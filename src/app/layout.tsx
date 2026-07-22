@@ -11,8 +11,8 @@ const interTight = Inter_Tight({
 });
 
 export const metadata: Metadata = {
-   title: "For QCLAY",
-   description: "For QCLAY",
+   title: "APIcenter",
+   description: "APIcenter",
    icons: {
       icon: [{ url: "/favicon.png", type: "image/svg+xml" }],
       apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],

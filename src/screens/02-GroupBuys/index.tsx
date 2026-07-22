@@ -1,32 +1,32 @@
 "use client";
+
 import React from "react";
 
-import { ContentActions } from "./ui/ContentActions";
-import { ModelsTable } from "./ui/ModelsTable";
-import { Pagination } from "../../shared/ui/components/Pagination";
+import { GroupBuysList } from "./ui/GroupBuysList";
 import clsx from "clsx";
+import { ContentActions } from "screens/01-Content/ui/ContentActions";
 
+import { Pagination } from "shared/ui/components/Pagination";
 import { Button } from "shared/ui/ui-kit/Button";
 
-import css from "./Content.module.scss";
+import css from "./GroupBuysContent.module.scss";
 
-const tabs = ["All Types", "Image", "New", "Search", "Audio & Video"];
+const tabs = ["Group Buys", "API", "Video"];
 
-interface Prop {
+interface Props {
    className?: string;
 }
 
-export const Content: React.FC<Prop> = ({ className }) => {
+export const GroupBuysContent: React.FC<Props> = ({ className }) => {
    const [activeTab, setActiveTab] = React.useState(tabs[0]);
    const [currentPage, setCurrentPage] = React.useState(1);
-
-   const totalPages = 10;
 
    return (
       <div className={clsx(css.content, className)}>
          <div className={css.content_top}>
             <div className={css.content_title}>
-               <h2>OpenAI </h2>
+               <h2>OpenAI</h2>
+
                <span>
                   (<strong>158</strong> results)
                </span>
@@ -48,17 +48,13 @@ export const Content: React.FC<Prop> = ({ className }) => {
                ))}
             </div>
 
-            <ContentActions />
+            <ContentActions variant="group" />
          </div>
 
          <div className={css.content_list}>
-            <ModelsTable />
+            <GroupBuysList />
 
-            <Pagination
-               currentPage={currentPage}
-               totalPages={totalPages}
-               onChange={setCurrentPage}
-            />
+            <Pagination currentPage={currentPage} totalPages={10} onChange={setCurrentPage} />
          </div>
       </div>
    );

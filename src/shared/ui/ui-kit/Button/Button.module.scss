@@ -5,7 +5,7 @@
    white-space: nowrap;
    overflow: hidden;
 
-   border-radius: 1rem;
+   border-radius: 0.8rem;
    @include fontInterTight(1.4rem, 1, -0.01em, 500);
 
    &_content {
@@ -66,16 +66,38 @@
       padding: 1.2rem 1.6rem;
       @include transition((box-shadow));
       color: getColorWhite(1);
-      background: radial-gradient(67.56% 113.72% at 50% 1.56%, #474c49 0%, #090c0a 100%);
-      border: 0.1rem solid rgba(0, 12, 27, 0.4);
+      background: #212121;
+      border: 0.1rem solid getColorWhite(0.1);
       box-shadow:
-         0 0.5rem 1.5rem rgba(9, 12, 10, 0.2),
-         inset 0 0.6rem 2rem rgba(255, 255, 255, 0.16);
+         0 0 1.5rem rgba(0, 66, 163, 0.2);
 
       &:hover {
          box-shadow:
             0 0.5rem 1.5rem rgba(9, 12, 10, 0.4),
             inset 0 0.6rem 2rem rgba(255, 255, 255, 0.2);
+      }
+
+      &::before,
+      &::after {
+         content: "";
+         position: absolute;
+         width: 6.2rem;
+         height: 2rem;
+         border-radius: 50%;
+         background-color: #D3E7FF;
+         filter: blur(15px);
+      }
+
+      &::before {
+         left: -1.4rem;
+         top: -0.8rem;
+         transform: rotate(-35deg);
+      }
+
+      &::after {
+         bottom: -1rem;
+         right: -1.4rem;
+         transform: rotate(-25deg);
       }
    }
 
@@ -159,169 +181,4 @@
          }
       }
    }
-
-   &_stars {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-   }
-
-   &_star {
-      position: absolute;
-      border-radius: 50%;
-      background: getColorWhite(0.5);
-      filter: blur(0.04rem);
-      animation: starFloat 6s ease-in-out infinite;
-      animation-delay: var(--delay);
-   }
-}
-
-@keyframes starFloat {
-   0%,
-   100% {
-      transform: translate(0, 0) scale(1);
-      opacity: 0.3;
-   }
-
-   25% {
-      transform: translate(0.2rem, -0.3rem) scale(1.15);
-      opacity: 1;
-   }
-
-   50% {
-      transform: translate(-0.15rem, 0.25rem) scale(0.9);
-      opacity: 0.5;
-   }
-
-   75% {
-      transform: translate(0.1rem, -0.15rem) scale(1.2);
-      opacity: 0.9;
-   }
-}
-
-.button_star:nth-child(1) {
-   top: 18%;
-   left: 22%;
-   width: 0.2rem;
-   height: 0.2rem;
-}
-
-.button_star:nth-child(2) {
-   top: 20%;
-   left: 28%;
-   width: 0.12rem;
-   height: 0.12rem;
-}
-
-.button_star:nth-child(3) {
-   top: 27%;
-   left: 26%;
-   width: 0.08rem;
-   height: 0.08rem;
-}
-
-.button_star:nth-child(4) {
-   top: 15%;
-   left: 58%;
-   width: 0.1rem;
-   height: 0.1rem;
-}
-
-.button_star:nth-child(5) {
-   top: 20%;
-   left: 61%;
-   width: 0.18rem;
-   height: 0.18rem;
-}
-
-.button_star:nth-child(6) {
-   top: 31%;
-   left: 59%;
-   width: 0.12rem;
-   height: 0.12rem;
-}
-
-.button_star:nth-child(7) {
-   top: 12%;
-   left: 55%;
-   width: 0.08rem;
-   height: 0.08rem;
-}
-
-.button_star:nth-child(8) {
-   top: 22%;
-   left: 74%;
-   width: 0.14rem;
-   height: 0.14rem;
-}
-
-.button_star:nth-child(9) {
-   top: 66%;
-   left: 27%;
-   width: 0.14rem;
-   height: 0.14rem;
-}
-
-.button_star:nth-child(10) {
-   top: 82%;
-   left: 38%;
-   width: 0.14rem;
-   height: 0.14rem;
-}
-
-.button_star:nth-child(11) {
-   top: 76%;
-   left: 45%;
-   width: 0.18rem;
-   height: 0.18rem;
-}
-
-.button_star:nth-child(12) {
-   top: 66%;
-   left: 72%;
-   width: 0.12rem;
-   height: 0.12rem;
-}
-
-.button_star:nth-child(13) {
-   top: 56%;
-   left: 78%;
-   width: 0.22rem;
-   height: 0.22rem;
-}
-
-.button_star:nth-child(14) {
-   top: 72%;
-   left: 83%;
-   width: 0.1rem;
-   height: 0.1rem;
-}
-
-.button_star:nth-child(15) {
-   top: 35%;
-   left: 48%;
-   width: 0.08rem;
-   height: 0.08rem;
-}
-
-.button_star:nth-child(16) {
-   top: 48%;
-   left: 33%;
-   width: 0.06rem;
-   height: 0.06rem;
-}
-
-.button_star:nth-child(17) {
-   top: 82%;
-   left: 62%;
-   width: 0.08rem;
-   height: 0.08rem;
-}
-
-.button_star:nth-child(18) {
-   top: 30%;
-   left: 86%;
-   width: 0.06rem;
-   height: 0.06rem;
 }

@@ -1,8 +1,11 @@
+import { default as ClockIcon } from "./Clock.icon";
 import { default as DropdownArrowIcon } from "./DropdownArrow.icon";
 import { default as FilterIcon } from "./Filter.icon";
 import { default as MacKeyIcon } from "./MacKey.icon";
 import { default as MainIcon } from "./Main.icon";
+import { default as MessageTextIcon } from "./MessageText.icon";
 import { default as ModelIcon } from "./Model.icon";
+import { default as PlusIcon } from "./Plus.icon";
 import { default as SearchIcon } from "./Search.icon";
 import { default as SortIcon } from "./Sort.icon";
 import { default as TableIcon } from "./Table.icon";
@@ -16,4 +19,7 @@ export {
    TableIcon,
    SortIcon,
    DropdownArrowIcon,
+   PlusIcon,
+   ClockIcon,
+   MessageTextIcon,
 };
