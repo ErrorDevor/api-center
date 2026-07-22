@@ -1,0 +1,23 @@
+.content_actions {
+   display: flex;
+   align-items: center;
+   gap: 0.6rem;
+   margin-left: auto;
+   flex-shrink: 0;
+}
+
+.content_action_button {
+   height: 3.6rem;
+
+   svg {
+      width: 1.6rem;
+      height: 1.6rem;
+      flex-shrink: 0;
+   }
+}
+
+@media (max-width: 1200px) {
+   .content_actions {
+      display: none;
+   }
+}

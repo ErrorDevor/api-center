@@ -1,0 +1,72 @@
+.pagination {
+   display: grid;
+   grid-template-columns: 1fr auto 1fr;
+   align-items: center;
+   width: 100%;
+   min-height: 3.6rem;
+   flex-shrink: 0;
+
+   &_button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      width: max-content;
+      height: 3.2rem;
+      padding: 1.1rem 1.4rem;
+
+      border: 0.1rem solid rgba(0, 0, 0, 0.07);
+      border-radius: 0.8rem;
+      color: #212121;
+      background: linear-gradient(178.65deg, #ffffff 7.92%, #f7f7f7 98.85%);
+      cursor: pointer;
+
+      @include fontInterTight(1.4rem, 2rem, -0.01em, 400);
+      @include transition((background, border-color, color, opacity));
+
+      &:first-child {
+         justify-self: end;
+         margin-right: 4rem;
+      }
+
+      &:last-child {
+         justify-self: start;
+         margin-left: 4rem;
+      }
+
+      &:hover:not(&_disabled) {
+         border-color: rgba(0, 0, 0, 0.12);
+         background: #ffffff;
+      }
+
+      &_disabled {
+         color: #797a79;
+         opacity: 0.5;
+         cursor: default;
+      }
+
+      svg {
+         width: 1.4rem;
+         height: 1.4rem;
+         flex-shrink: 0;
+         transform: rotate(-180deg);
+      }
+   }
+
+   &_info {
+      grid-column: 2;
+      white-space: nowrap;
+
+      @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #212121);
+
+      strong {
+         font-weight: 500;
+      }
+   }
+
+   &_arrow_right {
+      transform: rotate(360deg) !important;
+   }
+}
+
+
