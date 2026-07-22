@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { ProviderItem as ProviderItemType, ProviderModel } from "../lib/sidebar.data";
+import type { ProviderItem as ProviderItemType, ProviderModel } from "../lib/sidebar.types";
 import clsx from "clsx";
 
 import Accordion from "shared/ui/base/Accordion";

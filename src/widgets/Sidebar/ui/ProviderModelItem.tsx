@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { ProviderModel } from "../lib/sidebar.data";
+import type { ProviderModel } from "../lib/sidebar.types";
 import clsx from "clsx";
 
 import Image from "shared/ui/base/Image";
