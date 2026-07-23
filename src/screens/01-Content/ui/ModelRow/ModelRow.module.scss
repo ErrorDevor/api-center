@@ -175,6 +175,12 @@
    }
 }
 
+.provider_wrapper {
+   display: inline-flex;
+   align-items: center;
+   min-width: 0;
+}
+
 .provider {
    display: inline-flex;
    align-items: center;
@@ -182,20 +188,26 @@
    gap: 0.8rem;
    min-width: 0;
 
+   color: transparent;
+   background: linear-gradient(178.4deg, #4791ff 1.36%, #bfd2ed 122.98%);
+   background-clip: text;
+   -webkit-background-clip: text;
+   cursor: pointer;
+   @include fontInterTight(1.4rem, 2rem, -0.01em, 500);
    @include transition((opacity));
+
+   img,
+   svg {
+      width: 1.6rem;
+      height: 1.6rem;
+      flex-shrink: 0;
+   }
 
    span {
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
    }
-
-   color: transparent;
-   background: linear-gradient(178.4deg, #4791ff 1.36%, #bfd2ed 122.98%);
-   background-clip: text;
-   -webkit-background-clip: text;
-
-   @include fontInterTight(1.4rem, 2rem, -0.01em, 500);
 
    &:hover {
       opacity: 0.7;

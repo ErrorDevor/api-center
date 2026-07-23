@@ -1,17 +1,115 @@
 import React from "react";
 
 import type { ModelItem } from "screens/01-Content/lib/content.data";
+import { providerDetails } from "screens/01-Content/lib/provider.data";
 
 import Image from "shared/ui/base/Image";
+import {
+   ProviderTooltip,
+   type ProviderTooltipPosition,
+} from "shared/ui/components/ProviderTooltip";
 import { ModelIcon } from "shared/ui/icons";
 
 import css from "./ModelRow.module.scss";
+
+const TOOLTIP_WIDTH = 243;
+const TOOLTIP_HEIGHT = 195;
+const TOOLTIP_GAP = 12;
+const VIEWPORT_PADDING = 8;
+const CLOSE_DELAY = 120;
 
 interface Prop {
    model: ModelItem;
 }
 
 export const ModelRow: React.FC<Prop> = ({ model }) => {
+   const tooltipId = React.useId();
+   const provider = providerDetails[model.provider];
+
+   const providerRef = React.useRef<HTMLAnchorElement>(null);
+   const closeTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+   const [isTooltipOpen, setIsTooltipOpen] = React.useState(false);
+   const [tooltipPosition, setTooltipPosition] = React.useState<ProviderTooltipPosition>({
+      left: 0,
+      top: 0,
+   });
+
+   const clearCloseTimeout = React.useCallback(() => {
+      if (!closeTimeoutRef.current) {
+         return;
+      }
+
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+   }, []);
+
+   const updateTooltipPosition = React.useCallback(() => {
+      const providerElement = providerRef.current;
+
+      if (!providerElement) {
+         return;
+      }
+
+      const rect = providerElement.getBoundingClientRect();
+
+      const desiredLeft = rect.left - TOOLTIP_WIDTH - TOOLTIP_GAP;
+      const desiredTop = rect.top + rect.height / 2 - TOOLTIP_HEIGHT / 2;
+
+      const left = Math.max(VIEWPORT_PADDING, desiredLeft);
+      const top = Math.min(
+         Math.max(VIEWPORT_PADDING, desiredTop),
+         window.innerHeight - TOOLTIP_HEIGHT - VIEWPORT_PADDING
+      );
+
+      setTooltipPosition({
+         left,
+         top,
+      });
+   }, []);
+
+   const openTooltip = React.useCallback(() => {
+      if (!provider) {
+         return;
+      }
+
+      clearCloseTimeout();
+      updateTooltipPosition();
+      setIsTooltipOpen(true);
+   }, [clearCloseTimeout, provider, updateTooltipPosition]);
+
+   const closeTooltip = React.useCallback(() => {
+      clearCloseTimeout();
+
+      closeTimeoutRef.current = setTimeout(() => {
+         setIsTooltipOpen(false);
+      }, CLOSE_DELAY);
+   }, [clearCloseTimeout]);
+
+   React.useEffect(() => {
+      if (!isTooltipOpen) {
+         return;
+      }
+
+      const handlePositionChange = () => {
+         updateTooltipPosition();
+      };
+
+      window.addEventListener("resize", handlePositionChange);
+      window.addEventListener("scroll", handlePositionChange, true);
+
+      return () => {
+         window.removeEventListener("resize", handlePositionChange);
+         window.removeEventListener("scroll", handlePositionChange, true);
+      };
+   }, [isTooltipOpen, updateTooltipPosition]);
+
+   React.useEffect(() => {
+      return () => {
+         clearCloseTimeout();
+      };
+   }, [clearCloseTimeout]);
+
    return (
       <div className={css.table_row}>
          <div className={css.table_cell}>
@@ -63,10 +161,32 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
          </div>
 
          <div className={css.table_cell}>
-            <a href="#" className={css.provider} onClick={(event) => event.preventDefault()}>
-               <Image.Default src="/icons/info.svg" />
-               {model.provider}
-            </a>
+            <div className={css.provider_wrapper}>
+               <a
+                  ref={providerRef}
+                  className={css.provider}
+                  aria-describedby={provider && isTooltipOpen ? tooltipId : undefined}
+                  onMouseEnter={openTooltip}
+                  onMouseLeave={closeTooltip}
+                  onFocus={openTooltip}
+                  onBlur={closeTooltip}
+                  onClick={(event) => event.preventDefault()}
+               >
+                  <Image.Default src="/icons/info.svg" />
+                  {model.provider}
+               </a>
+
+               {provider && isTooltipOpen && (
+                  <ProviderTooltip
+                     id={tooltipId}
+                     providerName={model.provider}
+                     details={provider}
+                     position={tooltipPosition}
+                     onMouseEnter={openTooltip}
+                     onMouseLeave={closeTooltip}
+                  />
+               )}
+            </div>
          </div>
 
          <div className={css.table_cell}>
