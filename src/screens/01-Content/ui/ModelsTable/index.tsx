@@ -5,6 +5,7 @@ import React from "react";
 import { models } from "screens/01-Content/lib/content.data";
 import type { ModelItem } from "screens/01-Content/lib/content.data";
 
+import { useTranslation } from "shared/lib/i18n";
 import { SortIcon } from "shared/ui/icons";
 
 import { ModelRow } from "../ModelRow";
@@ -23,6 +24,8 @@ interface SortState {
 }
 
 export const ModelsTable: React.FC = () => {
+   const { t } = useTranslation();
+
    const tableRef = React.useRef<HTMLDivElement>(null);
    const bodyScrollRef = React.useRef<HTMLDivElement>(null);
 
@@ -181,32 +184,49 @@ export const ModelsTable: React.FC = () => {
                      columnIndex={0}
                      sortKey="name"
                      sort={sort}
+                     sortLabel={t.content.table.modelName}
+                     resizeLabel={t.content.table.resizeColumn}
                      onSort={handleSort}
                      onResizeStart={handleResizeStart}
                   >
-                     Model Name
+                     {t.content.table.modelName}
                   </HeaderCell>
 
                   <HeaderCell
                      columnIndex={1}
                      sortKey="price"
                      sort={sort}
+                     sortLabel={t.content.table.price}
+                     resizeLabel={t.content.table.resizeColumn}
                      onSort={handleSort}
                      onResizeStart={handleResizeStart}
                   >
-                     Price (Input & Output & Off official price)
+                     {t.content.table.price}
                   </HeaderCell>
 
-                  <HeaderCell columnIndex={2} onResizeStart={handleResizeStart}>
-                     Tags
+                  <HeaderCell
+                     columnIndex={2}
+                     resizeLabel={t.content.table.resizeColumn}
+                     onResizeStart={handleResizeStart}
+                  >
+                     {t.content.table.tags}
                   </HeaderCell>
 
-                  <HeaderCell columnIndex={3} onResizeStart={handleResizeStart}>
-                     Provider
+                  <HeaderCell
+                     columnIndex={3}
+                     resizeLabel={t.content.table.resizeColumn}
+                     onResizeStart={handleResizeStart}
+                  >
+                     {t.content.table.provider}
                   </HeaderCell>
 
-                  <HeaderCell sortKey="reviews" sort={sort} onSort={handleSort}>
-                     Reviews
+                  <HeaderCell
+                     sortKey="reviews"
+                     sort={sort}
+                     sortLabel={t.content.table.reviews}
+                     onSort={handleSort}
+                  >
+                     {t.content.table.reviews}
                   </HeaderCell>
                </div>
             </div>
@@ -228,6 +248,8 @@ interface HeaderCellProps {
    columnIndex?: number;
    sortKey?: SortKey;
    sort?: SortState;
+   sortLabel?: string;
+   resizeLabel?: string;
    onSort?: (key: SortKey) => void;
    onResizeStart?: (event: React.PointerEvent<HTMLButtonElement>, columnIndex: number) => void;
 }
@@ -237,6 +259,8 @@ const HeaderCell: React.FC<HeaderCellProps> = ({
    columnIndex,
    sortKey,
    sort,
+   sortLabel,
+   resizeLabel,
    onSort,
    onResizeStart,
 }) => {
@@ -249,7 +273,7 @@ const HeaderCell: React.FC<HeaderCellProps> = ({
                <button
                   type="button"
                   className={css.table_sort}
-                  aria-label={`Sort by ${String(children)}`}
+                  aria-label={sortLabel}
                   aria-pressed={isActiveSort}
                   onClick={() => onSort(sortKey)}
                >
@@ -268,7 +292,7 @@ const HeaderCell: React.FC<HeaderCellProps> = ({
             <button
                type="button"
                className={css.table_resize}
-               aria-label="Resize column"
+               aria-label={resizeLabel}
                onPointerDown={(event) => onResizeStart(event, columnIndex)}
             >
                <span />

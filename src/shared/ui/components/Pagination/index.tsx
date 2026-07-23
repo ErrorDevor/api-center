@@ -2,6 +2,8 @@ import React from "react";
 
 import clsx from "clsx";
 
+import { useTranslation } from "shared/lib/i18n";
+
 import css from "./Pagination.module.scss";
 
 interface Prop {
@@ -19,6 +21,8 @@ export const Pagination: React.FC<Prop> = ({ currentPage, totalPages, onChange }
       onChange(Math.min(totalPages, currentPage + 1));
    };
 
+   const { t } = useTranslation();
+
    return (
       <div className={css.pagination}>
          <button
@@ -31,11 +35,11 @@ export const Pagination: React.FC<Prop> = ({ currentPage, totalPages, onChange }
             onClick={handlePrevious}
          >
             <ArrowIcon />
-            Previous
+            {t.pagination.previous} 
          </button>
 
          <span className={css.pagination_info}>
-            Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+            {t.pagination.page} <strong>{currentPage}</strong> {t.pagination.of}  <strong>{totalPages}</strong>
          </span>
 
          <button
@@ -47,7 +51,7 @@ export const Pagination: React.FC<Prop> = ({ currentPage, totalPages, onChange }
             disabled={currentPage === totalPages}
             onClick={handleNext}
          >
-            Next
+            {t.pagination.next} 
             <ArrowIcon right />
          </button>
       </div>

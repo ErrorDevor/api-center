@@ -2,24 +2,29 @@
 
 import React from "react";
 
+import { type GroupBuysTabId, tabs } from "./lib/groupBuys.data";
 import { GroupBuysList } from "./ui/GroupBuysList";
 import clsx from "clsx";
 import { ContentActions } from "screens/01-Content/ui/ContentActions";
 
+import { useTranslation } from "shared/lib/i18n";
 import { Pagination } from "shared/ui/components/Pagination";
 import { Button } from "shared/ui/ui-kit/Button";
 
 import css from "./GroupBuysContent.module.scss";
-
-const tabs = ["Group Buys", "API", "Video"];
 
 interface Props {
    className?: string;
 }
 
 export const GroupBuysContent: React.FC<Props> = ({ className }) => {
-   const [activeTab, setActiveTab] = React.useState(tabs[0]);
+   const { t } = useTranslation();
+
+   const [activeTab, setActiveTab] = React.useState<GroupBuysTabId>(tabs[0].id);
    const [currentPage, setCurrentPage] = React.useState(1);
+
+   const resultsCount = 158;
+   const totalPages = 10;
 
    return (
       <div className={clsx(css.content, className)}>
@@ -28,24 +33,28 @@ export const GroupBuysContent: React.FC<Props> = ({ className }) => {
                <h2>OpenAI</h2>
 
                <span>
-                  (<strong>158</strong> results)
+                  (<strong>{resultsCount}</strong> {t.content.results})
                </span>
             </div>
 
             <div className={css.divider} />
 
             <div className={css.content_buttons_nav}>
-               {tabs.map((tab) => (
-                  <Button
-                     key={tab}
-                     variant="grey"
-                     className={clsx(css.button_nav, activeTab === tab && css.button_nav_active)}
-                     active={activeTab === tab}
-                     onClick={() => setActiveTab(tab)}
-                  >
-                     {tab}
-                  </Button>
-               ))}
+               {tabs.map((tab) => {
+                  const isActive = activeTab === tab.id;
+
+                  return (
+                     <Button
+                        key={tab.id}
+                        variant="grey"
+                        className={clsx(css.button_nav, isActive && css.button_nav_active)}
+                        active={isActive}
+                        onClick={() => setActiveTab(tab.id)}
+                     >
+                        {t.groupBuys.tabs[tab.translationKey]}
+                     </Button>
+                  );
+               })}
             </div>
 
             <ContentActions variant="group" />
@@ -54,7 +63,11 @@ export const GroupBuysContent: React.FC<Props> = ({ className }) => {
          <div className={css.content_list}>
             <GroupBuysList />
 
-            <Pagination currentPage={currentPage} totalPages={10} onChange={setCurrentPage} />
+            <Pagination
+               currentPage={currentPage}
+               totalPages={totalPages}
+               onChange={setCurrentPage}
+            />
          </div>
       </div>
    );

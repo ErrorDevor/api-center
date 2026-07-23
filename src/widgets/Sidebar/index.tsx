@@ -13,6 +13,7 @@ import { ProviderItem } from "./ui/ProviderItem";
 import { SidebarSwitcher } from "./ui/SidebarSwitcher";
 import clsx from "clsx";
 
+import { useTranslation } from "shared/lib/i18n";
 import { DropdownArrowIcon } from "shared/ui/icons";
 
 import css from "./Sidebar.module.scss";
@@ -35,7 +36,7 @@ export const Sidebar: React.FC<Props> = ({
    const [activeProviderId, setActiveProviderId] = React.useState<string>("openai");
    const [activeModelId, setActiveModelId] = React.useState<string>("gpt-5-6-terra");
    const [showAll, setShowAll] = React.useState(false);
-
+   const { t } = useTranslation();
    const visibleProviders = showAll ? providers : providers.slice(0, 8);
 
    const handleProviderClick = (providerId: string) => {
@@ -56,7 +57,7 @@ export const Sidebar: React.FC<Props> = ({
                </div>
 
                <div className={css.sidebar_content}>
-                  <span className={css.sidebar_label}>Provider</span>
+                  <span className={css.sidebar_label}>{t.common.provider}</span>
 
                   <div className={css.providers}>
                      {visibleProviders.map((provider) => {
@@ -98,7 +99,7 @@ export const Sidebar: React.FC<Props> = ({
                            )}
                         />
 
-                        {showAll ? "Show less" : "Show more"}
+                        {showAll ? t.sidebar.showLess : t.sidebar.showMore}
                      </button>
                   </div>
                </div>

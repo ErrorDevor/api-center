@@ -1,51 +1,62 @@
 "use client";
+
 import React from "react";
 
+import { tabs } from "./lib/content.data";
 import { ContentActions } from "./ui/ContentActions";
 import { ModelsTable } from "./ui/ModelsTable";
-import { Pagination } from "../../shared/ui/components/Pagination";
 import clsx from "clsx";
 
+import { useTranslation } from "shared/lib/i18n";
+import { Pagination } from "shared/ui/components/Pagination";
 import { Button } from "shared/ui/ui-kit/Button";
 
 import css from "./Content.module.scss";
 
-const tabs = ["All Types", "Image", "New", "Search", "Audio & Video"];
+type TabId = (typeof tabs)[number]["id"];
 
 interface Prop {
    className?: string;
 }
 
 export const Content: React.FC<Prop> = ({ className }) => {
-   const [activeTab, setActiveTab] = React.useState(tabs[0]);
+   const { t } = useTranslation();
+
+   const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
    const [currentPage, setCurrentPage] = React.useState(1);
 
    const totalPages = 10;
+   const resultsCount = 158;
 
    return (
       <div className={clsx(css.content, className)}>
          <div className={css.content_top}>
             <div className={css.content_title}>
-               <h2>OpenAI </h2>
+               <h2>OpenAI</h2>
+
                <span>
-                  (<strong>158</strong> results)
+                  (<strong>{resultsCount}</strong> {t.content.results})
                </span>
             </div>
 
             <div className={css.divider} />
 
             <div className={css.content_buttons_nav}>
-               {tabs.map((tab) => (
-                  <Button
-                     key={tab}
-                     variant="grey"
-                     className={clsx(css.button_nav, activeTab === tab && css.button_nav_active)}
-                     active={activeTab === tab}
-                     onClick={() => setActiveTab(tab)}
-                  >
-                     {tab}
-                  </Button>
-               ))}
+               {tabs.map((tab) => {
+                  const isActive = activeTab === tab.id;
+
+                  return (
+                     <Button
+                        key={tab.id}
+                        variant="grey"
+                        className={clsx(css.button_nav, isActive && css.button_nav_active)}
+                        active={isActive}
+                        onClick={() => setActiveTab(tab.id)}
+                     >
+                        {t.content.tabs[tab.translationKey]}
+                     </Button>
+                  );
+               })}
             </div>
 
             <ContentActions />

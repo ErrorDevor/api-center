@@ -3,6 +3,8 @@ import React from "react";
 import type { SidebarMode } from "../lib/sidebar.data";
 import clsx from "clsx";
 
+import { useTranslation } from "shared/lib/i18n";
+
 import css from "../Sidebar.module.scss";
 
 interface Props {
@@ -11,6 +13,8 @@ interface Props {
 }
 
 export const SidebarSwitcher: React.FC<Props> = ({ value, onChange }) => {
+   const { t } = useTranslation();
+
    return (
       <div className={css.mode_switcher}>
          <button
@@ -18,7 +22,7 @@ export const SidebarSwitcher: React.FC<Props> = ({ value, onChange }) => {
             className={clsx(css.mode_button, value === "api" && css.mode_button_active)}
             onClick={() => onChange("api")}
          >
-            API
+            {t.sidebar.api}
          </button>
 
          <button
@@ -26,7 +30,7 @@ export const SidebarSwitcher: React.FC<Props> = ({ value, onChange }) => {
             className={clsx(css.mode_button, value === "group-buys" && css.mode_button_active)}
             onClick={() => onChange("group-buys")}
          >
-            Group Buys
+            {t.sidebar.groupBuys}
          </button>
       </div>
    );

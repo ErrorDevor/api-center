@@ -1,8 +1,11 @@
+"use client";
+
 import React from "react";
 
 import type { ModelItem } from "screens/01-Content/lib/content.data";
 import { providerDetails } from "screens/01-Content/lib/provider.data";
-
+import type { ProviderName } from "screens/01-Content/lib/provider.data";
+import { useTranslation } from "shared/lib/i18n";
 import Image from "shared/ui/base/Image";
 import {
    ProviderTooltip,
@@ -23,6 +26,8 @@ interface Prop {
 }
 
 export const ModelRow: React.FC<Prop> = ({ model }) => {
+   const { t } = useTranslation();
+
    const tooltipId = React.useId();
    const provider = providerDetails[model.provider];
 
@@ -110,6 +115,8 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
       };
    }, [clearCloseTimeout]);
 
+   const modelTranslation = t.models.items[model.translationKey];
+
    return (
       <div className={css.table_row}>
          <div className={css.table_cell}>
@@ -120,7 +127,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
 
                <div className={css.model_info}>
                   <strong>{model.name}</strong>
-                  <span>{model.description}</span>
+                  <span>{modelTranslation.description}</span>
                </div>
             </div>
          </div>
@@ -128,7 +135,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
          <div className={css.table_cell}>
             <div className={css.prices}>
                <div className={css.price}>
-                  <span>Input:</span>&nbsp;
+                  <span>{t.common.input}:</span>&nbsp;
                   <Image.Default src="/icons/energy.svg" />
                   &nbsp;
                   <strong>
@@ -140,7 +147,8 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                <div className={css.price_divider} />
 
                <div className={css.price}>
-                  <span>Output:</span>&nbsp; <Image.Default src="/icons/energy.svg" />
+                  <span>{t.common.output}:</span>&nbsp;
+                  <Image.Default src="/icons/energy.svg" />
                   &nbsp;
                   <strong>
                      ${model.outputPrice}
@@ -149,13 +157,15 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                </div>
             </div>
 
-            <span className={css.discount}>{model.discount}</span>
+            <span className={css.discount}>
+               {t.models.discount.replace("{percent}", String(model.discountPercent))}
+            </span>
          </div>
 
          <div className={css.table_cell}>
             <div className={css.tags}>
                {model.tags.map((tag) => (
-                  <span key={tag}>{tag}</span>
+                  <span key={tag}>{t.tags[tag]}</span>
                ))}
             </div>
          </div>
@@ -192,6 +202,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
          <div className={css.table_cell}>
             <div className={css.reviews}>
                <span>{model.reviews}</span>
+
                <div className={css.reports}>
                   <div className={css.reports_inner}>{model.reports}</div>
                </div>

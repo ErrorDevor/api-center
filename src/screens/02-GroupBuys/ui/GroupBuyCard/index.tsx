@@ -1,7 +1,11 @@
+"use client";
+
 import React from "react";
 
 import type { GroupBuyItem } from "../../lib/groupBuys.data";
 
+import { useTranslation } from "shared/lib/i18n";
+import { formatComments, formatPersons, formatRelativeDate } from "shared/lib/i18n/formatters";
 import { UserInfo } from "shared/ui/components/UserInfo";
 import { ClockIcon, MessageTextIcon } from "shared/ui/icons";
 
@@ -12,17 +16,15 @@ interface Props {
 }
 
 export const GroupBuyCard: React.FC<Props> = ({ item }) => {
+   const { locale, t } = useTranslation();
+
+   const translation = t.groupBuys.items[item.translationKey];
+
    return (
       <article className={css.card}>
          <div className={css.card_header}>
             <div className={css.card_author}>
-               <UserInfo
-                  userName={item.userName}
-                  userAvatar={item.userAvatar}
-                  withName={true}
-               />
-
-               {/* <span className={css.card_user_name}>{item.userName}</span> */}
+               <UserInfo userName={item.userName} userAvatar={item.userAvatar} withName={true} />
 
                <span className={css.card_divider} />
 
@@ -38,12 +40,12 @@ export const GroupBuyCard: React.FC<Props> = ({ item }) => {
 
          <div className={css.card_content}>
             <div className={css.card_main}>
-               <h3 className={css.card_title}>{item.title}</h3>
+               <h3 className={css.card_title}>{translation.title}</h3>
 
                <div className={css.card_description}>
                   <span className={css.card_description_mark} />
 
-                  <p>{item.description}</p>
+                  <p>{translation.description}</p>
                </div>
             </div>
 
@@ -53,16 +55,14 @@ export const GroupBuyCard: React.FC<Props> = ({ item }) => {
 
                   <span className={css.card_dot} />
 
-                  <span className={css.card_persons}>
-                     {item.persons} persons
-                  </span>
+                  <span className={css.card_persons}>{formatPersons(item.persons, locale)}</span>
                </div>
 
                <div className={css.card_info_right}>
                   <div className={css.card_meta}>
                      <ClockIcon />
 
-                     <span>{item.publishedAt}</span>
+                     <span>{formatRelativeDate(item.publishedAt, locale)}</span>
                   </div>
 
                   <span className={css.card_dot} />
@@ -70,7 +70,7 @@ export const GroupBuyCard: React.FC<Props> = ({ item }) => {
                   <div className={css.card_meta}>
                      <MessageTextIcon />
 
-                     <span>{item.comments}</span>
+                     <span> {formatComments(item.comments, locale)}</span>
                   </div>
                </div>
             </div>

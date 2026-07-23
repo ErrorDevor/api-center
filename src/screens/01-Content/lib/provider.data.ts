@@ -1,16 +1,27 @@
+export type ProviderTranslationKey = "openRouter";
+
+export interface ProviderAge {
+   years: number;
+   months: number;
+}
+
 export interface ProviderDetails {
-   description: string;
-   age: string;
+   translationKey: ProviderTranslationKey;
+   age: ProviderAge;
    positiveReviews: number;
    negativeReviews: number;
 }
 
-export const providerDetails: Record<string, ProviderDetails> = {
+export const providerDetails = {
    OpenRouter: {
-      description:
-         "OpenRouter is a unified API gateway for accessing AI models from multiple providers.",
-      age: "8 years and 10 months",
+      translationKey: "openRouter",
+      age: {
+         years: 8,
+         months: 10,
+      },
       positiveReviews: 123,
       negativeReviews: 12,
    },
-};
+} satisfies Record<string, ProviderDetails>;
+
+export type ProviderName = keyof typeof providerDetails;

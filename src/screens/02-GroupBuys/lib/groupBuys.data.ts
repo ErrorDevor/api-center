@@ -1,15 +1,33 @@
+export type GroupBuyTranslationKey = "gptTerraSharing";
+
 export interface GroupBuyItem {
    id: number;
    userName: string;
    userAvatar: string;
    providers: string[];
-   title: string;
-   description: string;
+   translationKey: GroupBuyTranslationKey;
    price: number;
    persons: number;
    publishedAt: string;
    comments: number;
 }
+
+export const tabs = [
+   {
+      id: "group-buys",
+      translationKey: "groupBuys",
+   },
+   {
+      id: "api",
+      translationKey: "api",
+   },
+   {
+      id: "video",
+      translationKey: "video",
+   },
+] as const;
+
+export type GroupBuysTabId = (typeof tabs)[number]["id"];
 
 export const groupBuys: GroupBuyItem[] = [
    {
@@ -17,12 +35,10 @@ export const groupBuys: GroupBuyItem[] = [
       userName: "@insightminer",
       userAvatar: "/images/avatar2.png",
       providers: ["OpenAI", "Anthropic"],
-      title: "Sharing GPT-5.6 Terra (4 spots, 2 free) — save on the top tier!",
-      description:
-         "Taking the top-tier plan, I'm splitting it into 4 equal accesses. Each spot comes out twice as cheaper than buying 5xMax separately, saving you money.",
+      translationKey: "gptTerraSharing",
       price: 8,
       persons: 4,
-      publishedAt: "50 min ago",
+      publishedAt: "2026-07-23T10:10:00.000Z",
       comments: 42,
    },
    {
@@ -30,12 +46,10 @@ export const groupBuys: GroupBuyItem[] = [
       userName: "@insightminer",
       userAvatar: "/images/avatar2.png",
       providers: ["OpenAI", "Anthropic"],
-      title: "Sharing GPT-5.6 Terra (4 spots, 2 free) — save on the top tier!",
-      description:
-         "Taking the top-tier plan, I'm splitting it into 4 equal accesses. Each spot comes out twice as cheaper than buying 5xMax separately, saving you money.",
+      translationKey: "gptTerraSharing",
       price: 8,
       persons: 4,
-      publishedAt: "1h 35 min ago",
+      publishedAt: "2026-07-23T09:25:00.000Z",
       comments: 42,
    },
    {
@@ -43,12 +57,10 @@ export const groupBuys: GroupBuyItem[] = [
       userName: "@insightminer",
       userAvatar: "/images/avatar2.png",
       providers: ["OpenAI", "Anthropic"],
-      title: "Sharing GPT-5.6 Terra (4 spots, 2 free) — save on the top tier!",
-      description:
-         "Taking the top-tier plan, I'm splitting it into 4 equal accesses. Each spot comes out twice as cheaper than buying 5xMax separately, saving you money.",
+      translationKey: "gptTerraSharing",
       price: 8,
       persons: 4,
-      publishedAt: "2 days ago",
+      publishedAt: "2026-07-21T11:00:00.000Z",
       comments: 42,
    },
    {
@@ -56,12 +68,10 @@ export const groupBuys: GroupBuyItem[] = [
       userName: "@insightminer",
       userAvatar: "/images/avatar2.png",
       providers: ["OpenAI", "Anthropic"],
-      title: "Sharing GPT-5.6 Terra (4 spots, 2 free) — save on the top tier!",
-      description:
-         "Taking the top-tier plan, I'm splitting it into 4 equal accesses. Each spot comes out twice as cheaper than buying 5xMax separately, saving you money.",
+      translationKey: "gptTerraSharing",
       price: 8,
       persons: 4,
-      publishedAt: "3 days ago",
+      publishedAt: "2026-07-20T11:00:00.000Z",
       comments: 42,
    },
 ];

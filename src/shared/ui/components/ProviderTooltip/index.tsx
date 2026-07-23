@@ -6,6 +6,8 @@ import { createPortal } from "react-dom";
 import clsx from "clsx";
 import type { ProviderDetails } from "screens/01-Content/lib/provider.data";
 
+import { useTranslation } from "shared/lib/i18n";
+import { formatProviderAge } from "shared/lib/i18n/formatters";
 import Image from "shared/ui/base/Image";
 
 import css from "./ProviderTooltip.module.scss";
@@ -35,6 +37,9 @@ export const ProviderTooltip: React.FC<Props> = ({
    onMouseLeave,
 }) => {
    const [mounted, setMounted] = React.useState(false);
+   const { locale, t } = useTranslation();
+
+   const providerTranslation = t.providers.items[details.translationKey];
 
    React.useEffect(() => {
       setMounted(true);
@@ -68,18 +73,18 @@ export const ProviderTooltip: React.FC<Props> = ({
 
          <div className={css.provider_modal_body}>
             <p className={css.provider_modal_description}>
-               <strong>{providerName}</strong> — {details.description}
+               <strong>{providerName}</strong> — {providerTranslation.description}
             </p>
 
             <div className={css.provider_modal_divider} />
 
-            <div className={css.provider_modal_row}>
-               <span>Age:</span>
-               <strong>{details.age}</strong>
+            <div className={clsx(css.provider_modal_row)}>
+               <span>{t.providers.age}:</span>
+               <strong>{formatProviderAge(details.age.years, details.age.months, locale)}</strong>
             </div>
 
             <div className={css.provider_modal_row}>
-               <span>Reviews:</span>
+               <span>{t.providers.reviews}:</span>
 
                <div className={css.provider_modal_reviews}>
                   <strong>{details.positiveReviews}</strong>

@@ -3,6 +3,7 @@ import React from "react";
 import type { ProviderModel } from "../lib/sidebar.types";
 import clsx from "clsx";
 
+import { useTranslation } from "shared/lib/i18n";
 import Image from "shared/ui/base/Image";
 import { DropdownArrowIcon } from "shared/ui/icons";
 
@@ -15,6 +16,8 @@ interface Props {
 }
 
 export const ProviderModelItem: React.FC<Props> = ({ model, active, onClick }) => {
+   const { t } = useTranslation();
+
    return (
       <button
          type="button"
@@ -28,12 +31,12 @@ export const ProviderModelItem: React.FC<Props> = ({ model, active, onClick }) =
          </span>
 
          {model.badge === "new" && (
-            <span className={clsx(css.model_badge, css.model_badge_new)}>New</span>
+            <span className={clsx(css.model_badge, css.model_badge_new)}>{t.common.new}</span>
          )}
 
          {model.badge === "top" && (
             <span className={clsx(css.model_badge, css.model_badge_top)}>
-               <span>Top</span>
+               <span>{t.common.top}</span>
 
                <Image.Default src="/icons/fire.svg" className={css.model_badge_icon} />
             </span>
