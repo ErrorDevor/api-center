@@ -5,7 +5,7 @@ import React from "react";
 import { type GroupBuysTabId, tabs } from "./lib/groupBuys.data";
 import { GroupBuysList } from "./ui/GroupBuysList";
 import clsx from "clsx";
-import { ContentActions } from "screens/01-Content/ui/ContentActions";
+import { ContentActions } from "shared/ui/components/ContentActions";
 
 import { useTranslation } from "shared/lib/i18n";
 import { Pagination } from "shared/ui/components/Pagination";

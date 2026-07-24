@@ -1,0 +1,193 @@
+.comment_layer {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-start;
+   width: 100%;
+   min-width: 0;
+   padding: 1.6rem;
+   gap: 1.6rem;
+   border: 0.1rem solid #ffffff;
+   border-radius: 1.2rem;
+   @include transition((background-color, border-color));
+
+   &_orange {
+      background: rgba(242, 132, 33, 0.05);
+   }
+
+   &_blue {
+      background: rgba(9, 73, 168, 0.05);
+   }
+
+   &_white {
+      background: rgba(255, 255, 255, 0.5);
+   }
+
+   &_header {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      gap: 0.8rem;
+   }
+
+   &_dot {
+      width: 0.3rem;
+      height: 0.3rem;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: #797a79;
+   }
+
+   &_date {
+      flex-shrink: 0;
+      white-space: nowrap;
+      @include fontInterTight(1.2rem, 1.5rem, 0, 500, #797a79);
+   }
+
+   &_text {
+      width: 100%;
+      min-width: 0;
+      margin: 0;
+      @include fontInterTight(1.4rem, 2rem, -0.01em, 400, rgba(9, 12, 10, 0.7));
+   }
+
+   &_actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+   }
+
+   &_action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      gap: 0.4rem;
+      border: 0;
+      background: transparent;
+      color: #797a79;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+
+      > svg {
+         display: block;
+         width: 1.5rem;
+         height: 1.5rem;
+         flex-shrink: 0;
+         overflow: visible;
+      }
+
+      > span {
+         color: #797a79;
+
+         @include fontInterTight(1.2rem, 1.6rem, -0.01em, 500, #797a79);
+      }
+
+      @media (hover: hover) {
+         &:hover {
+            .comment_layer_reaction_icon {
+               transform: scale(1.08);
+            }
+
+            &.comment_layer_simple_action > svg {
+               transform: scale(1.08);
+            }
+         }
+      }
+
+      &:active {
+         .comment_layer_reaction_icon {
+            transform: scale(1.25);
+         }
+
+         &.comment_layer_simple_action > svg {
+            transform: scale(1.25);
+         }
+      }
+
+      &:focus-visible {
+         border-radius: 0.4rem;
+         outline: 0.2rem solid rgba(1, 166, 255, 0.25);
+         outline-offset: 0.3rem;
+      }
+   }
+
+   &_reaction_icon {
+      display: block;
+      width: 1.5rem;
+      height: 1.5rem;
+      flex-shrink: 0;
+      overflow: visible;
+      object-fit: contain;
+
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+   }
+
+   &_reaction {
+      --reaction-stroke-color: #797a79;
+      --reaction-fill-color: #797a79;
+      --reaction-fill-opacity: 0;
+      --reaction-stroke-opacity: 1;
+
+      &.is_active {
+         --reaction-fill-opacity: 1;
+         --reaction-stroke-opacity: 0;
+      }
+   }
+
+   &_reaction > svg.comment_layer_reaction_icon {
+      path {
+         stroke: var(--reaction-stroke-color);
+         stroke-opacity: var(--reaction-stroke-opacity);
+
+         fill: var(--reaction-fill-color);
+         fill-opacity: var(--reaction-fill-opacity);
+
+         transition:
+            fill 0.18s ease,
+            fill-opacity 0.18s ease,
+            stroke 0.18s ease,
+            stroke-opacity 0.18s ease;
+      }
+   }
+
+   &_favorite {
+      --reaction-stroke-color: #797a79;
+      --reaction-fill-color: #f4b740;
+   }
+
+   &_simple_action {
+      > svg {
+         color: #797a79;
+
+         transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+   }
+
+   &_share {
+      margin-left: 0.1rem;
+   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .comment_layer_reaction_icon,
+   .comment_layer_reaction_icon path,
+   .comment_layer_simple_action > svg {
+      transition: none;
+   }
+}
+
+@media (max-width: 600px) {
+   .comment_layer {
+      padding: 1.4rem;
+
+      &_actions {
+         gap: 1rem;
+      }
+
+      &_text {
+         line-height: 1.9rem;
+      }
+   }
+}

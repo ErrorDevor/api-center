@@ -12,6 +12,7 @@ export const en = {
       output: "Output",
       new: "New",
       top: "Top",
+      participants:"Reviews of participants"
    },
 
    models: {
@@ -68,12 +69,30 @@ export const en = {
          video: "Video",
       },
 
+      reviewsTitle: "Reviews of participants",
+      reply: "Reply",
+
       items: {
          gptTerraSharing: {
             title: "OpenAI API (GPT-5.6)",
             description:
                "High-performance and reliable access to advanced language models via a unified interface with minimal latency.",
          },
+
+         yunwu: {
+            title: "Yunwu",
+            description:
+               "Yunwu.ai - is an API gateway for developers that provides access to models from OpenAI, Claude, Gemini, and others through a single OpenAI-compatible endpoint. It works without a VPN, accepts payments via local methods (Alipay, WeChat), and offers prices lower than the official ones.",
+            review:
+               "Bought this, and I'm very satisfied! The price is 4 times lower than the original, and the seller is completely trustworthy.",
+         },
+      },
+
+      actions: {
+         like: "Like",
+         dislike: "Dislike",
+         favorite: "Add to favorites",
+         share: "Share",
       },
 
       person: "person",
@@ -131,6 +150,7 @@ export const ru: Dictionary = {
       output: "Выход",
       new: "Новое",
       top: "Топ",
+      participants:"Отзывы участников"
    },
 
    models: {
@@ -188,12 +208,30 @@ export const ru: Dictionary = {
          video: "Видео",
       },
 
+      reviewsTitle: "Отзывы участников",
+      reply: "Ответить",
+
       items: {
          gptTerraSharing: {
             title: "OpenAI API (GPT-5.6)",
             description:
                "Высокопроизводительный и надежный доступ к передовым языковым моделям через единый интерфейс с минимальной задержкой.",
          },
+
+         yunwu: {
+            title: "Yunwu",
+            description:
+               "Yunwu.ai — API-шлюз для разработчиков, который даёт доступ к моделям OpenAI, Claude, Gemini и другим через единый OpenAI-совместимый эндпоинт. Работает без VPN, принимает оплату через локальные методы (Alipay, WeChat), цены ниже официальных.",
+            review:
+               "Купил доступ и остался очень доволен! Цена в 4 раза ниже официальной, а продавцу можно полностью доверять.",
+         },
+      },
+
+      actions: {
+         like: "Нравится",
+         dislike: "Не нравится",
+         favorite: "Добавить в избранное",
+         share: "Поделиться",
       },
 
       person: "участник",

@@ -2,16 +2,16 @@
 
 import React from "react";
 
-import { tabs } from "./lib/content.data";
-import { ContentActions } from "../../shared/ui/components/ContentActions";
-import { ModelsTable } from "./ui/ModelsTable";
+import { tabs } from "./lib/comments.data";
+import { CommentCard } from "./ui/CommentCard";
 import clsx from "clsx";
-
+import { commentsData } from "./lib/comments.data";
 import { useTranslation } from "shared/lib/i18n";
+import { ContentActions } from "shared/ui/components/ContentActions";
 import { Pagination } from "shared/ui/components/Pagination";
 import { Button } from "shared/ui/ui-kit/Button";
 
-import css from "./Content.module.scss";
+import css from "./Comments.module.scss";
 
 type TabId = (typeof tabs)[number]["id"];
 
@@ -19,7 +19,7 @@ interface Prop {
    className?: string;
 }
 
-export const Content: React.FC<Prop> = ({ className }) => {
+export const Comments: React.FC<Prop> = ({ className }) => {
    const { t } = useTranslation();
 
    const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
@@ -29,9 +29,9 @@ export const Content: React.FC<Prop> = ({ className }) => {
    const resultsCount = 158;
 
    return (
-      <div className={clsx(css.content, className)}>
-         <div className={css.content_top}>
-            <div className={css.content_title}>
+      <div className={clsx(css.comments, className)}>
+         <div className={css.comments_top}>
+            <div className={css.comments_title}>
                <h2>OpenAI</h2>
 
                <span>
@@ -41,7 +41,7 @@ export const Content: React.FC<Prop> = ({ className }) => {
 
             <div className={css.divider} />
 
-            <div className={css.content_buttons_nav}>
+            <div className={css.comments_buttons_nav}>
                {tabs.map((tab) => {
                   const isActive = activeTab === tab.id;
 
@@ -59,11 +59,11 @@ export const Content: React.FC<Prop> = ({ className }) => {
                })}
             </div>
 
-            <ContentActions />
+            <ContentActions variant="group" />
          </div>
 
-         <div className={css.content_list}>
-            <ModelsTable />
+         <div className={css.comments_list}>
+            <CommentCard data={commentsData}/>
 
             <Pagination
                currentPage={currentPage}
