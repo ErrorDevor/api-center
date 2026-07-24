@@ -3,7 +3,7 @@ import React from "react";
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
-import { FilterIcon, PlusIcon, TableIcon } from "shared/ui/icons";
+import { FilterIcon, PlusIcon, Sort2Icon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
 
 import css from "./ContentActions.module.scss";
@@ -24,12 +24,12 @@ export const ContentActions: React.FC<Prop> = ({ className, variant = "api" }) =
          </Button>
 
          <Button variant="grey" className={css.content_action_button}>
-            <TableIcon />
+            <Sort2Icon />
             {t.content.actions.tableView}
          </Button>
 
          {variant !== "api" && (
-            <Button variant="black" className={css.content_action_button}>
+            <Button variant="black" className={clsx(css.content_action_button, css.create_button)}>
                <PlusIcon />
                {t.common.create}
             </Button>

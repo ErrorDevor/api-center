@@ -1,7 +1,5 @@
 export type CommentTranslationKey = "yunwu";
 
-export type CommentLayerTone = "orange" | "blue" | "white";
-
 export type CommentReactionType = {
    likes: number;
    dislikes: number;
@@ -11,11 +9,11 @@ export type CommentReactionType = {
 export type CommentLayerType = {
    id: string;
    userName: string;
-   userAvatar: string;
+   userAvatar?: string;
    publishedAt: string;
    translationKey: CommentTranslationKey;
    reactions: CommentReactionType;
-   tone: CommentLayerTone;
+   replies?: CommentLayerType[];
 };
 
 export type CommentDataType = {
@@ -24,6 +22,7 @@ export type CommentDataType = {
    persons: number;
    publishedAt: string;
    comments: number;
+   providerDetails: CommentProviderDetails;
    reviews: CommentLayerType[];
 };
 
@@ -33,4 +32,27 @@ export type CommentType = {
    userAvatar: string;
    providers: string[];
    commentsData: CommentDataType;
+};
+
+export type CommentProviderAge = {
+   years: number;
+   months: number;
+};
+
+export type CommentProviderModel = {
+   id: string;
+   name: string;
+   icon: string;
+   inputPrice: number;
+   outputPrice: number;
+};
+
+export type CommentProviderDetails = {
+   url: string;
+   age: CommentProviderAge;
+   paymentMethods: string[];
+   rating: number;
+   positiveReviews: number;
+   negativeReviews: number;
+   models: CommentProviderModel[];
 };

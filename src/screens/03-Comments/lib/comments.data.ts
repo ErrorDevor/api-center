@@ -28,6 +28,91 @@ export const commentsData: CommentType = {
       publishedAt: "2026-07-23T10:10:00.000Z",
       comments: 42,
 
+      providerDetails: {
+         url: "https://yunwu.ai/",
+         age: {
+            years: 2,
+            months: 4,
+         },
+         paymentMethods: ["WeChat", "Alipay", "Crypto"],
+         rating: 4.8,
+         positiveReviews: 123,
+         negativeReviews: 12,
+
+         models: [
+            {
+               id: "openai-1",
+               name: "OpenAI",
+               icon: "/icons/providers/openai.svg",
+               inputPrice: 4,
+               outputPrice: 8,
+            },
+            {
+               id: "google-1",
+               name: "Google",
+               icon: "/icons/providers/google.svg",
+               inputPrice: 4,
+               outputPrice: 8,
+            },
+            {
+               id: "deepseek",
+               name: "DeepSeek",
+               icon: "/icons/providers/deepseek.svg",
+               inputPrice: 4,
+               outputPrice: 8,
+            },
+            {
+               id: "minimax-1",
+               name: "Minimax",
+               icon: "/icons/providers/minimax.svg",
+               inputPrice: 4,
+               outputPrice: 8,
+            },
+            {
+               id: "chatglm",
+               name: "ChatGLM",
+               icon: "/icons/providers/chatglm.svg",
+               inputPrice: 4,
+               outputPrice: 8,
+            },
+            {
+               id: "grok",
+               name: "Grok",
+               icon: "/icons/providers/grok.svg",
+               inputPrice: 4,
+               outputPrice: 8,
+            },
+            {
+               id: "anthropic",
+               name: "Anthropic",
+               icon: "/icons/providers/anthropic.svg",
+               inputPrice: 4,
+               outputPrice: 8,
+            },
+            {
+               id: "openai-2",
+               name: "OpenAI",
+               icon: "/icons/providers/openai.svg",
+               inputPrice: 4,
+               outputPrice: 8,
+            },
+            {
+               id: "minimax-2",
+               name: "Minimax",
+               icon: "/icons/providers/minimax.svg",
+               inputPrice: 4,
+               outputPrice: 8,
+            },
+            {
+               id: "google-2",
+               name: "Google",
+               icon: "/icons/providers/google.svg",
+               inputPrice: 4,
+               outputPrice: 8,
+            },
+         ],
+      },
+
       reviews: [
          {
             id: "review-1",
@@ -40,7 +125,20 @@ export const commentsData: CommentType = {
                dislikes: 3,
                favorites: 0,
             },
-            tone: "orange",
+            replies: [
+               {
+                  id: "review-1-reply-1",
+                  userName: "@admin",
+                  userAvatar: "/images/avatar3.png",
+                  publishedAt: "2026-07-23T10:45:00.000Z",
+                  translationKey: "yunwu",
+                  reactions: {
+                     likes: 12,
+                     dislikes: 3,
+                     favorites: 0,
+                  },
+               },
+            ],
          },
          {
             id: "review-2",
@@ -53,7 +151,6 @@ export const commentsData: CommentType = {
                dislikes: 3,
                favorites: 0,
             },
-            tone: "blue",
          },
          {
             id: "review-3",
@@ -66,7 +163,6 @@ export const commentsData: CommentType = {
                dislikes: 3,
                favorites: 0,
             },
-            tone: "white",
          },
          {
             id: "review-4",
@@ -79,7 +175,6 @@ export const commentsData: CommentType = {
                dislikes: 3,
                favorites: 0,
             },
-            tone: "blue",
          },
       ],
    },

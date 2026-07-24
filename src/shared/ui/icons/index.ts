@@ -1,3 +1,4 @@
+import { default as ArrowIcon } from "./Arrow.icon";
 import { default as ClockIcon } from "./Clock.icon";
 import { default as DislikeIcon } from "./Dislike.icon";
 import { default as DropdownArrowIcon } from "./DropdownArrow.icon";
@@ -11,6 +12,7 @@ import { default as PlusIcon } from "./Plus.icon";
 import { default as ReplyIcon } from "./Reply.icon";
 import { default as SearchIcon } from "./Search.icon";
 import { default as ShareIcon } from "./Share.icon";
+import { default as Sort2Icon } from "./Sort2.icon";
 import { default as SortIcon } from "./Sort.icon";
 import { default as StarIcon } from "./Star.icon";
 import { default as TableIcon } from "./Table.icon";
@@ -32,4 +34,6 @@ export {
    StarIcon,
    ReplyIcon,
    ShareIcon,
+   Sort2Icon,
+   ArrowIcon,
 };

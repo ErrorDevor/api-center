@@ -5,6 +5,11 @@ const localeMap: Record<Locale, string> = {
    ru: "ru-RU",
 };
 
+interface ProviderAge {
+   years: number;
+   months: number;
+}
+
 export const formatRelativeDate = (value: string | Date, locale: Locale) => {
    const date = new Date(value);
 
@@ -64,31 +69,54 @@ export const formatComments = (count: number, locale: Locale) => {
    return `${count} `;
 };
 
-export const formatProviderAge = (years: number, months: number, locale: Locale) => {
-   const yearsFormatter = new Intl.NumberFormat(localeMap[locale], {
-      style: "unit",
-      unit: "year",
-      unitDisplay: "long",
-   });
+const formatUnit = (
+   value: number,
+   locale: Locale,
+   forms: {
+      en: [string, string];
+      ru: [string, string, string];
+   }
+): string => {
+   if (locale === "en") {
+      const unit = value === 1 ? forms.en[0] : forms.en[1];
 
-   const monthsFormatter = new Intl.NumberFormat(localeMap[locale], {
-      style: "unit",
-      unit: "month",
-      unitDisplay: "long",
-   });
-
-   const formattedYears = yearsFormatter.format(years);
-   const formattedMonths = monthsFormatter.format(months);
-
-   if (years > 0 && months > 0) {
-      return locale === "ru"
-         ? `${formattedYears} и ${formattedMonths}`
-         : `${formattedYears} and ${formattedMonths}`;
+      return `${value} ${unit}`;
    }
 
-   if (years > 0) {
-      return formattedYears;
+   const mod10 = value % 10;
+   const mod100 = value % 100;
+
+   let unit = forms.ru[2];
+
+   if (mod10 === 1 && mod100 !== 11) {
+      unit = forms.ru[0];
+   } else if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) {
+      unit = forms.ru[1];
    }
 
-   return formattedMonths;
+   return `${value} ${unit}`;
+};
+
+export const formatProviderAge = (age: ProviderAge, locale: Locale): string => {
+   const parts: string[] = [];
+
+   if (age.years > 0) {
+      parts.push(
+         formatUnit(age.years, locale, {
+            en: ["year", "years"],
+            ru: ["год", "года", "лет"],
+         })
+      );
+   }
+
+   if (age.months > 0) {
+      parts.push(
+         formatUnit(age.months, locale, {
+            en: ["month", "months"],
+            ru: ["месяц", "месяца", "месяцев"],
+         })
+      );
+   }
+
+   return parts.join(locale === "ru" ? " и " : " and ");
 };

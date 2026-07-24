@@ -18,6 +18,11 @@ interface Prop {
    data: CommentLayerType;
 }
 
+interface CommentItemProp {
+   data: CommentLayerType;
+   isReply?: boolean;
+}
+
 type VoteType = "like" | "dislike" | null;
 
 type CommentTone = "orange" | "blue" | "white";
@@ -34,7 +39,7 @@ const getCommentTone = (id: string | number): CommentTone => {
    return COMMENT_TONES[hash % COMMENT_TONES.length];
 };
 
-export const CommentLayer: React.FC<Prop> = ({ className, data }) => {
+const CommentItem: React.FC<CommentItemProp> = ({ data, isReply = false }) => {
    const { locale, t } = useTranslation();
 
    const translation = t.groupBuys.items[data.translationKey];
@@ -42,12 +47,8 @@ export const CommentLayer: React.FC<Prop> = ({ className, data }) => {
    const [vote, setVote] = React.useState<VoteType>(null);
    const [isFavorite, setIsFavorite] = React.useState(false);
 
-   const tone = getCommentTone(data.id);
-
    const likes = data.reactions.likes + (vote === "like" ? 1 : 0);
-
    const dislikes = data.reactions.dislikes + (vote === "dislike" ? 1 : 0);
-
    const favorites = data.reactions.favorites + (isFavorite ? 1 : 0);
 
    const handleLike = () => {
@@ -63,9 +64,13 @@ export const CommentLayer: React.FC<Prop> = ({ className, data }) => {
    };
 
    return (
-      <article className={clsx(css.comment_layer, css[`comment_layer_${tone}`], className)}>
+      <div className={css.comment_layer_item}>
          <div className={css.comment_layer_header}>
-            <UserInfo userName={data.userName} userAvatar={data.userAvatar} withName />
+            {isReply && data.userAvatar ? (
+               <UserInfo userName={data.userName} userAvatar={data.userAvatar} withName />
+            ) : (
+               <span className={css.comment_layer_user_name}>{data.userName}</span>
+            )}
 
             <span className={css.comment_layer_dot} />
 
@@ -74,89 +79,119 @@ export const CommentLayer: React.FC<Prop> = ({ className, data }) => {
             </time>
          </div>
 
-         <p className={css.comment_layer_text}>{translation.review}</p>
+         <div className={css.comment_layer_body}>
+            <p className={css.comment_layer_text}>{translation.review}</p>
 
-         <div className={css.comment_layer_actions}>
-            <button
-               type="button"
-               className={clsx(
-                  css.comment_layer_action,
-                  css.comment_layer_reaction,
-                  vote === "like" && css.is_active
+            <div className={css.comment_layer_actions}>
+               <button
+                  type="button"
+                  className={clsx(
+                     css.comment_layer_action,
+                     css.comment_layer_reaction,
+                     vote === "like" && css.is_active
+                  )}
+                  aria-label={t.groupBuys.actions.like}
+                  aria-pressed={vote === "like"}
+                  onClick={handleLike}
+               >
+                  <Image.Default
+                     className={css.comment_layer_reaction_icon}
+                     src={vote === "like" ? "/icons/like-fill.svg" : "/icons/like.svg"}
+                     alt=""
+                     aria-hidden="true"
+                  />
+
+                  <span>{likes}</span>
+               </button>
+
+               <button
+                  type="button"
+                  className={clsx(
+                     css.comment_layer_action,
+                     css.comment_layer_reaction,
+                     vote === "dislike" && css.is_active
+                  )}
+                  aria-label={t.groupBuys.actions.dislike}
+                  aria-pressed={vote === "dislike"}
+                  onClick={handleDislike}
+               >
+                  <Image.Default
+                     className={css.comment_layer_reaction_icon}
+                     src={vote === "dislike" ? "/icons/dislike-fill.svg" : "/icons/dislike.svg"}
+                     alt=""
+                     aria-hidden="true"
+                  />
+
+                  <span>{dislikes}</span>
+               </button>
+
+               <button
+                  type="button"
+                  className={clsx(
+                     css.comment_layer_action,
+                     css.comment_layer_reaction,
+                     css.comment_layer_favorite,
+                     isFavorite && css.is_active
+                  )}
+                  aria-label={t.groupBuys.actions.favorite}
+                  aria-pressed={isFavorite}
+                  onClick={handleFavorite}
+               >
+                  <StarIcon className={css.comment_layer_reaction_icon} />
+
+                  <span>{favorites}</span>
+               </button>
+
+               {!isReply && (
+                  <button
+                     type="button"
+                     className={clsx(css.comment_layer_action, css.comment_layer_simple_action)}
+                  >
+                     <ReplyIcon />
+
+                     <span>{t.groupBuys.reply}</span>
+                  </button>
                )}
-               aria-label={t.groupBuys.actions.like}
-               aria-pressed={vote === "like"}
-               onClick={handleLike}
-            >
-               <Image.Default
-                  className={css.comment_layer_reaction_icon}
-                  src={vote === "like" ? "/icons/like-fill.svg" : "/icons/like.svg"}
-                  alt=""
-                  aria-hidden="true"
-               />
 
-               <span>{likes}</span>
-            </button>
-
-            <button
-               type="button"
-               className={clsx(
-                  css.comment_layer_action,
-                  css.comment_layer_reaction,
-                  vote === "dislike" && css.is_active
-               )}
-               aria-label={t.groupBuys.actions.dislike}
-               aria-pressed={vote === "dislike"}
-               onClick={handleDislike}
-            >
-               <Image.Default
-                  className={css.comment_layer_reaction_icon}
-                  src={vote === "dislike" ? "/icons/dislike-fill.svg" : "/icons/dislike.svg"}
-                  alt=""
-                  aria-hidden="true"
-               />
-
-               <span>{dislikes}</span>
-            </button>
-
-            <button
-               type="button"
-               className={clsx(
-                  css.comment_layer_action,
-                  css.comment_layer_reaction,
-                  css.comment_layer_favorite,
-                  isFavorite && css.is_active
-               )}
-               aria-label={t.groupBuys.actions.favorite}
-               aria-pressed={isFavorite}
-               onClick={handleFavorite}
-            >
-               <StarIcon className={css.comment_layer_reaction_icon} />
-
-               <span>{favorites}</span>
-            </button>
-
-            <button
-               type="button"
-               className={clsx(css.comment_layer_action, css.comment_layer_simple_action)}
-            >
-               <ReplyIcon />
-
-               <span>{t.groupBuys.reply}</span>
-            </button>
-
-            <button
-               type="button"
-               className={clsx(
-                  css.comment_layer_action,
-                  css.comment_layer_simple_action,
-                  css.comment_layer_share
-               )}
-               aria-label={t.groupBuys.actions.share}
-            >
-               <ShareIcon />
-            </button>
+               <button
+                  type="button"
+                  className={clsx(
+                     css.comment_layer_action,
+                     css.comment_layer_simple_action,
+                     css.comment_layer_share
+                  )}
+                  aria-label={t.groupBuys.actions.share}
+               >
+                  <ShareIcon />
+               </button>
+            </div>
          </div>
+      </div>
+   );
+};
+
+export const CommentLayer: React.FC<Prop> = ({ className, data }) => {
+   const tone = getCommentTone(data.id);
+   const hasReplies = Boolean(data.replies?.length);
+
+   return (
+      <article
+         className={clsx(
+            css.comment_layer,
+            css[`comment_layer_${tone}`],
+            hasReplies && css.has_replies,
+            className
+         )}
+      >
+         <CommentItem data={data} />
+
+         {hasReplies && (
+            <div className={css.comment_layer_replies}>
+               {data.replies?.map((reply) => (
+                  <CommentItem key={reply.id} data={reply} isReply />
+               ))}
+            </div>
+         )}
       </article>
    );
 };

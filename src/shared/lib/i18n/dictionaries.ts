@@ -12,7 +12,8 @@ export const en = {
       output: "Output",
       new: "New",
       top: "Top",
-      participants:"Reviews of participants"
+      participants: "Reviews of participants",
+      sort: "Sort",
    },
 
    models: {
@@ -50,7 +51,7 @@ export const en = {
          video: "Video",
       },
       actions: {
-         tableView: "Table View",
+         tableView: "Sort",
       },
       table: {
          modelName: "Model Name",
@@ -59,6 +60,12 @@ export const en = {
          provider: "Provider",
          reviews: "Reviews",
          resizeColumn: "Resize column",
+      },
+      modelDescription: {
+         title: "Cheap GPT-5.6 Terra API",
+         text: "Offers for the GPT-5.6 Terra API from various providers and aggregators are displayed here. Compare input and output token prices, check support for the features you need, and choose the most cost-effective API route for connecting the model to an application, bot, SaaS product, or internal AI tool. The table helps you find GPT-5.6 Terra at a lower price than the official one and quickly navigate to a provider with suitable terms. You can compare available payment methods, provider ratings, reviews, service age, supported model capabilities, request limits, and other important conditions before choosing an API provider.",
+         readMore: "Read more",
+         showLess: "Show less",
       },
    },
 
@@ -71,6 +78,19 @@ export const en = {
 
       reviewsTitle: "Reviews of participants",
       reply: "Reply",
+
+      providerDetails: {
+         link: "Link",
+         age: "Age",
+         paymentMethods: "Payment methods",
+         rating: "Rating",
+         reviews: "Reviews",
+         showAll: "View all",
+         topModelsPrices: "Top 10 model prices",
+         modelName: "Model name",
+         price: "Price",
+         resizeColumn: "Resize column",
+      },
 
       items: {
          gptTerraSharing: {
@@ -150,7 +170,8 @@ export const ru: Dictionary = {
       output: "Выход",
       new: "Новое",
       top: "Топ",
-      participants:"Отзывы участников"
+      participants: "Отзывы участников",
+      sort: "Сортировка",
    },
 
    models: {
@@ -189,7 +210,7 @@ export const ru: Dictionary = {
          video: "Видео",
       },
       actions: {
-         tableView: "Таблица",
+         tableView: "Сортировка",
       },
       table: {
          modelName: "Название модели",
@@ -198,6 +219,12 @@ export const ru: Dictionary = {
          provider: "Поставщик",
          reviews: "Отзывы",
          resizeColumn: "Изменить ширину столбца",
+      },
+      modelDescription: {
+         title: "Дешевый GPT-5.6 Terra API",
+         text: "Здесь показаны предложения GPT-5.6 Terra API от разных поставщиков и агрегаторов. Сравните цену входных и выходных токенов, проверьте поддержку нужных функций и выберите самый выгодный API-маршрут для подключения модели к приложению, боту, SaaS-продукту или внутреннему AI-инструменту. Таблица помогает найти GPT-5.6 Terra дешевле официальной цены и быстро перейти к поставщику с подходящими условиями. Здесь показаны предложения GPT-5.6 Terra API от разных поставщиков и агрегаторов. Сравните цену входных и выходных токенов, проверьте поддержку нужных функций и выберите самый выгодный API-маршрут для подключения модели к приложению, боту, SaaS-продукту или внутреннему AI-инструменту. Таблица помогает найти GPT-5.6 Terra дешевле официальной цены и быстро перейти к поставщику с подходящими условиями",
+         readMore: "Читать далее",
+         showLess: "Скрыть",
       },
    },
 
@@ -210,6 +237,19 @@ export const ru: Dictionary = {
 
       reviewsTitle: "Отзывы участников",
       reply: "Ответить",
+
+      providerDetails: {
+         link: "Ссылка",
+         age: "Возраст",
+         paymentMethods: "Способы оплаты",
+         rating: "Оценка",
+         reviews: "Отзывы",
+         showAll: "Смотреть все",
+         topModelsPrices: "Цены топ-10 моделей",
+         modelName: "Название модели",
+         price: "Цена",
+         resizeColumn: "Изменить ширину колонки",
+      },
 
       items: {
          gptTerraSharing: {

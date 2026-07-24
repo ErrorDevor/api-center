@@ -6,11 +6,9 @@ import clsx from "clsx";
 import type { CommentType } from "screens/03-Comments/lib/comments.type";
 
 import { useTranslation } from "shared/lib/i18n";
-import { formatComments, formatPersons, formatRelativeDate } from "shared/lib/i18n/formatters";
 import { UserInfo } from "shared/ui/components/UserInfo";
-import { ClockIcon, MessageTextIcon } from "shared/ui/icons";
 
-import { CommentLayer } from "../CommentLayer";
+import { CommentCardOptions } from "../CommentCardOptions";
 
 import css from "./CommentCard.module.scss";
 
@@ -20,7 +18,7 @@ interface Prop {
 }
 
 export const CommentCard: React.FC<Prop> = ({ className, data }) => {
-   const { locale, t } = useTranslation();
+   const { t } = useTranslation();
 
    const { commentsData } = data;
    const translation = t.groupBuys.items[commentsData.translationKey];
@@ -52,44 +50,8 @@ export const CommentCard: React.FC<Prop> = ({ className, data }) => {
 
                   <p>{translation.description}</p>
                </div>
-            </div>
 
-            <div className={css.comment_card_bottom}>
-               <div className={css.comment_card_bottom_left}>
-                  <span className={css.card_price}>${commentsData.price}</span>
-
-                  <span className={css.card_dot} />
-
-                  <span className={css.card_persons}>
-                     {formatPersons(commentsData.persons, locale)}
-                  </span>
-               </div>
-
-               <div className={css.comment_card_bottom_right}>
-                  <div className={css.card_meta}>
-                     <ClockIcon />
-
-                     <span>{formatRelativeDate(commentsData.publishedAt, locale)}</span>
-                  </div>
-
-                  <span className={css.card_dot} />
-
-                  <div className={css.card_meta}>
-                     <MessageTextIcon />
-
-                     <span>{formatComments(commentsData.comments, locale)}</span>
-                  </div>
-               </div>
-            </div>
-         </div>
-
-         <div className={css.comment_card_comments}>
-            <h6>{t.common.participants}</h6>
-
-            <div className={css.comment_card_list}>
-               {commentsData.reviews.map((item) => (
-                  <CommentLayer key={item.id} data={item} />
-               ))}
+               <CommentCardOptions data={commentsData.providerDetails} />
             </div>
          </div>
       </div>

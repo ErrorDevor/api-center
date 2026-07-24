@@ -1,4 +1,5 @@
 .comment_layer {
+   position: relative;
    display: flex;
    flex-direction: column;
    align-items: flex-start;
@@ -6,12 +7,14 @@
    min-width: 0;
    padding: 1.6rem;
    gap: 1.6rem;
+   overflow: hidden;
    border: 0.1rem solid #ffffff;
    border-radius: 1.2rem;
+
    @include transition((background-color, border-color));
 
    &_orange {
-      background: rgba(242, 132, 33, 0.05);
+      background: rgba(200, 23, 52, 0.05);
    }
 
    &_blue {
@@ -22,11 +25,29 @@
       background: rgba(255, 255, 255, 0.5);
    }
 
+   &_item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      min-width: 0;
+      gap: 1.6rem;
+   }
+
    &_header {
+      position: relative;
+      z-index: 1;
       display: flex;
       align-items: center;
       min-width: 0;
       gap: 0.8rem;
+   }
+
+   &_user_name {
+      flex-shrink: 0;
+
+      @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #212121);
    }
 
    &_dot {
@@ -40,13 +61,33 @@
    &_date {
       flex-shrink: 0;
       white-space: nowrap;
+
       @include fontInterTight(1.2rem, 1.5rem, 0, 500, #797a79);
+   }
+
+   &_body {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      min-width: 0;
+      padding-left: 0;
+      gap: 1.6rem;
+   }
+
+   &.has_replies {
+      > .comment_layer_item:first-child {
+         > .comment_layer_body {
+            padding-left: 4.8rem;
+         }
+      }
    }
 
    &_text {
       width: 100%;
       min-width: 0;
       margin: 0;
+
       @include fontInterTight(1.4rem, 2rem, -0.01em, 400, rgba(9, 12, 10, 0.7));
    }
 
@@ -61,6 +102,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      min-width: 0;
       padding: 0;
       gap: 0.4rem;
       border: 0;
@@ -79,7 +121,7 @@
       }
 
       > span {
-         color: #797a79;
+         white-space: nowrap;
 
          @include fontInterTight(1.2rem, 1.6rem, -0.01em, 500, #797a79);
       }
@@ -140,7 +182,6 @@
       path {
          stroke: var(--reaction-stroke-color);
          stroke-opacity: var(--reaction-stroke-opacity);
-
          fill: var(--reaction-fill-color);
          fill-opacity: var(--reaction-fill-opacity);
 
@@ -168,6 +209,40 @@
    &_share {
       margin-left: 0.1rem;
    }
+   &_replies {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-width: 0;
+      padding: 1.6rem 1.6rem 1.6rem 4.8rem;
+      gap: 1.6rem;
+      border-radius: 0.8rem;
+
+      &::before {
+   content: "";
+   position: absolute;
+
+   top: -8.6rem;
+   left: 2.1rem;
+
+   width: 2.9rem;
+   bottom: calc(100% - 3.5rem);
+
+   border-left: 0.1rem solid rgba(0, 0, 0, 0.07);
+   border-bottom: 0.1rem solid rgba(0, 0, 0, 0.07);
+   border-bottom-left-radius: 1.2rem;
+}
+
+      > .comment_layer_item {
+         position: relative;
+         z-index: 1;
+
+         > .comment_layer_body {
+            padding-left: 0;
+         }
+      }
+   }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -182,12 +257,37 @@
    .comment_layer {
       padding: 1.4rem;
 
+      &.has_replies {
+         > .comment_layer_item {
+            > .comment_layer_body {
+               padding-left: 2.4rem;
+            }
+         }
+      }
+
       &_actions {
          gap: 1rem;
       }
 
       &_text {
          line-height: 1.9rem;
+      }
+
+      &_replies {
+         padding: 1.4rem 0 1.4rem 2.4rem;
+
+         &::before {
+            top: -9.1rem;
+            left: 1.1rem;
+            width: 2.5rem;
+            height: 11.7rem;
+         }
+
+         > .comment_layer_item {
+            > .comment_layer_body {
+               padding-left: 0;
+            }
+         }
       }
    }
 }

@@ -1,0 +1,452 @@
+.comment_card_options {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-start;
+   width: 100%;
+   min-width: 0;
+   padding: 1.6rem;
+   gap: 1.6rem;
+   border: 0.1rem solid rgba(0, 0, 0, 0.07);
+   border-radius: 1.2rem;
+
+   &_info {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: flex-start;
+      width: 100%;
+      min-width: 0;
+      gap: 1.6rem;
+   }
+
+   &_column {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      min-width: 0;
+      gap: 1.6rem;
+   }
+
+   &_item {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      gap: 0.4rem;
+   }
+
+   &_label {
+      flex-shrink: 0;
+
+      @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #797a79);
+   }
+
+   &_value {
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #212121);
+   }
+
+   &_link {
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #4791ff);
+      @include transition(opacity);
+
+      @media (hover: hover) {
+         &:hover {
+            opacity: 0.7;
+         }
+      }
+   }
+
+   &_more {
+      display: inline-flex;
+      align-items: center;
+      padding: 0;
+      gap: 0.4rem;
+      flex-shrink: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+
+      > span:first-child {
+         white-space: nowrap;
+
+         @include fontInterTight(1.4rem, 2rem, -0.01em, 500, #4791ff);
+      }
+
+      @media (hover: hover) {
+         &:hover {
+            .comment_card_options_arrow {
+               transform: translateX(0.2rem) rotate(45deg);
+            }
+         }
+      }
+   }
+
+   &_arrow {
+      width: 0.7rem;
+      height: 0.7rem;
+      flex-shrink: 0;
+      border-top: 0.15rem solid #4791ff;
+      border-right: 0.15rem solid #4791ff;
+      transform: rotate(45deg);
+
+      @include transition(transform);
+   }
+
+   &_rating {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+
+      > span:last-child {
+         @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #212121);
+      }
+   }
+
+   &_star {
+      fill: #ff8d28 !important;
+      width: 1.6rem;
+   }
+
+   &_reviews {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+   }
+
+   &_positive {
+      @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #10b981);
+   }
+
+   &_negative {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 2rem;
+      height: 1.9rem;
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.6rem;
+      background: linear-gradient(180deg, #f5f5f5 0%, #ffe5e5 100%);
+
+      @include fontInterTight(1.2rem, 1.5rem, -0.01em, 500, #ff383c);
+   }
+
+   &_separator {
+      width: 100%;
+      height: 0.1rem;
+      flex-shrink: 0;
+      background: rgba(0, 0, 0, 0.07);
+   }
+
+   &_models {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      min-width: 0;
+      gap: 1.6rem;
+   }
+
+   &_models_header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      min-width: 0;
+      padding-left: 0.4rem;
+      gap: 1.6rem;
+
+      h4 {
+         margin: 0;
+
+         @include fontInterTight(1.4rem, 2rem, -0.01em, 600, #212121);
+      }
+   }
+
+   &_tables {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: flex-start;
+      width: 100%;
+      min-width: 0;
+      gap: 1.6rem;
+   }
+
+   &_table {
+      width: 100%;
+      min-width: 0;
+      overflow: hidden;
+      border-radius: 1.2rem;
+   }
+
+   &_table_header {
+      display: grid;
+      grid-template-columns:
+         var(--model-column)
+         var(--price-column);
+      width: 100%;
+      height: 4rem;
+   }
+
+   &_table_header_cell {
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      height: 4rem;
+      padding: 1rem 1.6rem;
+
+      background: linear-gradient(178.65deg, #f5f5f5 7.92%, #ededed 98.85%);
+      border-top: 0.1rem solid rgba(0, 0, 0, 0.08);
+      border-right: 0.1rem solid rgba(0, 0, 0, 0.08);
+      border-bottom: 0.1rem solid rgba(0, 0, 0, 0.08);
+
+      @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #797a79);
+
+      &:first-child {
+         border-left: 0.1rem solid rgba(0, 0, 0, 0.08);
+         border-radius: 1.2rem 0 0;
+      }
+
+      &:last-child {
+         border-radius: 0 1.2rem 0 0;
+      }
+
+      > span {
+         min-width: 0;
+         overflow: hidden;
+         white-space: nowrap;
+         text-overflow: ellipsis;
+      }
+   }
+
+   &_table_resize {
+      position: absolute;
+      top: 0;
+      right: -0.4rem;
+      z-index: 5;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 0.8rem;
+      height: 100%;
+      padding: 0;
+
+      border: 0;
+      background: transparent;
+      cursor: col-resize;
+      touch-action: none;
+
+      > span {
+         width: 0.1rem;
+         height: 2.4rem;
+         background: transparent;
+
+         @include transition((height, background));
+      }
+
+      &:hover,
+      &:active {
+         > span {
+            height: 100%;
+            background: #4791ff;
+         }
+      }
+   }
+
+   &_table_body {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-width: 0;
+   }
+
+   &_table_row {
+      display: grid;
+      grid-template-columns:
+         var(--model-column)
+         var(--price-column);
+      width: 100%;
+      min-width: 0;
+      height: 5.2rem;
+
+      &:hover {
+         .comment_card_options_model,
+         .comment_card_options_prices {
+            background: #fafafa;
+         }
+      }
+
+      &:last-child {
+         .comment_card_options_model {
+            border-radius: 0 0 0 1.2rem;
+         }
+
+         .comment_card_options_prices {
+            border-radius: 0 0 1.2rem;
+         }
+      }
+   }
+
+   &_model,
+   &_prices {
+      min-width: 0;
+      height: 5.2rem;
+      background: #f7f7f7;
+      border-right: 0.1rem solid rgba(0, 0, 0, 0.08);
+      border-bottom: 0.1rem solid rgba(0, 0, 0, 0.08);
+
+      @include transition(background);
+   }
+
+   &_model {
+      display: flex;
+      align-items: center;
+      padding: 1.1rem 1.6rem;
+      gap: 0.8rem;
+      border-left: 0.1rem solid rgba(0, 0, 0, 0.08);
+
+      strong {
+         min-width: 0;
+         overflow: hidden;
+         white-space: nowrap;
+         text-overflow: ellipsis;
+
+         @include fontInterTight(1.4rem, 2rem, -0.01em, 500, #212121);
+      }
+   }
+
+   &_model_icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 3rem;
+      height: 3rem;
+      flex-shrink: 0;
+      border-radius: 0.8rem;
+      background: linear-gradient(178.65deg, #ededed 7.92%, #f2f2f2 64.53%);
+
+      img {
+         width: 1.6rem;
+         height: 1.6rem;
+         object-fit: contain;
+      }
+   }
+
+   &_prices {
+      display: flex;
+      align-items: center;
+      padding: 1.1rem 1.6rem;
+      gap: 0.8rem;
+      overflow: hidden;
+   }
+
+   &_price {
+      display: inline-flex;
+      align-items: center;
+      min-width: 0;
+      height: 2rem;
+      white-space: nowrap;
+
+      > span {
+         @include fontInterTight(1.3rem, 2rem, -0.01em, 400, #797a79);
+      }
+
+      > img {
+         width: 1.6rem;
+         height: 1.6rem;
+         flex-shrink: 0;
+         margin-inline: 0.2rem;
+      }
+
+      strong {
+         display: inline-flex;
+         align-items: center;
+         height: 2rem;
+
+         @include fontInterTight(1.4rem, 2rem, -0.01em, 500, #212121);
+      }
+
+      small {
+         font: inherit;
+      }
+   }
+
+   &_price_divider {
+      width: 0.1rem;
+      height: 1.2rem;
+      flex-shrink: 0;
+      background: rgba(0, 0, 0, 0.12);
+   }
+
+   &_table_row:last-child {
+      .comment_card_options_model {
+         border-radius: 0 0 0 1.2rem;
+      }
+
+      .comment_card_options_prices {
+         border-radius: 0 0 1.2rem;
+      }
+   }
+}
+
+.reports {
+   @include flexCenter();
+   @include box(2rem);
+   border-radius: 0.6rem;
+   padding: 0.1rem 0.1rem 0.2rem 0.1rem;
+   background: linear-gradient(180deg, #ff8e8e 0%, #eac4c4 100%);
+
+   &_inner {
+      @include flexCenter();
+      @include box(100%);
+      @include fontInterTight(1.2rem, 1.5rem, -0.01em, 500, #ff383c);
+      border-radius: 0.5rem;
+      background: linear-gradient(180deg, #f5f5f5 0%, #ffe5e5 100%);
+   }
+}
+
+@media (max-width: 900px) {
+   .comment_card_options {
+      &_tables {
+         grid-template-columns: 1fr;
+      }
+   }
+}
+
+@media (max-width: 700px) {
+   .comment_card_options {
+      &_info {
+         grid-template-columns: 1fr;
+      }
+   }
+}
+
+@media (max-width: 560px) {
+   .comment_card_options {
+      padding: 1.4rem;
+
+      &_item {
+         align-items: flex-start;
+         flex-wrap: wrap;
+      }
+
+      &_table {
+         overflow-x: auto;
+      }
+
+      &_table_header,
+      &_table_row {
+         min-width: 48rem;
+      }
+   }
+}
