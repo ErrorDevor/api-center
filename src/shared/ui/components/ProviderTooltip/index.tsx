@@ -78,9 +78,10 @@ export const ProviderTooltip: React.FC<Props> = ({
 
             <div className={css.provider_modal_divider} />
 
-            <div className={clsx(css.provider_modal_row)}>
+            <div className={css.provider_modal_row}>
                <span>{t.providers.age}:</span>
-               <strong>{formatProviderAge(details.age.years, details.age.months, locale)}</strong>
+
+               <strong>{formatProviderAge(details.age, locale)}</strong>
             </div>
 
             <div className={css.provider_modal_row}>
