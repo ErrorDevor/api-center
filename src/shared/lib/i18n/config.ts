@@ -1,6 +1,6 @@
 import type { Locale, LocaleOption } from "./types";
 
-export const DEFAULT_LOCALE: Locale = "en";
+export const DEFAULT_LOCALE: Locale = "ru";
 export const LOCALE_STORAGE_KEY = "api-center-locale";
 
 export const localeOptions: LocaleOption[] = [
