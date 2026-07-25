@@ -36,6 +36,19 @@ export const en = {
       groupBuys: "Group Buys",
       showMore: "Show more",
       showLess: "Show less",
+
+      modelTypeTitle: "Model Type",
+      forum: "Forum",
+      discussions: "Discussions",
+
+      modelTypes: {
+         allTypes: "All Types",
+         images: "Images",
+         search: "Search",
+         audioVideo: "Audio & Video",
+         text: "Text",
+         chat: "Chat",
+      },
    },
 
    content: {
@@ -195,6 +208,19 @@ export const ru: Dictionary = {
       groupBuys: "Складчины",
       showMore: "Показать ещё",
       showLess: "Скрыть",
+
+      modelTypeTitle: "Тип модели",
+      forum: "Форум",
+      discussions: "Обсуждения",
+
+      modelTypes: {
+         allTypes: "Все типы",
+         images: "Изображения",
+         search: "Поиск",
+         audioVideo: "Аудио и видео",
+         text: "Текст",
+         chat: "Чат",
+      },
    },
 
    content: {

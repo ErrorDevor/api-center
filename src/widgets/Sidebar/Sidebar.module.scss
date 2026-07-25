@@ -105,6 +105,23 @@
          }
       }
    }
+
+   &_forum {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      width: 100%;
+
+      h6 {
+         @include fontInterTight(1.4rem, 2rem, -0.01em, 500, getColorBlack(0.4));
+      }
+
+      &_button {
+         justify-content: flex-start;
+         padding-left: 1.2rem;
+         height: 3.6rem;
+      }
+   }
 }
 
 .mode_switcher {
@@ -284,9 +301,8 @@
       content: "";
       position: absolute;
       top: 0;
-      bottom: 1.8rem;
+      bottom: 2.6rem;
       left: 2rem;
-
       width: 0.1rem;
       background: rgba(0, 0, 0, 0.07);
    }
@@ -314,11 +330,9 @@
       content: "";
       position: absolute;
       top: 0;
-      left: -1.4rem;
-
+      left: -1.5rem;
       width: 1.4rem;
       height: 1.8rem;
-
       border-bottom: 0.1rem solid #dedede;
       border-left: 0.1rem solid #dedede;
       border-radius: 0 0 0 0.8rem;

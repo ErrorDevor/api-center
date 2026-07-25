@@ -1,4 +1,4 @@
-import type { ProviderItem } from "./sidebar.types";
+import type { ListData, ProviderItem } from "./sidebar.types";
 
 export type SidebarMode = "api" | "group-buys";
 
@@ -77,4 +77,14 @@ export const providers: ProviderItem[] = [
       count: 47,
       icon: "/icons/providers/grok.svg",
    },
+];
+
+
+export const modelType: ListData[] = [
+   { id: "1", nameKey: "allTypes", count: 455 },
+   { id: "2", nameKey: "images", count: 158 },
+   { id: "3", nameKey: "search", count: 86 },
+   { id: "4", nameKey: "audioVideo", count: 75 },
+   { id: "5", nameKey: "text", count: 68 },
+   { id: "6", nameKey: "chat", count: 68 },
 ];

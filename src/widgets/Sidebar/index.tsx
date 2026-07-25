@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { providers } from "./lib/sidebar.data";
+import { modelType, providers } from "./lib/sidebar.data";
 import type {
    ProviderItem as ProviderItemType,
    ProviderModel,
@@ -10,11 +10,13 @@ import type {
 } from "./lib/sidebar.types";
 import { ProviderAccordion } from "./ui/ProviderAccordion";
 import { ProviderItem } from "./ui/ProviderItem";
+import { SidebarList } from "./ui/SidebarList";
 import { SidebarSwitcher } from "./ui/SidebarSwitcher";
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
 import { DropdownArrowIcon } from "shared/ui/icons";
+import { Button } from "shared/ui/ui-kit/Button";
 
 import css from "./Sidebar.module.scss";
 
@@ -38,6 +40,7 @@ export const Sidebar: React.FC<Props> = ({
    const [showAll, setShowAll] = React.useState(false);
    const { t } = useTranslation();
    const visibleProviders = showAll ? providers : providers.slice(0, 8);
+   const [activeModelType, setActiveModelType] = React.useState(modelType[0].id);
 
    const handleProviderClick = (providerId: string) => {
       setActiveProviderId(providerId);
@@ -70,7 +73,7 @@ export const Sidebar: React.FC<Props> = ({
                                  provider={provider}
                                  activeProviderId={activeProviderId}
                                  activeModelId={activeModelId}
-                                 initialOpen={provider.id === "openai"}
+                                 // initialOpen={provider.id === "openai"}
                                  onProviderClick={handleProviderClick}
                                  onModelClick={handleModelClick}
                               />
@@ -101,6 +104,21 @@ export const Sidebar: React.FC<Props> = ({
 
                         {showAll ? t.sidebar.showLess : t.sidebar.showMore}
                      </button>
+                  </div>
+
+                  <SidebarList
+                     title={t.sidebar.modelTypeTitle}
+                     list={modelType}
+                     activeId={activeModelType}
+                     onChange={setActiveModelType}
+                  />
+
+                  <div className={css.sidebar_forum}>
+                     <h6>{t.sidebar.forum}</h6>
+
+                     <Button variant="grey" className={css.sidebar_forum_button}>
+                        {t.sidebar.discussions}
+                     </Button>
                   </div>
                </div>
             </>

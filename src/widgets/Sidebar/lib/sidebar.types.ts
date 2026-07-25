@@ -16,3 +16,17 @@ export interface ProviderItem {
    icon: string;
    models?: ProviderModel[];
 }
+
+export interface ListData {
+   id: string;
+   nameKey: ModelTypeTranslationKey;
+   count: number;
+}
+
+export type ModelTypeTranslationKey =
+   | "allTypes"
+   | "images"
+   | "search"
+   | "audioVideo"
+   | "text"
+   | "chat";
