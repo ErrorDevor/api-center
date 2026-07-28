@@ -9,11 +9,8 @@
    overflow-y: auto;
    overflow-x: hidden;
 
-   scrollbar-width: thin;
-   scrollbar-color: rgba(9, 12, 10, 0.16) transparent;
-
    &::-webkit-scrollbar {
-      width: 0.5rem;
+      width: 0.6rem;
    }
 
    &::-webkit-scrollbar-track {
@@ -22,6 +19,6 @@
 
    &::-webkit-scrollbar-thumb {
       border-radius: 1rem;
-      background: rgba(9, 12, 10, 0.16);
+      background: rgba(0, 0, 0, 0.15);
    }
 }

@@ -1,0 +1,52 @@
+.toggle {
+   display: flex;
+   flex: none;
+   flex-direction: row;
+   align-items: center;
+   width: 4rem;
+   height: 2.4rem;
+   padding: 0.4rem;
+   border: 0;
+   border-radius: 999.9rem;
+   background: #e4e4e7;
+
+   cursor: pointer;
+
+   transition:
+      background-color 0.2s ease,
+      opacity 0.2s ease;
+
+   &_thumb {
+      flex: none;
+      width: 1.6rem;
+      height: 1.6rem;
+      border-radius: 999.9rem;
+      background: #ffffff;
+
+      box-shadow:
+         0 0 0.5rem rgba(0, 0, 0, 0.02),
+         0 0.2rem 1rem rgba(0, 0, 0, 0.06),
+         0 0 0.1rem rgba(0, 0, 0, 0.3);
+
+      transform: translateX(0);
+      @include transition((transform));
+   }
+
+   &_checked {
+      background: #4791ff;
+
+      .toggle_thumb {
+         transform: translateX(1.6rem);
+      }
+   }
+
+   &:focus-visible {
+      outline: 0.2rem solid rgba(71, 145, 255, 0.35);
+      outline-offset: 0.2rem;
+   }
+
+   &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+   }
+}

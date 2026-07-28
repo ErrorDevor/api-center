@@ -18,7 +18,6 @@
    min-height: 0;
    flex: 1;
    overflow: hidden;
-
    border-radius: 1.2rem;
 
    &_header_wrapper {
@@ -166,8 +165,8 @@
       overflow-y: auto;
       overscroll-behavior: contain;
 
-      scrollbar-width: thin;
-      scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+      // scrollbar-width: thin;
+      // scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
 
       &::-webkit-scrollbar {
          width: 0.6rem;

@@ -29,15 +29,15 @@ export const CommentCard: React.FC<Prop> = ({ className, data }) => {
             <div className={css.comment_card_author}>
                <UserInfo userName={data.userName} userAvatar={data.userAvatar} withName />
 
-               <span className={css.comment_card_divider} />
+               {/* <span className={css.comment_card_divider} /> */}
 
-               <div className={css.comment_card_tags}>
+               {/* <div className={css.comment_card_tags}>
                   {data.providers.map((provider) => (
                      <span key={provider} className={css.comment_card_tag}>
                         {provider}
                      </span>
                   ))}
-               </div>
+               </div> */}
             </div>
          </div>
 

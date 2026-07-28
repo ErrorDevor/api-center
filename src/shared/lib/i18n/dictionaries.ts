@@ -14,6 +14,7 @@ export const en = {
       top: "Top",
       participants: "Reviews of participants",
       sort: "Sort",
+      feedback: "Feedback",
    },
 
    models: {
@@ -54,9 +55,9 @@ export const en = {
    content: {
       results: "results",
       tabs: {
-         allTypes: "All Types",
-         image: "Image",
-         new: "New",
+         crypto: "Crypto",
+         paymentToAccount: "Payment to account",
+         freeTest: "Free test",
          search: "Search",
          audioVideo: "Audio & Video",
          groupBuys: "Group Buys",
@@ -84,9 +85,12 @@ export const en = {
 
    groupBuys: {
       tabs: {
-         groupBuys: "Group Buys",
-         api: "API",
+         coding: "Coding",
+         chat: "Chat",
+         image: "Image",
          video: "Video",
+         audio: "Audio",
+         others: "Others",
       },
 
       reviewsTitle: "Reviews of participants",
@@ -128,6 +132,10 @@ export const en = {
          share: "Share",
       },
 
+      forPeople: "For {count} people",
+      seatsTaken: "{taken} of {total} already taken",
+      forOnePerson: "for one person",
+
       person: "person",
       persons: "persons",
       comment: "comment",
@@ -155,6 +163,109 @@ export const en = {
             description:
                "OpenRouter is a unified API gateway for accessing AI models from different providers.",
          },
+      },
+   },
+
+   pricesTooltip: {
+      title: "Prices",
+
+      groups: {
+         quickSelect: "Quick selection",
+         cards: "Cards",
+      },
+
+      options: {
+         anyCrypto: "Any crypto",
+         anyCard: "Any card",
+         anyWallet: "Any wallet",
+         bankTransfer: "Bank transfer",
+         visa: "Visa",
+         mastercard: "Mastercard",
+         wechat: "WeChat",
+         alipay: "Alipay",
+      },
+   },
+
+   sortDropdown: {
+      newest: "Newest first",
+      popular: "Most popular first",
+      positive: "Positive first",
+      negative: "Negative first",
+   },
+
+   filterDropdown: {
+      title: "Account type",
+      buttonShow: "Show",
+      buttonCancel: "Reset",
+      price: "Price per seat",
+      status: "Status",
+      payment: "Payment methods",
+      choosePayment: "Choose methods",
+      active: "Active — seats available",
+   },
+
+   freeTest: {
+      title: "Free trial",
+      trial: "Trial available before deposit",
+      rating: "Rating",
+      reviews: "Minimum reviews",
+      payment: "Payment methods",
+      choosePayment: "Choose methods",
+
+      ratingOptions: {
+         any: "Any",
+         five: "5 stars",
+         four: "4 stars or higher",
+         three: "3 stars or higher",
+      },
+
+      reviewsOptions: {
+         any: "Any number",
+         ten: "10 or more reviews",
+         twentyFive: "25 or more reviews",
+         fifty: "50 or more reviews",
+         hundred: "100 or more reviews",
+      },
+   },
+
+   paymentMethodsModal: {
+      title: "Payment methods",
+      close: "Close payment methods",
+      searchPlaceholder: "WeChat, Alipay, USDT, UOI...",
+      regionsLabel: "Payment method regions",
+      selected: "Selected",
+      apply: "Apply ({count})",
+      nothingFound: "No payment methods found",
+
+      groups: {
+         quickSelect: "Quick selection",
+         cards: "Cards",
+      },
+
+      regions: {
+         all: "All",
+         global: "Global",
+         europe: "Europe",
+         asia: "Asia",
+         middleEast: "Middle East",
+         latinAmerica: "Latin America",
+         africa: "Africa",
+         cis: "CIS",
+      },
+
+      methods: {
+         anyCrypto: "Any crypto",
+         anyCard: "Any card",
+         anyWallet: "Any wallet",
+         bankTransfer: "Bank transfer",
+         visa: "Visa",
+         mastercard: "Mastercard",
+         unionPay: "UnionPay",
+         americanExpress: "American Express",
+         wechat: "WeChat",
+         alipay: "Alipay",
+         usdt: "USDT",
+         uoi: "UOI",
       },
    },
 } as const;
@@ -185,6 +296,7 @@ export const ru: Dictionary = {
       top: "Топ",
       participants: "Отзывы участников",
       sort: "Сортировка",
+      feedback: "Оставить отзыв",
    },
 
    models: {
@@ -226,9 +338,9 @@ export const ru: Dictionary = {
    content: {
       results: "результатов",
       tabs: {
-         allTypes: "Все типы",
-         image: "Изображения",
-         new: "Новинки",
+         crypto: "Крипта",
+         paymentToAccount: "Оплата на счёт",
+         freeTest: "Бесплатный тест",
          search: "Поиск",
          audioVideo: "Аудио и видео",
          groupBuys: "Складчины",
@@ -256,9 +368,12 @@ export const ru: Dictionary = {
 
    groupBuys: {
       tabs: {
-         groupBuys: "Складчины",
-         api: "API",
+         coding: "Coding",
+         chat: "Чат",
+         image: "Изображение",
          video: "Видео",
+         audio: "Аудио",
+         others: "Другое",
       },
 
       reviewsTitle: "Отзывы участников",
@@ -300,6 +415,10 @@ export const ru: Dictionary = {
          share: "Поделиться",
       },
 
+      forPeople: "Для {count} человек",
+      seatsTaken: "{taken} из {total} уже занято",
+      forOnePerson: "за одного человека",
+
       person: "участник",
       persons: "участников",
       comment: "комментарий",
@@ -327,6 +446,109 @@ export const ru: Dictionary = {
             description:
                "OpenRouter — единый API-шлюз для доступа к AI-моделям от разных провайдеров.",
          },
+      },
+   },
+
+   pricesTooltip: {
+      title: "Цены",
+
+      groups: {
+         quickSelect: "Быстрый выбор",
+         cards: "Карты",
+      },
+
+      options: {
+         anyCrypto: "Любая крипта",
+         anyCard: "Любая карта",
+         anyWallet: "Любой кошелёк",
+         bankTransfer: "Банковский перевод",
+         visa: "Visa",
+         mastercard: "Mastercard",
+         wechat: "WeChat",
+         alipay: "Alipay",
+      },
+   },
+
+   sortDropdown: {
+      newest: "Сначала новые",
+      popular: "Сначала популярные",
+      positive: "Сначала положительные",
+      negative: "Сначала отрицательные",
+   },
+
+   filterDropdown: {
+      title: "Тип аккаунта",
+      buttonShow: "Показать",
+      buttonCancel: "Сбросить",
+      price: "Цена за место",
+      status: "Статус",
+      payment: "Способы оплаты",
+      choosePayment: "Выбрать способы",
+      active: "Активна — есть места",
+   },
+
+   freeTest: {
+      title: "Бесплатный тест",
+      trial: "Есть триал до депозита",
+      rating: "Рейтинг",
+      reviews: "Минимум отзывов",
+      payment: "Способы оплаты",
+      choosePayment: "Выбрать способы",
+
+      ratingOptions: {
+         any: "Любой",
+         five: "5 звёзд",
+         four: "От 4 звёзд",
+         three: "От 3 звёзд",
+      },
+
+      reviewsOptions: {
+         any: "Любое количество",
+         ten: "От 10 отзывов",
+         twentyFive: "От 25 отзывов",
+         fifty: "От 50 отзывов",
+         hundred: "От 100 отзывов",
+      },
+   },
+
+   paymentMethodsModal: {
+      title: "Способы оплаты",
+      close: "Закрыть способы оплаты",
+      searchPlaceholder: "WeChat, Alipay, USDT, UOI...",
+      regionsLabel: "Регионы способов оплаты",
+      selected: "Выбрано",
+      apply: "Применить ({count})",
+      nothingFound: "Способы оплаты не найдены",
+
+      groups: {
+         quickSelect: "Быстрый выбор",
+         cards: "Карты",
+      },
+
+      regions: {
+         all: "Все",
+         global: "Глобальные",
+         europe: "Европа",
+         asia: "Азия",
+         middleEast: "Бл. Восток",
+         latinAmerica: "Лат. Америка",
+         africa: "Африка",
+         cis: "СНГ",
+      },
+
+      methods: {
+         anyCrypto: "Любая крипта",
+         anyCard: "Любая карта",
+         anyWallet: "Любой кошелёк",
+         bankTransfer: "Банковский перевод",
+         visa: "Visa",
+         mastercard: "Mastercard",
+         unionPay: "UnionPay",
+         americanExpress: "American Express",
+         wechat: "WeChat",
+         alipay: "Alipay",
+         usdt: "USDT",
+         uoi: "UOI",
       },
    },
 };

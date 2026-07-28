@@ -2,16 +2,28 @@ import type { CommentType } from "./comments.type";
 
 export const tabs = [
    {
-      id: "group-buys",
-      translationKey: "groupBuys",
+      id: "coding",
+      translationKey: "coding",
    },
    {
-      id: "api",
-      translationKey: "api",
+      id: "chat",
+      translationKey: "chat",
+   },
+   {
+      id: "image",
+      translationKey: "image",
    },
    {
       id: "video",
       translationKey: "video",
+   },
+   {
+      id: "audio",
+      translationKey: "audio",
+   },
+   {
+      id: "others",
+      translationKey: "others",
    },
 ] as const;
 

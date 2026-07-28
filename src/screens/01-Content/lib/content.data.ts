@@ -10,6 +10,7 @@ export interface ModelItem {
    inputPrice: number;
    outputPrice: number;
    discountPercent: number;
+   weChat: string;
    tags: ModelTag[];
    provider: ProviderName;
    reviews: number;
@@ -18,20 +19,16 @@ export interface ModelItem {
 
 export const tabs = [
    {
-      id: "all",
-      translationKey: "allTypes",
+      id: "crypto",
+      translationKey: "crypto",
    },
    {
-      id: "image",
-      translationKey: "image",
+      id: "paytoacc",
+      translationKey: "paymentToAccount",
    },
    {
-      id: "search",
-      translationKey: "search",
-   },
-   {
-      id: "audio-video",
-      translationKey: "audioVideo",
+      id: "freetest",
+      translationKey: "freeTest",
    },
 ] as const;
 
@@ -42,6 +39,7 @@ export const models: ModelItem[] = Array.from({ length: 11 }, (_, index): ModelI
    inputPrice: 4,
    outputPrice: 8,
    discountPercent: 90,
+   weChat: "WeChat +30",
    tags: ["image", "video"],
    provider: "OpenRouter",
    reviews: 123,

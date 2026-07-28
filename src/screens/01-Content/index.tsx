@@ -100,64 +100,66 @@ export const Content: React.FC<Prop> = ({ className }) => {
             <ContentActions />
          </div>
 
-         <div className={css.content_main}>
-            <div className={css.content_main_inner}>
-               <h4>{descriptionTranslation.title}</h4>
+         <div className={css.content_scroll}>
+            <div className={css.content_main}>
+               <div className={css.content_main_inner}>
+                  <h4>{descriptionTranslation.title}</h4>
 
-               <div
-                  className={clsx(
-                     css.content_description,
-                     isDescriptionExpanded && css.content_description_expanded
-                  )}
-                  style={
-                     {
-                        "--description-expanded-height": `${descriptionHeight}px`,
-                     } as React.CSSProperties
-                  }
-               >
-                  <p ref={descriptionRef} className={css.content_description_text}>
-                     {descriptionTranslation.text}
-                  </p>
+                  <div
+                     className={clsx(
+                        css.content_description,
+                        isDescriptionExpanded && css.content_description_expanded
+                     )}
+                     style={
+                        {
+                           "--description-expanded-height": `${descriptionHeight}px`,
+                        } as React.CSSProperties
+                     }
+                  >
+                     <p ref={descriptionRef} className={css.content_description_text}>
+                        {descriptionTranslation.text}
+                     </p>
 
-                  {isDescriptionOverflowing && !isDescriptionExpanded && (
+                     {isDescriptionOverflowing && !isDescriptionExpanded && (
+                        <button
+                           type="button"
+                           className={clsx(
+                              css.content_description_button,
+                              css.content_description_button_more
+                           )}
+                           aria-expanded={false}
+                           onClick={handleDescriptionToggle}
+                        >
+                           ... {descriptionTranslation.readMore}
+                        </button>
+                     )}
+                  </div>
+
+                  {isDescriptionOverflowing && isDescriptionExpanded && (
                      <button
                         type="button"
                         className={clsx(
                            css.content_description_button,
-                           css.content_description_button_more
+                           css.content_description_button_less
                         )}
-                        aria-expanded={false}
+                        aria-expanded
                         onClick={handleDescriptionToggle}
                      >
-                        ... {descriptionTranslation.readMore}
+                        {descriptionTranslation.showLess}
                      </button>
                   )}
                </div>
-
-               {isDescriptionOverflowing && isDescriptionExpanded && (
-                  <button
-                     type="button"
-                     className={clsx(
-                        css.content_description_button,
-                        css.content_description_button_less
-                     )}
-                     aria-expanded
-                     onClick={handleDescriptionToggle}
-                  >
-                     {descriptionTranslation.showLess}
-                  </button>
-               )}
             </div>
-         </div>
 
-         <div className={css.content_list}>
-            <ModelsTable />
+            <div className={css.content_list}>
+               <ModelsTable />
 
-            <Pagination
-               currentPage={currentPage}
-               totalPages={totalPages}
-               onChange={setCurrentPage}
-            />
+               <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onChange={setCurrentPage}
+               />
+            </div>
          </div>
       </div>
    );

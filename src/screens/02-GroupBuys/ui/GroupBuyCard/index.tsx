@@ -2,10 +2,13 @@
 
 import React from "react";
 
+import { useRouter } from "next/navigation";
+
 import type { GroupBuyItem } from "../../lib/groupBuys.data";
+import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
-import { formatComments, formatPersons, formatRelativeDate } from "shared/lib/i18n/formatters";
+import { formatRelativeDate } from "shared/lib/i18n/formatters";
 import { UserInfo } from "shared/ui/components/UserInfo";
 import { ClockIcon, MessageTextIcon } from "shared/ui/icons";
 
@@ -15,27 +18,31 @@ interface Props {
    item: GroupBuyItem;
 }
 
+const SEATS_SEGMENTS_COUNT = 19;
+
 export const GroupBuyCard: React.FC<Props> = ({ item }) => {
    const { locale, t } = useTranslation();
-
+   const router = useRouter();
    const translation = t.groupBuys.items[item.translationKey];
+   const peopleLabel = t.groupBuys.forPeople.replace("{count}", String(item.totalPersons));
+
+   const seatsTakenLabel = t.groupBuys.seatsTaken
+      .replace("{taken}", String(item.takenPersons))
+      .replace("{total}", String(item.totalPersons));
+
+   const activeSegmentsCount =
+      item.takenPersons === 0
+         ? 0
+         : Math.max(1, Math.floor((item.takenPersons / item.totalPersons) * SEATS_SEGMENTS_COUNT));
 
    return (
       <article className={css.card}>
          <div className={css.card_header}>
-            <div className={css.card_author}>
-               <UserInfo userName={item.userName} userAvatar={item.userAvatar} withName={true} />
+            <UserInfo userName={item.userName} userAvatar={item.userAvatar} withName={true} />
 
-               <span className={css.card_divider} />
-
-               <div className={css.card_tags}>
-                  {item.providers.map((provider) => (
-                     <span key={provider} className={css.card_tag}>
-                        {provider}
-                     </span>
-                  ))}
-               </div>
-            </div>
+            <span className={css.card_status}>
+               <div className={css.card_status_inner}>{peopleLabel}</div>
+            </span>
          </div>
 
          <div className={css.card_content}>
@@ -50,28 +57,54 @@ export const GroupBuyCard: React.FC<Props> = ({ item }) => {
             </div>
 
             <div className={css.card_info}>
-               <div className={css.card_info_left}>
-                  <span className={css.card_price}>${item.price}</span>
+               <div className={css.card_info_row}>
+                  <div className={css.card_info_left}>
+                     <div className={css.card_seats} aria-label={seatsTakenLabel}>
+                        {Array.from({
+                           length: SEATS_SEGMENTS_COUNT,
+                        }).map((_, index) => (
+                           <span
+                              key={index}
+                              className={clsx(
+                                 css.card_seat,
+                                 index < activeSegmentsCount && css.card_seat_active
+                              )}
+                           />
+                        ))}
+                     </div>
 
-                  <span className={css.card_dot} />
+                     <span className={css.card_taken}>{seatsTakenLabel}</span>
 
-                  <span className={css.card_persons}>{formatPersons(item.persons, locale)}</span>
-               </div>
+                     <span className={css.card_dot} />
 
-               <div className={css.card_info_right}>
-                  <div className={css.card_meta}>
-                     <ClockIcon />
+                     <div className={css.card_price_block}>
+                        <strong className={css.card_price}>${item.price}</strong>
 
-                     <span>{formatRelativeDate(item.publishedAt, locale)}</span>
+                        <span>{t.groupBuys.forOnePerson}</span>
+                     </div>
+
+                     <span className={css.card_dot} />
+
+                     <div className={css.card_meta}>
+                        <ClockIcon />
+
+                        <span>{formatRelativeDate(item.publishedAt, locale)}</span>
+                     </div>
+
+                     <span className={css.card_dot} />
+
+                     <button
+                        className={css.card_meta}
+                        type="button"
+                        onClick={() => router.push("/comments")}
+                     >
+                        <MessageTextIcon />
+
+                        <span>{item.comments}</span>
+                     </button>
                   </div>
 
-                  <span className={css.card_dot} />
-
-                  <div className={css.card_meta}>
-                     <MessageTextIcon />
-
-                     <span> {formatComments(item.comments, locale)}</span>
-                  </div>
+                  <span className={css.card_payment}>{item.paymentMethod}</span>
                </div>
             </div>
          </div>

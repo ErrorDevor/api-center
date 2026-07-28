@@ -11,6 +11,7 @@ import css from "./Button.module.scss";
 interface Prop {
    variant: "blue" | "black" | "grey" | "white";
    className?: string;
+   classNameContent?: string;
    disabled?: boolean;
    active?: boolean;
 }
@@ -27,6 +28,7 @@ type ButtonProps = Prop & (ButtonComponent | AnchorComponent);
 
 export const Button: React.FC<ButtonProps> = ({
    className,
+   classNameContent,
    variant = "blue",
    disabled,
    active,
@@ -42,31 +44,7 @@ export const Button: React.FC<ButtonProps> = ({
       active && css["button--active"]
    );
 
-   const isBlack = variant === "black";
-
-   const stars = Array.from({ length: 10 });
-
-   const content = (
-      <>
-         {isBlack && (
-            <span className={css.button_stars}>
-               {stars.map((_, index) => (
-                  <span
-                     key={index}
-                     className={css.button_star}
-                     style={
-                        {
-                           "--delay": `${index * 0.3}s`,
-                        } as React.CSSProperties
-                     }
-                  />
-               ))}
-            </span>
-         )}
-
-         <span className={css.button_content}>{children}</span>
-      </>
-   );
+   const content = <span className={clsx(css.button_content, classNameContent)}>{children}</span>;
 
    if (as === "a") {
       return (

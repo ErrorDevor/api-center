@@ -1,0 +1,116 @@
+.checkbox {
+   display: inline-flex;
+   align-items: center;
+   gap: 0.8rem;
+   min-width: 0;
+
+   cursor: pointer;
+   user-select: none;
+
+   &_input {
+      position: absolute;
+
+      width: 0.1rem;
+      height: 0.1rem;
+      padding: 0;
+      margin: -0.1rem;
+      overflow: hidden;
+
+      white-space: nowrap;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      border: 0;
+
+      &:focus-visible + .checkbox_control {
+         outline: 0.2rem solid rgba(71, 145, 255, 0.35);
+         outline-offset: 0.2rem;
+      }
+
+      &:checked + .checkbox_control_checkbox {
+         border-color: rgba(0, 0, 0, 0.07);
+         background: linear-gradient(178.4deg, #4791ff 1.36%, #bfd2ed 122.98%);
+
+         .checkbox_check {
+            opacity: 1;
+            transform: scale(1);
+         }
+      }
+
+      &:checked + .checkbox_control_radio {
+         border-color: #212121;
+
+         .checkbox_dot {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+         }
+      }
+   }
+
+   &_control {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.6rem;
+      height: 1.6rem;
+      flex-shrink: 0;
+      box-sizing: border-box;
+      background: transparent;
+
+      @include transition((border-color, background, opacity));
+
+      &_checkbox {
+         border: 0.15rem solid rgba(0, 0, 0, 0.07);
+         border-radius: 0.5rem;
+      }
+
+      &_radio {
+         border: 0.15rem solid #d4d4d8;
+         border-radius: 50%;
+      }
+   }
+
+   &_check {
+      width: 1.2rem;
+      height: 1.2rem;
+      opacity: 0;
+      color: #ffffff;
+      transform: scale(0.7);
+      @include transition((opacity, transform));
+   }
+
+   &_dot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0.6rem;
+      height: 0.6rem;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.7);
+      border-radius: 50%;
+      background: #212121;
+
+      @include transition((opacity, transform));
+   }
+
+   &_label {
+      min-width: 0;
+      overflow: hidden;
+
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #797a79);
+
+      @include transition((color));
+   }
+
+   &_disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+   }
+}
+
+.checkbox_input:checked + .checkbox_control + .checkbox_label {
+   color: #212121;
+}

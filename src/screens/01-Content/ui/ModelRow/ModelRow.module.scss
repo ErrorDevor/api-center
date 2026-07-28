@@ -18,7 +18,8 @@
    min-width: 0;
    height: 6.8rem;
    padding: 1.3rem 1.6rem;
-
+   @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #212121);
+gap: 0.8rem;
    background: #f7f7f7;
    border-right: 0.1rem solid rgba(0, 0, 0, 0.08);
    border-bottom: 0.1rem solid rgba(0, 0, 0, 0.08);
@@ -211,6 +212,18 @@
 
    &:hover {
       opacity: 0.7;
+   }
+}
+
+.we_chat {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   gap: 0.8rem;
+   min-width: 0;
+
+   p {
+      @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #212121);
    }
 }
 

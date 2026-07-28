@@ -1,0 +1,19 @@
+.filter_button {
+   height: 3.6rem;
+   color: #212121;
+
+   svg {
+      width: 1.6rem;
+      height: 1.6rem;
+      flex-shrink: 0;
+   }
+}
+
+.account_type_modal {
+   width: 46.9rem;
+   min-width: 46.9rem;
+   padding: 0;
+   overflow: hidden;
+   border-radius: 1.6rem;
+}
+

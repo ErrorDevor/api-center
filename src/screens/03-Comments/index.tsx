@@ -2,6 +2,8 @@
 
 import React from "react";
 
+import { useRouter } from "next/navigation";
+
 import { tabs } from "./lib/comments.data";
 import { commentsData } from "./lib/comments.data";
 import { CommentCard } from "./ui/CommentCard";
@@ -11,8 +13,9 @@ import clsx from "clsx";
 import { useTranslation } from "shared/lib/i18n";
 import { ContentActions } from "shared/ui/components/ContentActions";
 import { Pagination } from "shared/ui/components/Pagination";
-import { Sort2Icon, ArrowIcon } from "shared/ui/icons";
+import { ArrowIcon, PlusIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
+import { SortDropdown } from "shared/ui/ui-kit/SortDropdown";
 
 import css from "./Comments.module.scss";
 
@@ -24,7 +27,7 @@ interface Prop {
 
 export const Comments: React.FC<Prop> = ({ className }) => {
    const { t } = useTranslation();
-
+   const router = useRouter();
    const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
    const [currentPage, setCurrentPage] = React.useState(1);
 
@@ -35,7 +38,10 @@ export const Comments: React.FC<Prop> = ({ className }) => {
       <div className={clsx(css.comments, className)}>
          <div className={css.comments_top}>
             <div className={css.comments_title}>
-               <button className={css.back_button} type="button"><ArrowIcon/></button>
+               <button className={css.back_button} type="button" onClick={() => router.back()}>
+                  <ArrowIcon />
+               </button>
+
                <h2>OpenAI</h2>
 
                <span>
@@ -57,7 +63,7 @@ export const Comments: React.FC<Prop> = ({ className }) => {
                         active={isActive}
                         onClick={() => setActiveTab(tab.id)}
                      >
-                        {t.content.tabs[tab.translationKey]}
+                        {t.groupBuys.tabs[tab.translationKey]}
                      </Button>
                   );
                })}
@@ -73,10 +79,14 @@ export const Comments: React.FC<Prop> = ({ className }) => {
                <div className={css.comments_data_list_title}>
                   <h6>{t.common.participants}</h6>
 
-                  <Button variant="grey" className={css.sort_button}>
-                     <Sort2Icon />
-                     {t.common.sort}
-                  </Button>
+                  <div className={css.buttons_block}>
+                     <SortDropdown name={t.common.sort} />
+
+                     <Button variant="black" className={css.feedback_button}>
+                        <PlusIcon />
+                        {t.common.feedback}
+                     </Button>
+                  </div>
                </div>
 
                {commentsData.commentsData.reviews.map((item) => (

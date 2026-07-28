@@ -70,11 +70,8 @@
       overflow-y: auto;
       overflow-x: hidden;
 
-      scrollbar-width: thin;
-      scrollbar-color: rgba(9, 12, 10, 0.16) transparent;
-
       &::-webkit-scrollbar {
-         width: 0.5rem;
+         width: 0.6rem;
       }
 
       &::-webkit-scrollbar-track {
@@ -83,7 +80,7 @@
 
       &::-webkit-scrollbar-thumb {
          border-radius: 1rem;
-         background: rgba(9, 12, 10, 0.16);
+         background: rgba(0, 0, 0, 0.15);
       }
    }
 }
@@ -127,6 +124,12 @@
    }
 }
 
+.buttons_block {
+   display: flex;
+   align-items: center;
+   gap: 0.8rem;
+}
+
 .back_button {
    @include box(2.4rem);
    flex-shrink: 0;
@@ -149,6 +152,15 @@
    svg {
       width: 1.6rem;
       stroke: #1c274c;
+   }
+}
+.feedback_button {
+   height: 3.6rem;
+   color: getColorWhite(1);
+
+   svg {
+      width: 1.6rem;
+      stroke: getColorWhite(1);
    }
 }
 
