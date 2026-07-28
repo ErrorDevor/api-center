@@ -3,7 +3,7 @@
 import React from "react";
 
 import clsx from "clsx";
-import type { CommentLayerType } from "screens/03-Comments/lib/comments.type";
+import type { CommentLayerType } from "screens/03-Reviews/lib/comments.type";
 
 import { useTranslation } from "shared/lib/i18n";
 import { formatRelativeDate } from "shared/lib/i18n/formatters";
@@ -16,6 +16,7 @@ import css from "./CommentLayer.module.scss";
 interface Prop {
    className?: string;
    data: CommentLayerType;
+   withBackground?: boolean;
 }
 
 interface CommentItemProp {
@@ -39,7 +40,10 @@ const getCommentTone = (id: string | number): CommentTone => {
    return COMMENT_TONES[hash % COMMENT_TONES.length];
 };
 
-const CommentItem: React.FC<CommentItemProp> = ({ data, isReply = false }) => {
+const CommentItem: React.FC<CommentItemProp> = ({
+   data,
+   isReply = false,
+}) => {
    const { locale, t } = useTranslation();
 
    const translation = t.groupBuys.items[data.translationKey];
@@ -170,8 +174,8 @@ const CommentItem: React.FC<CommentItemProp> = ({ data, isReply = false }) => {
    );
 };
 
-export const CommentLayer: React.FC<Prop> = ({ className, data }) => {
-   const tone = getCommentTone(data.id);
+export const CommentLayer: React.FC<Prop> = ({ className, data, withBackground = true }) => {
+   const tone = withBackground ? getCommentTone(data.id) : undefined;
    const hasReplies = Boolean(data.replies?.length);
 
    return (
@@ -180,7 +184,7 @@ export const CommentLayer: React.FC<Prop> = ({ className, data }) => {
             css.comment_layer,
             css[`comment_layer_${tone}`],
             hasReplies && css.has_replies,
-            className
+            className, withBackground && css.comment_layer_background
          )}
       >
          <CommentItem data={data} />

@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { Comments } from "screens/03-Comments";
+import { Buys } from "screens/04-Buys/inedx";
 
 import { Header } from "widgets/Header";
 import { Sidebar } from "widgets/Sidebar";
@@ -12,7 +12,7 @@ import { AppLayout } from "shared/ui/templates/AppLayout";
 
 export const dynamic = "force-dynamic";
 
-export default function CommentsPage() {
+export default function BuysPage() {
    const [collapsed, setCollapsed] = React.useState(false);
    const [mode, setMode] = React.useState<SidebarMode>("api");
 
@@ -29,7 +29,7 @@ export default function CommentsPage() {
             />
          }
       >
-         <Comments />
+         <Buys />
       </AppLayout>
    );
 }

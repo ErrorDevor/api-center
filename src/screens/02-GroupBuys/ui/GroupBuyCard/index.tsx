@@ -16,11 +16,12 @@ import css from "./GroupBuyCard.module.scss";
 
 interface Props {
    item: GroupBuyItem;
+   withBackground?: boolean;
 }
 
 const SEATS_SEGMENTS_COUNT = 19;
 
-export const GroupBuyCard: React.FC<Props> = ({ item }) => {
+export const GroupBuyCard: React.FC<Props> = ({ item, withBackground = true }) => {
    const { locale, t } = useTranslation();
    const router = useRouter();
    const translation = t.groupBuys.items[item.translationKey];
@@ -36,7 +37,7 @@ export const GroupBuyCard: React.FC<Props> = ({ item }) => {
          : Math.max(1, Math.floor((item.takenPersons / item.totalPersons) * SEATS_SEGMENTS_COUNT));
 
    return (
-      <article className={css.card}>
+      <article className={clsx(css.card, withBackground && css.card_background)}>
          <div className={css.card_header}>
             <UserInfo userName={item.userName} userAvatar={item.userAvatar} withName={true} />
 
@@ -47,7 +48,9 @@ export const GroupBuyCard: React.FC<Props> = ({ item }) => {
 
          <div className={css.card_content}>
             <div className={css.card_main}>
-               <h3 className={css.card_title}>{translation.title}</h3>
+               <h3 className={css.card_title} onClick={() => router.push("/buys")}>
+                  {translation.title}
+               </h3>
 
                <div className={css.card_description}>
                   <span className={css.card_description_mark} />
@@ -96,7 +99,7 @@ export const GroupBuyCard: React.FC<Props> = ({ item }) => {
                      <button
                         className={css.card_meta}
                         type="button"
-                        onClick={() => router.push("/comments")}
+                        onClick={() => router.push("/reviews")}
                      >
                         <MessageTextIcon />
 

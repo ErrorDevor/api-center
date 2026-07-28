@@ -3,7 +3,7 @@
 import React from "react";
 
 import clsx from "clsx";
-import type { CommentType } from "screens/03-Comments/lib/comments.type";
+import type { CommentType } from "screens/03-Reviews/lib/comments.type";
 
 import { useTranslation } from "shared/lib/i18n";
 import { UserInfo } from "shared/ui/components/UserInfo";

@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import type { CommentProviderDetails } from "screens/03-Comments/lib/comments.type";
+import type { CommentProviderDetails } from "screens/03-Reviews/lib/comments.type";
 
 import { useTranslation } from "shared/lib/i18n";
 import { formatProviderAge } from "shared/lib/i18n/formatters";
