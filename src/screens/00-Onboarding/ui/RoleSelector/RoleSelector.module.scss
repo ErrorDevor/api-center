@@ -1,0 +1,148 @@
+.role_selector {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-end;
+   gap: 1.6rem;
+   width: 100%;
+   padding: 3.2rem;
+
+   &_close {
+      display: flex;
+      flex: none;
+      align-items: center;
+      justify-content: center;
+
+      width: 4rem;
+      height: 4rem;
+      padding: 0.8rem;
+
+      background: #f9f9fb;
+      border: none;
+      border-radius: 1.2rem;
+
+      cursor: pointer;
+
+      @include transition((background-color, opacity));
+
+      img {
+         width: 2.4rem;
+         height: 2.4rem;
+      }
+
+      @media (hover: hover) {
+         &:hover {
+            background: #f1f1f4;
+         }
+      }
+
+      &:active {
+         opacity: 0.75;
+      }
+
+      &:focus-visible {
+         outline: 0.2rem solid rgba(71, 145, 255, 0.55);
+         outline-offset: 0.2rem;
+      }
+   }
+
+   &_body,
+   &_content,
+   &_header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+   }
+
+   &_body {
+      gap: 4rem;
+   }
+
+   &_content {
+      gap: 2.4rem;
+   }
+
+   &_header {
+      gap: 1.6rem;
+   }
+
+   &_title {
+      text-align: center;
+      @include fontInterTight(3rem, 1, -0.01em, 500, #212121);
+   }
+
+   &_description {
+      text-align: center;
+      @include fontInterTight(1.6rem, 1.4, -0.01em, 400, #797a79);
+   }
+
+   &_options {
+      display: grid;
+      flex: none;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.6rem;
+      width: 100%;
+   }
+
+   &_option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      min-width: 0;
+      height: 16.6rem;
+      padding: 5.6rem 0.8rem;
+      color: #797a79;
+      background: #ffffff;
+      border: 0.1rem solid rgba(0, 0, 0, 0.07);
+      border-radius: 1.6rem;
+      cursor: pointer;
+      @include transition((color, background-color, border-color));
+
+      @media (hover: hover) {
+         &:hover:not(.role_selector_option_active) {
+            background: #fafafa;
+            border-color: rgba(0, 0, 0, 0.12);
+         }
+      }
+
+      &:focus-visible {
+         outline: 0.2rem solid rgba(71, 145, 255, 0.55);
+         outline-offset: 0.2rem;
+      }
+
+      &_active {
+         color: #4791ff;
+         background: #ebf2ff;
+         border-color: transparent;
+      }
+   }
+
+   &_option_icon {
+      flex: none;
+      width: 2.4rem;
+      height: 2.4rem;
+      color: inherit;
+      stroke: currentColor;
+   }
+
+   &_option_text {
+      width: 100%;
+      color: inherit;
+      text-align: center;
+      @include fontInterTight(1.6rem, 2.2rem, -0.01em, 500);
+   }
+
+   &_submit {
+      width: 100%;
+
+      svg {
+         @include box(2.4rem);
+         flex-shrink: 0;
+         stroke: getColorWhite(1);
+
+         transform: scaleX(-1);
+      }
+   }
+}

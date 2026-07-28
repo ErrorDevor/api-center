@@ -8,11 +8,11 @@ interface Props {
    children: React.ReactNode;
 }
 
-export default async function HomeLayout({ children }: Props) {
+export default async function OnboardingLayout({ children }: Props) {
    const onboardingCompleted = await isOnboardingCompleted();
 
-   if (!onboardingCompleted) {
-      redirect("/start");
+   if (onboardingCompleted) {
+      redirect("/home");
    }
 
    return children;

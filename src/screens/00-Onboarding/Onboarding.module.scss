@@ -1,0 +1,34 @@
+.onboarding {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+
+   width: 100%;
+   min-height: 100svh;
+   padding: 2rem;
+
+   background: #e7e7e7;
+
+   &_card {
+      width: 100%;
+      max-width: 44.2rem;
+      min-height: 50rem;
+
+      overflow: hidden;
+
+      background: #ffffff;
+      border-radius: 3.2rem;
+   }
+}
+
+@media (max-width: 767px) {
+   .onboarding {
+      padding: 1.2rem;
+
+      &_card {
+         max-width: 100%;
+         min-height: auto;
+         border-radius: 2.4rem;
+      }
+   }
+}

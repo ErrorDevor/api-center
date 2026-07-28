@@ -1,0 +1,234 @@
+.login_form {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-end;
+   gap: 1.6rem;
+   width: 100%;
+   min-height: 49.8rem;
+   padding: 3.2rem;
+
+   &_top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 4rem;
+   }
+
+   &_close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      @include box(4rem);
+      padding: 0.8rem;
+      background: #f9f9fb;
+      border: none;
+      border-radius: 1.2rem;
+      cursor: pointer;
+      @include transition((background-color, opacity));
+
+      img {
+         @include box(2.4rem);
+      }
+
+      @media (hover: hover) {
+         &:hover {
+            background: #f1f1f4;
+         }
+      }
+
+      &:active {
+         opacity: 0.75;
+      }
+
+      &:focus-visible {
+         outline: 0.2rem solid rgba(71, 145, 255, 0.55);
+         outline-offset: 0.2rem;
+      }
+   }
+
+   &_back {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      @include box(4rem);
+      color: #797a79;
+      background: transparent;
+      border: none;
+
+      cursor: pointer;
+
+      svg {
+         @include box(2.4rem);
+         stroke: currentColor;
+      }
+
+      @media (hover: hover) {
+         &:hover {
+            color: #212121;
+         }
+      }
+
+      &:focus-visible {
+         outline: 0.2rem solid rgba(71, 145, 255, 0.55);
+         outline-offset: 0.2rem;
+         border-radius: 0.8rem;
+      }
+   }
+
+   &_title {
+      width: 100%;
+      margin: 0;
+      text-align: center;
+      @include fontInterTight(1.8rem, 2.2rem, -0.01em, 500, #212121);
+   }
+
+   &_form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.6rem;
+      width: 100%;
+
+      > input,
+      input {
+         width: 100%;
+         height: 5rem;
+         padding: 0.7rem 1.6rem;
+         background: #ffffff;
+         border: 0.1rem solid rgba(0, 0, 0, 0.05);
+         border-radius: 1.2rem;
+         outline: none;
+         @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #212121);
+
+         &::placeholder {
+            color: #b9b9b9;
+            opacity: 1;
+         }
+
+         &:focus {
+            border-color: rgba(71, 145, 255, 0.7);
+         }
+
+         &:focus-visible {
+            box-shadow: 0 0 0 0.2rem rgba(71, 145, 255, 0.12);
+         }
+      }
+   }
+
+   &_password {
+      position: relative;
+      width: 100%;
+
+      input {
+         padding-right: 4.8rem;
+      }
+   }
+
+   &_password_toggle {
+      position: absolute;
+      top: 50%;
+      right: 1.2rem;
+      @include flexCenter();
+      @include box(2.4rem);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transform: translateY(-50%);
+      @include transition(color);
+
+      svg {
+         @include box(2.4rem);
+         stroke: #b9b9b9;
+      }
+
+      @media (hover: hover) {
+         &:hover {
+            stroke: #b9b9b9;
+         }
+      }
+
+      &:focus-visible {
+         outline: 0.2rem solid rgba(71, 145, 255, 0.55);
+         outline-offset: 0.2rem;
+         border-radius: 0.4rem;
+      }
+   }
+
+   &_submit {
+      width: 100%;
+      height: 5rem;
+      min-height: 5rem;
+   }
+
+   &_divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      width: 100%;
+      height: 2rem;
+
+      > span:not(.login_form_divider_text) {
+         flex: 1;
+         height: 0.1rem;
+
+         background: rgba(0, 0, 0, 0.07);
+      }
+   }
+
+   &_divider_text {
+      flex-shrink: 0;
+      @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #797a79);
+   }
+
+   &_telegram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 5rem;
+      background: #ffffff;
+      border: 0.1rem solid rgba(0, 0, 0, 0.07);
+      border-radius: 1.2rem;
+      cursor: pointer;
+      @include transition((background-color, border-color));
+
+      img {
+         @include box(2.6rem);
+      }
+
+      @media (hover: hover) {
+         &:hover {
+            background: #f9f9fb;
+            border-color: rgba(0, 0, 0, 0.12);
+         }
+      }
+
+      &:focus-visible {
+         outline: 0.2rem solid rgba(71, 145, 255, 0.55);
+         outline-offset: 0.2rem;
+      }
+   }
+
+   &_terms {
+      align-self: center;
+      width: 25.5rem;
+      margin: 0;
+      text-align: center;
+      @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #b9b9b9);
+
+      a {
+         color: inherit;
+         text-decoration: underline;
+         text-decoration-thickness: 0.1rem;
+         text-underline-offset: 0.2rem;
+         @include transition(color);
+
+         @media (hover: hover) {
+            &:hover {
+               color: #797a79;
+            }
+         }
+      }
+   }
+}

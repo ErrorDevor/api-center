@@ -1,0 +1,2 @@
+export const ONBOARDING_SLIDES_COUNT = 3;
+export const ONBOARDING_INITIAL_SLIDE_INDEX = 0;

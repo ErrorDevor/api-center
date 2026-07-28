@@ -268,6 +268,92 @@ export const en = {
          uoi: "UOI",
       },
    },
+
+   onboarding: {
+      common: {
+         close: "Close onboarding",
+         back: "Go back",
+         previous: "Previous",
+         next: "Next",
+         or: "or",
+         telegram: "Continue with Telegram",
+      },
+
+      roleSelector: {
+         title: "Welcome to the platform for AI access distribution",
+         description: "Choose which account you want to create.",
+         createGroupBuy: "Create group buy",
+         joinExisting: "Join existing",
+         create: "Create",
+         accountType: "Account type",
+      },
+
+      distribution: {
+         addAccount: {
+            title: "Add your account",
+            description: "Add your accounts for sharing in the system.",
+         },
+
+         setLimits: {
+            title: "Set limits",
+            description: "Configuring limits for $n$ people for secure access.",
+         },
+
+         securityIsolation: {
+            title: "Security & Isolation",
+            description:
+               "Everything works from a single IP and fingerprint, the system doesn't see local files.",
+         },
+      },
+
+      recipient: {
+         singleDevice: {
+            title: "Single Device",
+            description:
+               "The system emulates one device for everyone, so you get one shared API key.",
+         },
+
+         yourSoftware: {
+            title: "Your Software",
+            description: "You can continue using your software: Claude Desktop, Codex, Cursor.",
+         },
+
+         privacy: {
+            title: "Privacy",
+            description:
+               "It doesn't send local files to the server or through the API, and no one sees your data.",
+         },
+      },
+
+      registration: {
+         title: "Let's create your profile",
+         email: "Email *",
+         userName: "Enter username *",
+         password: "Password *",
+         submit: "Create account",
+         close: "Close registration",
+      },
+
+      login: {
+         title: "Sign in to your account",
+         email: "Email *",
+         password: "Password *",
+         submit: "Sign In",
+         close: "Close login",
+      },
+
+      password: {
+         show: "Show password",
+         hide: "Hide password",
+      },
+
+      terms: {
+         prefix: "I agree with the",
+         termsAndConditions: "Terms & Conditions",
+         conjunction: "and",
+         contractOffer: "The contract offer",
+      },
+   },
 } as const;
 
 type DeepStringValues<T> = {
@@ -549,6 +635,93 @@ export const ru: Dictionary = {
          alipay: "Alipay",
          usdt: "USDT",
          uoi: "UOI",
+      },
+   },
+
+   onboarding: {
+      common: {
+         close: "Закрыть онбординг",
+         back: "Вернуться назад",
+         previous: "Назад",
+         next: "Далее",
+         or: "или",
+         telegram: "Продолжить через Telegram",
+      },
+
+      roleSelector: {
+         title: "Добро пожаловать на платформу распределения доступа к ИИ",
+         description: "Выберите, какой аккаунт вы хотите создать.",
+         createGroupBuy: "Создать складчину",
+         joinExisting: "Присоединиться к существующей",
+         create: "Создать",
+         accountType: "Тип аккаунта",
+      },
+
+      distribution: {
+         addAccount: {
+            title: "Добавьте свой аккаунт",
+            description: "Добавьте свои аккаунты для совместного использования в системе.",
+         },
+
+         setLimits: {
+            title: "Установите лимиты",
+            description: "Настройка лимитов для $n$ пользователей для безопасного доступа.",
+         },
+
+         securityIsolation: {
+            title: "Безопасность и изоляция",
+            description:
+               "Всё работает с единого IP-адреса и отпечатка, система не видит локальные файлы.",
+         },
+      },
+
+      recipient: {
+         singleDevice: {
+            title: "Одно устройство",
+            description:
+               "Система эмулирует одно устройство для всех, поэтому вы получаете один общий ключ API.",
+         },
+
+         yourSoftware: {
+            title: "Ваши программы",
+            description:
+               "Вы можете продолжать использовать своё ПО: Claude Desktop, Codex, Cursor.",
+         },
+
+         privacy: {
+            title: "Конфиденциальность",
+            description:
+               "Система не передаёт локальные файлы на сервер или через API, и никто не видит ваши данные.",
+         },
+      },
+
+      registration: {
+         title: "Давайте создадим ваш профиль",
+         email: "Email *",
+         userName: "Укажите имя пользователя *",
+         password: "Пароль *",
+         submit: "Создать аккаунт",
+         close: "Закрыть регистрацию",
+      },
+
+      login: {
+         title: "Войдите в свой аккаунт",
+         email: "Email *",
+         password: "Пароль *",
+         submit: "Войти",
+         close: "Закрыть окно входа",
+      },
+
+      password: {
+         show: "Показать пароль",
+         hide: "Скрыть пароль",
+      },
+
+      terms: {
+         prefix: "Я согласен с",
+         termsAndConditions: "Условиями и положениями",
+         conjunction: "и",
+         contractOffer: "Договором оферты",
       },
    },
 };
