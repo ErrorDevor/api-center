@@ -15,10 +15,10 @@ const currencyOptions = [
       value: "usd",
       symbol: "$",
    },
-   {
-      value: "rub",
-      symbol: "₽",
-   },
+   // {
+   //    value: "rub",
+   //    symbol: "₽",
+   // },
    {
       value: "eur",
       symbol: "€",
