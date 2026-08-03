@@ -7,14 +7,13 @@
    overflow: hidden;
    border-radius: 1.6rem;
    background: #f6f6f6;
-   padding: 2.4rem;
    @include transition((width, min-width));
 
    &_inner {
       padding: 2.4rem;
       background-color: #EEEFF1;
       border-radius: 1.6rem;
-      margin-top: 2.4rem;
+      margin: 2.4rem;
       height: 100%;
    }
 }
