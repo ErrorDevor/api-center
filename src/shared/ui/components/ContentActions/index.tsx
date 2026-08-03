@@ -3,7 +3,7 @@ import React from "react";
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
-import { FilterIcon, PlusIcon } from "shared/ui/icons";
+import {  PlusIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
 import { FilterDropdown } from "shared/ui/ui-kit/FilterDropdown";
 import { SortDropdown } from "shared/ui/ui-kit/SortDropdown";
@@ -27,7 +27,7 @@ export const ContentActions: React.FC<Prop> = ({ className, variant = "api" }) =
          {variant !== "api" && (
             <Button variant="black" className={clsx(css.content_action_button, css.create_button)}>
                <PlusIcon />
-               {t.common.create}
+               {t.common.newPost}
             </Button>
          )}
       </div>

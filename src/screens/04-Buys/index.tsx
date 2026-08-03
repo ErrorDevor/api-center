@@ -2,8 +2,6 @@
 
 import React from "react";
 
-import { useRouter } from "next/navigation";
-
 import { card, tabs } from "./lib/buys.data";
 import clsx from "clsx";
 import { GroupBuyCard } from "screens/02-GroupBuys/ui/GroupBuyCard";
@@ -12,6 +10,8 @@ import { CommentLayer } from "screens/03-Reviews/ui/CommentLayer";
 
 import { useTranslation } from "shared/lib/i18n";
 import { ContentActions } from "shared/ui/components/ContentActions";
+import { ContentHeader } from "shared/ui/components/ContentHeader";
+import { ContentHeaderTab } from "shared/ui/components/ContentHeader";
 import { Pagination } from "shared/ui/components/Pagination";
 import { Reply } from "shared/ui/components/Reply";
 import { Button } from "shared/ui/ui-kit/Button";
@@ -26,46 +26,28 @@ interface Prop {
 
 export const Buys: React.FC<Prop> = ({ className }) => {
    const { t } = useTranslation();
-   const router = useRouter();
    const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
    const [currentPage, setCurrentPage] = React.useState(1);
 
    const totalPages = 10;
    const resultsCount = 158;
 
+   const headerTabs: ContentHeaderTab<TabId>[] = tabs.map((tab) => ({
+      id: tab.id,
+      label: t.groupBuys.tabs[tab.translationKey],
+   }));
+
    return (
       <div className={clsx(css.buys, className)}>
-         <div className={css.buys_top}>
-            <div className={css.buys_title}>
-               <h2>OpenAI</h2>
-
-               <span>
-                  (<strong>{resultsCount}</strong> {t.content.results})
-               </span>
-            </div>
-
-            <div className={css.divider} />
-
-            <div className={css.buys_buttons_nav}>
-               {tabs.map((tab) => {
-                  const isActive = activeTab === tab.id;
-
-                  return (
-                     <Button
-                        key={tab.id}
-                        variant="grey"
-                        className={clsx(css.button_nav, isActive && css.button_nav_active)}
-                        active={isActive}
-                        onClick={() => setActiveTab(tab.id)}
-                     >
-                        {t.groupBuys.tabs[tab.translationKey]}
-                     </Button>
-                  );
-               })}
-            </div>
-
-            <ContentActions variant="group" />
-         </div>
+         <ContentHeader
+            title="OpenAI"
+            resultsCount={resultsCount}
+            resultsLabel={t.content.results}
+            tabs={headerTabs}
+            activeTab={activeTab}
+            actionsVariant="group"
+            onTabChange={setActiveTab}
+         />
 
          <div className={css.buys_list}>
             <div className={css.buys_list_inner}>
@@ -86,15 +68,13 @@ export const Buys: React.FC<Prop> = ({ className }) => {
                      </React.Fragment>
                   ))}
                </div>
-
-               
             </div>
 
             <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onChange={setCurrentPage}
-               />
+               currentPage={currentPage}
+               totalPages={totalPages}
+               onChange={setCurrentPage}
+            />
          </div>
       </div>
    );

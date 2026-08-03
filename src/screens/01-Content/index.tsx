@@ -8,6 +8,8 @@ import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
 import { ContentActions } from "shared/ui/components/ContentActions";
+import { ContentHeader } from "shared/ui/components/ContentHeader";
+import { ContentHeaderTab } from "shared/ui/components/ContentHeader";
 import { Pagination } from "shared/ui/components/Pagination";
 import { Button } from "shared/ui/ui-kit/Button";
 
@@ -33,6 +35,11 @@ export const Content: React.FC<Prop> = ({ className }) => {
    const resultsCount = 158;
 
    const descriptionTranslation = t.content.modelDescription;
+
+   const headerTabs: ContentHeaderTab<TabId>[] = tabs.map((tab) => ({
+      id: tab.id,
+      label: t.content.tabs[tab.translationKey],
+   }));
 
    React.useLayoutEffect(() => {
       const descriptionElement = descriptionRef.current;
@@ -68,37 +75,14 @@ export const Content: React.FC<Prop> = ({ className }) => {
 
    return (
       <div className={clsx(css.content, className)}>
-         <div className={css.content_top}>
-            <div className={css.content_title}>
-               <h2>OpenAI</h2>
-
-               <span>
-                  (<strong>{resultsCount}</strong> {t.content.results})
-               </span>
-            </div>
-
-            <div className={css.divider} />
-
-            <div className={css.content_buttons_nav}>
-               {tabs.map((tab) => {
-                  const isActive = activeTab === tab.id;
-
-                  return (
-                     <Button
-                        key={tab.id}
-                        variant="grey"
-                        className={clsx(css.button_nav, isActive && css.button_nav_active)}
-                        active={isActive}
-                        onClick={() => setActiveTab(tab.id)}
-                     >
-                        {t.content.tabs[tab.translationKey]}
-                     </Button>
-                  );
-               })}
-            </div>
-
-            <ContentActions />
-         </div>
+         <ContentHeader
+            title="OpenAI"
+            resultsCount={resultsCount}
+            resultsLabel={t.content.results}
+            tabs={headerTabs}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+         />
 
          <div className={css.content_scroll}>
             <div className={css.content_main}>

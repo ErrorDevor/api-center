@@ -51,3 +51,17 @@
       transform: rotate(-90deg);
    }
 }
+
+.create_button {
+   height: 3.6rem;
+   color: getColorWhite(1);
+   svg {
+      width: 1.6rem;
+      height: 1.6rem;
+      flex-shrink: 0;
+   }
+}
+
+.enter_button {
+   height: 3.6rem;
+}

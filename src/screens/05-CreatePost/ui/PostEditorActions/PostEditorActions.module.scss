@@ -1,0 +1,150 @@
+.post_editor_actions {
+   display: flex;
+   align-items: flex-end;
+   justify-content: space-between;
+
+   width: 100%;
+   height: 3.2rem;
+   margin-top: auto;
+   gap: 3.2rem;
+
+   &_left {
+      display: flex;
+      align-items: center;
+
+      height: 2rem;
+      gap: 1.6rem;
+   }
+
+   &_icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 1.8rem;
+      height: 1.8rem;
+      padding: 0;
+      flex-shrink: 0;
+
+      border: none;
+      border-radius: 0.4rem;
+      outline: none;
+      background: transparent;
+
+      cursor: pointer;
+
+      img,
+      svg {
+         width: 1.8rem;
+         height: 1.8rem;
+      }
+
+      &:hover {
+         background: rgba(33, 33, 33, 0.05);
+      }
+
+      &:active {
+         transform: scale(0.94);
+      }
+
+      &:focus-visible {
+         outline: 0.2rem solid #4791ff;
+         outline-offset: 0.2rem;
+      }
+   }
+
+   &_divider {
+      width: 0.1rem;
+      height: 1.4rem;
+      flex-shrink: 0;
+
+      background: rgba(0, 0, 0, 0.07);
+   }
+
+   &_tags {
+      display: flex;
+      align-items: center;
+
+      height: 2rem;
+      padding: 0;
+
+      white-space: nowrap;
+
+      border: none;
+      outline: none;
+      background: transparent;
+
+      cursor: pointer;
+
+      @include fontInterTight(
+         1.4rem,
+         2rem,
+         -0.01em,
+         400,
+         #797a79
+      );
+
+      &:hover {
+         color: #212121;
+      }
+
+      &:focus-visible {
+         outline: 0.2rem solid #4791ff;
+         outline-offset: 0.2rem;
+         border-radius: 0.4rem;
+      }
+   }
+
+   &_publish {
+
+      height: 3.2rem;
+      padding: 0 1.6rem;
+
+   }
+
+   &_publish_text {
+      position: relative;
+      z-index: 3;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      @include fontInterTight(
+         1.4rem,
+         2rem,
+         -0.01em,
+         400,
+         #ffffff
+      );
+
+      .post_editor_actions_publish:disabled & {
+         color: #797a79;
+      }
+   }
+
+   &_publish_glow_left,
+   &_publish_glow_right {
+      position: absolute;
+      z-index: 0;
+
+      width: 6.194rem;
+      height: 1.997rem;
+
+      background: #d3e7ff;
+      filter: blur(1.5rem);
+      transform: rotate(-23.08deg);
+
+      pointer-events: none;
+   }
+
+   &_publish_glow_left {
+      top: -1.5rem;
+      left: -2.1rem;
+   }
+
+   &_publish_glow_right {
+      top: 1rem;
+      left: 6.1rem;
+   }
+}

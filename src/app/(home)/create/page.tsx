@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { Buys } from "screens/04-Buys";
+import { CreatePost } from "screens/05-CreatePost";
 
 import { Header } from "widgets/Header";
 import { Sidebar } from "widgets/Sidebar";
@@ -12,10 +12,9 @@ import { AppLayout } from "shared/ui/templates/AppLayout";
 
 export const dynamic = "force-dynamic";
 
-export default function BuysPage() {
+export default function CreatePage() {
    const [collapsed, setCollapsed] = React.useState(false);
    const [mode, setMode] = React.useState<SidebarMode>("api");
-
    return (
       <AppLayout
          isSidebarCollapsed={collapsed}
@@ -29,7 +28,7 @@ export default function BuysPage() {
             />
          }
       >
-         <Buys />
+         <CreatePost />
       </AppLayout>
    );
 }

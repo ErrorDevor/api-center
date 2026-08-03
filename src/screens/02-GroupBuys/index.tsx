@@ -5,9 +5,9 @@ import React from "react";
 import { type GroupBuysTabId, tabs } from "./lib/groupBuys.data";
 import { GroupBuysList } from "./ui/GroupBuysList";
 import clsx from "clsx";
-import { ContentActions } from "shared/ui/components/ContentActions";
 
 import { useTranslation } from "shared/lib/i18n";
+import { ContentActions } from "shared/ui/components/ContentActions";
 import { Pagination } from "shared/ui/components/Pagination";
 import { Button } from "shared/ui/ui-kit/Button";
 
@@ -59,15 +59,16 @@ export const GroupBuysContent: React.FC<Props> = ({ className }) => {
 
             <ContentActions variant="group" />
          </div>
+         <div className={css.content_scroll}>
+            <div className={css.content_list}>
+               <GroupBuysList />
 
-         <div className={css.content_list}>
-            <GroupBuysList />
-
-            <Pagination
-               currentPage={currentPage}
-               totalPages={totalPages}
-               onChange={setCurrentPage}
-            />
+               <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onChange={setCurrentPage}
+               />
+            </div>
          </div>
       </div>
    );

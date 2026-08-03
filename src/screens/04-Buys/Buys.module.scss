@@ -6,50 +6,8 @@
    min-height: 0;
    overflow: hidden;
    border-radius: 1.6rem;
-
    background: #f6f6f6;
-
    @include transition((width, min-width));
-
-   &_top {
-      display: flex;
-      align-items: center;
-      gap: 1.6rem;
-      height: 6.8rem;
-      flex-shrink: 0;
-      padding-inline: 4rem;
-      border-bottom: 0.1rem solid rgba(0, 0, 0, 0.08);
-   }
-
-   &_title {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      flex-shrink: 0;
-
-      h2 {
-         @include fontInterTight(3.2rem, 1, -0.02em, 500, getColorBlack(1));
-      }
-
-      span {
-         white-space: nowrap;
-
-         @include fontInterTight(1.4rem, 1, -0.01em, 400, getColorBlack(0.45));
-
-         strong {
-            font-weight: 600;
-         }
-      }
-   }
-
-   &_buttons_nav {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      height: 100%;
-      min-width: 0;
-   }
 
    &_list {
       display: flex;
@@ -97,20 +55,6 @@
          background: rgba(0, 0, 0, 0.15);
       }
    }
-}
-
-.divider {
-   width: 0.1rem;
-   height: 2.2rem;
-   flex-shrink: 0;
-   background-color: rgba(0, 0, 0, 0.1);
-}
-
-.button_nav {
-   position: relative;
-   height: 3.6rem;
-   padding-block: 0 !important;
-   overflow: visible !important;
 }
 
 .buys_data_list {
@@ -161,19 +105,6 @@
 
 @media (max-width: 1200px) {
    .comments {
-      &_top {
-         padding-inline: 2.4rem;
-      }
-
-      &_buttons_nav {
-         overflow-x: auto;
-         scrollbar-width: none;
-
-         &::-webkit-scrollbar {
-            display: none;
-         }
-      }
-
       &_list {
          margin: 1.6rem;
       }
@@ -186,22 +117,8 @@
 
 @media (max-width: 900px) {
    .comments {
-      &_top {
-         gap: 1rem;
-      }
-
-      &_title {
-         h2 {
-            font-size: 2.6rem;
-         }
-      }
-
       &_list {
          padding: 1.4rem;
       }
-   }
-
-   .divider {
-      display: none;
    }
 }

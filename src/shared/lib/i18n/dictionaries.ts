@@ -2,6 +2,7 @@ export const en = {
    common: {
       search: "Search",
       create: "Create",
+      newPost: "New Post",
       filter: "Filter",
       previous: "Previous",
       next: "Next",
@@ -15,6 +16,7 @@ export const en = {
       participants: "Reviews of participants",
       sort: "Sort",
       feedback: "Feedback",
+      enter: "Login"
    },
 
    models: {
@@ -354,6 +356,38 @@ export const en = {
          contractOffer: "The contract offer",
       },
    },
+
+   createPost: {
+      postTypes: {
+         discussion: "Discussion",
+         model: "Model",
+      },
+
+      fields: {
+         title: "Title",
+         titlePlaceholder: "Write your topic title and description...",
+         descriptionPlaceholder: "Write your topic title and description...",
+         modelPlaceholder: "Model",
+         pricePlaceholder: "Enter price",
+         personsPlaceholder: "Enter number of people",
+         postType: "Post type",
+      },
+
+      actions: {
+         addImage: "Add image",
+         addEmoji: "Add emoji",
+         addTags: "Add tags",
+         publish: "Publish",
+      },
+
+      validation: {
+         titleRequired: "Enter a title",
+         descriptionRequired: "Enter a description",
+         modelRequired: "Select a model",
+         priceRequired: "Enter a price",
+         personsRequired: "Enter the number of people",
+      },
+   },
 } as const;
 
 type DeepStringValues<T> = {
@@ -370,6 +404,7 @@ export const ru: Dictionary = {
    common: {
       search: "Поиск",
       create: "Создать",
+      newPost: "Новая Тема",
       filter: "Фильтр",
       previous: "Назад",
       next: "Далее",
@@ -383,6 +418,7 @@ export const ru: Dictionary = {
       participants: "Отзывы участников",
       sort: "Сортировка",
       feedback: "Оставить отзыв",
+      enter: "Войти"
    },
 
    models: {
@@ -722,6 +758,38 @@ export const ru: Dictionary = {
          termsAndConditions: "Условиями и положениями",
          conjunction: "и",
          contractOffer: "Договором оферты",
+      },
+   },
+
+   createPost: {
+      postTypes: {
+         discussion: "Обсуждение",
+         model: "Модель",
+      },
+
+      fields: {
+         title: "Заголовок",
+         titlePlaceholder: "Напишите заголовок и описание темы...",
+         descriptionPlaceholder: "Напишите заголовок и описание темы...",
+         modelPlaceholder: "Модель",
+         pricePlaceholder: "Введите цену",
+         personsPlaceholder: "Введите количество человек",
+         postType: "Тип публикации",
+      },
+
+      actions: {
+         addImage: "Добавить изображение",
+         addEmoji: "Добавить эмодзи",
+         addTags: "Добавить теги",
+         publish: "Опубликовать",
+      },
+
+      validation: {
+         titleRequired: "Введите заголовок",
+         descriptionRequired: "Введите описание",
+         modelRequired: "Выберите модель",
+         priceRequired: "Введите цену",
+         personsRequired: "Введите количество человек",
       },
    },
 };
