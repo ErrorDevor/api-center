@@ -11,15 +11,13 @@
    background: rgba(255, 255, 255, 0.3);
    box-shadow: 0 0.1rem 0.2rem 0.1rem rgba(0, 0, 0, 0.04);
 
-   
-
    &_header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       width: 100%;
       min-width: 0;
-      height: 2.6rem;
+      // height: 2.6rem;
    }
 
    &_author {
@@ -110,5 +108,15 @@
       flex-shrink: 0;
       border-radius: 10rem;
       background: linear-gradient(180deg, #45f0ff 0%, #0355cd 100%);
+   }
+}
+
+@include screenMD {
+   .comment_card {
+      padding: 0.8rem;
+
+      &_description {
+         padding: 1.2rem 0.8rem;
+      }
    }
 }

@@ -17,3 +17,10 @@
    border-radius: 1.6rem;
 }
 
+@include screenMD {
+   .account_type_modal {
+      width: 100%;
+      max-width: none;
+      padding: 0 1.6rem 1.6rem;
+   }
+}

@@ -1,5 +1,6 @@
 import { default as ArrowIcon } from "./Arrow.icon";
 import { default as ClockIcon } from "./Clock.icon";
+import { default as CloseIcon } from "./Close.icon";
 import { default as DislikeIcon } from "./Dislike.icon";
 import { default as DropdownArrowIcon } from "./DropdownArrow.icon";
 import { default as ExistingIcon } from "./Existing.icon";
@@ -42,4 +43,5 @@ export {
    GroupBuyIcon,
    ExistingIcon,
    PasswordEyeIcon,
+   CloseIcon,
 };

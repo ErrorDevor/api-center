@@ -69,4 +69,8 @@
    }
 }
 
-
+@include screenMD {
+   .pagination {
+      display: none;
+   }
+}

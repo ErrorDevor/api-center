@@ -103,22 +103,15 @@
    background-color: rgba(0, 0, 0, 0.07);
 }
 
-@media (max-width: 1200px) {
-   .comments {
+@include screenMD {
+   .buys {
       &_list {
          margin: 1.6rem;
-      }
-   }
+         padding: 0.8rem;
 
-   .comments_actions {
-      display: none;
-   }
-}
-
-@media (max-width: 900px) {
-   .comments {
-      &_list {
-         padding: 1.4rem;
+         &_inner {
+            padding: 1.6rem;
+         }
       }
    }
 }

@@ -7,12 +7,13 @@ import { useTranslation } from "shared/lib/i18n";
 import css from "./Pagination.module.scss";
 
 interface Prop {
+   className?: string;
    currentPage: number;
    totalPages: number;
    onChange: (page: number) => void;
 }
 
-export const Pagination: React.FC<Prop> = ({ currentPage, totalPages, onChange }) => {
+export const Pagination: React.FC<Prop> = ({ className, currentPage, totalPages, onChange }) => {
    const handlePrevious = () => {
       onChange(Math.max(1, currentPage - 1));
    };
@@ -24,7 +25,7 @@ export const Pagination: React.FC<Prop> = ({ currentPage, totalPages, onChange }
    const { t } = useTranslation();
 
    return (
-      <div className={css.pagination}>
+      <div className={clsx(css.pagination, className)}>
          <button
             type="button"
             className={clsx(

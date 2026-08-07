@@ -2,7 +2,8 @@ export const en = {
    common: {
       search: "Search",
       create: "Create",
-      newPost: "New Post",
+      menu: "Menu",
+      newPost: "New topic",
       filter: "Filter",
       previous: "Previous",
       next: "Next",
@@ -16,7 +17,11 @@ export const en = {
       participants: "Reviews of participants",
       sort: "Sort",
       feedback: "Feedback",
-      enter: "Login"
+      login: "Log In",
+      signup: "Sign Up",
+      addProvider: "Add provider",
+      replyPlaceholder: "Post your reply",
+      buttonText:"Reply"
    },
 
    models: {
@@ -104,7 +109,7 @@ export const en = {
          paymentMethods: "Payment methods",
          rating: "Rating",
          reviews: "Reviews",
-         showAll: "View all",
+         showAll: "See all",
          topModelsPrices: "Top 10 model prices",
          modelName: "Model name",
          price: "Price",
@@ -404,6 +409,7 @@ export const ru: Dictionary = {
    common: {
       search: "Поиск",
       create: "Создать",
+      menu: "Меню",
       newPost: "Новая Тема",
       filter: "Фильтр",
       previous: "Назад",
@@ -418,7 +424,11 @@ export const ru: Dictionary = {
       participants: "Отзывы участников",
       sort: "Сортировка",
       feedback: "Оставить отзыв",
-      enter: "Войти"
+      login: "Войти",
+      signup: "Зарегистрироваться",
+      addProvider: "Добавить провайдер",
+      replyPlaceholder: "Post your reply",
+      buttonText:"Ответить"
    },
 
    models: {
@@ -538,8 +548,8 @@ export const ru: Dictionary = {
       },
 
       forPeople: "Для {count} человек",
-      seatsTaken: "{taken} из {total} уже занято",
-      forOnePerson: "за одного человека",
+      seatsTaken: "занято {taken} из {total}",
+      forOnePerson: "с человека",
 
       person: "участник",
       persons: "участников",

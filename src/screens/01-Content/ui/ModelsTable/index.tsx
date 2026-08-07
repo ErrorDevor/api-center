@@ -2,11 +2,13 @@
 
 import React from "react";
 
+import clsx from "clsx";
 import { models } from "screens/01-Content/lib/content.data";
 import type { ModelItem } from "screens/01-Content/lib/content.data";
 
+import { useIsMobile } from "shared/lib/hooks/useIsMobile";
 import { useTranslation } from "shared/lib/i18n";
-import { SortIcon } from "shared/ui/icons";
+import { DropdownArrowIcon, SortIcon } from "shared/ui/icons";
 
 import { ModelRow } from "../ModelRow";
 
@@ -14,6 +16,9 @@ import css from "./ModelsTable.module.scss";
 
 const INITIAL_COLUMN_WIDTHS = [35, 32, 10, 13, 10];
 const MIN_COLUMN_WIDTHS = [20, 22, 7, 9, 7];
+
+const MOBILE_VISIBLE_COUNT = 3;
+const MOBILE_VISIBLE_STEP = 3;
 
 type SortKey = "name" | "price" | "reviews";
 type SortDirection = "asc" | "desc";
@@ -175,6 +180,22 @@ export const ModelsTable: React.FC = () => {
       "--scrollbar-width": `${scrollbarWidth}px`,
    } as React.CSSProperties;
 
+   const isMobile = useIsMobile();
+
+   const [visibleCount, setVisibleCount] = React.useState(MOBILE_VISIBLE_COUNT);
+
+   React.useEffect(() => {
+      setVisibleCount(isMobile ? MOBILE_VISIBLE_COUNT : sortedModels.length);
+   }, [isMobile, sortedModels.length]);
+
+   const visibleModels = isMobile ? sortedModels.slice(0, visibleCount) : sortedModels;
+
+   const hasMore = isMobile && visibleCount < sortedModels.length;
+
+   const handleShowMore = () => {
+      setVisibleCount((current) => Math.min(current + MOBILE_VISIBLE_STEP, sortedModels.length));
+   };
+
    return (
       <div className={css.table_scroll}>
          <div ref={tableRef} className={css.table} style={tableStyle}>
@@ -233,10 +254,17 @@ export const ModelsTable: React.FC = () => {
 
             <div ref={bodyScrollRef} className={css.table_body_scroll}>
                <div className={css.table_body}>
-                  {sortedModels.map((model: ModelItem) => (
+                  {visibleModels.map((model: ModelItem) => (
                      <ModelRow key={model.id} model={model} />
                   ))}
                </div>
+
+               {hasMore && (
+                  <button type="button" className={css.show_more} onClick={handleShowMore}>
+                     <DropdownArrowIcon className={css.show_more_icon} />
+                     {t.sidebar.showMore}
+                  </button>
+               )}
             </div>
          </div>
       </div>

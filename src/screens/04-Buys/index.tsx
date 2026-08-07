@@ -9,12 +9,12 @@ import { commentsData } from "screens/03-Reviews/lib/comments.data";
 import { CommentLayer } from "screens/03-Reviews/ui/CommentLayer";
 
 import { useTranslation } from "shared/lib/i18n";
-import { ContentActions } from "shared/ui/components/ContentActions";
+
 import { ContentHeader } from "shared/ui/components/ContentHeader";
 import { ContentHeaderTab } from "shared/ui/components/ContentHeader";
 import { Pagination } from "shared/ui/components/Pagination";
 import { Reply } from "shared/ui/components/Reply";
-import { Button } from "shared/ui/ui-kit/Button";
+
 
 import css from "./Buys.module.scss";
 
@@ -53,7 +53,7 @@ export const Buys: React.FC<Prop> = ({ className }) => {
             <div className={css.buys_list_inner}>
                <GroupBuyCard item={card} withBackground={false} />
 
-               <Reply />
+               <Reply placeholder={t.common.replyPlaceholder} buttonText={t.common.buttonText}/>
 
                <div className={css.buys_data_list}>
                   <h6>{t.common.participants}</h6>

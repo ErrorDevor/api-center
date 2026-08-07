@@ -21,8 +21,8 @@ interface Prop {
 
 export const Reply: React.FC<Prop> = ({
    className,
-   placeholder = "Опубликовать ответ",
-   buttonText = "Ответить",
+   placeholder = "Post your reply",
+   buttonText = "Reply",
    disabled = false,
    onSubmit,
    onImageClick,
@@ -78,7 +78,7 @@ export const Reply: React.FC<Prop> = ({
             <div className={css.reply_actions}>
                <button
                   type="button"
-                  aria-label="Добавить изображение"
+                  aria-label="add image"
                   disabled={disabled}
                   className={css.reply_action}
                   onClick={onImageClick}
@@ -88,7 +88,7 @@ export const Reply: React.FC<Prop> = ({
 
                <button
                   type="button"
-                  aria-label="Добавить эмодзи"
+                  aria-label="add emoji"
                   disabled={disabled}
                   className={css.reply_action}
                   onClick={onEmojiClick}
@@ -112,68 +112,3 @@ export const Reply: React.FC<Prop> = ({
       </div>
    );
 };
-
-//    return (
-//       <svg
-//          viewBox="0 0 18 18"
-//          fill="none"
-//          xmlns="http://www.w3.org/2000/svg"
-//          aria-hidden="true"
-//       >
-//          <rect
-//             x="1.5"
-//             y="1.5"
-//             width="15"
-//             height="15"
-//             rx="4"
-//             stroke="currentColor"
-//             strokeWidth="1.5"
-//          />
-
-//          <circle
-//             cx="11.75"
-//             cy="5.25"
-//             r="1.5"
-//             stroke="currentColor"
-//             strokeWidth="1.5"
-//          />
-
-//          <path
-//             d="M2.5 12.5L6.25 8.75C6.65 8.35 7.3 8.35 7.7 8.75L9.5 10.55L10.7 9.35C11.1 8.95 11.75 8.95 12.15 9.35L15.5 12.7"
-//             stroke="currentColor"
-//             strokeWidth="1.5"
-//             strokeLinecap="round"
-//             strokeLinejoin="round"
-//          />
-//       </svg>
-//    );
-// };
-
-// const EmojiIcon: React.FC = () => {
-//    return (
-//       <svg
-//          viewBox="0 0 18 18"
-//          fill="none"
-//          xmlns="http://www.w3.org/2000/svg"
-//          aria-hidden="true"
-//       >
-//          <circle
-//             cx="9"
-//             cy="9"
-//             r="7.5"
-//             stroke="currentColor"
-//             strokeWidth="1.5"
-//          />
-
-//          <circle cx="6.5" cy="7" r="0.75" fill="currentColor" />
-//          <circle cx="11.5" cy="7" r="0.75" fill="currentColor" />
-
-//          <path
-//             d="M6.5 11.25C7.1 11.95 7.95 12.3 9 12.3C10.05 12.3 10.9 11.95 11.5 11.25"
-//             stroke="currentColor"
-//             strokeWidth="1.5"
-//             strokeLinecap="round"
-//          />
-//       </svg>
-//    );
-// };

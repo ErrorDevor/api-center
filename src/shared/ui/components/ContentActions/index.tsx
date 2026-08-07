@@ -25,7 +25,7 @@ export const ContentActions: React.FC<Prop> = ({ className, variant = "api" }) =
          <SortDropdown name={t.content.actions.tableView} />
 
          {variant !== "api" && (
-            <Button variant="black" className={clsx(css.content_action_button, css.create_button)}>
+            <Button variant="grey" className={clsx(css.content_action_button, css.create_button)}>
                <PlusIcon />
                {t.common.newPost}
             </Button>

@@ -14,12 +14,11 @@
       background: rgba(255, 255, 255, 0.3);
       box-shadow: 0 0.1rem 0.2rem 0.1rem rgba(0, 0, 0, 0.04);
    }
-   
+
    &_header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-
       width: 100%;
       min-width: 0;
       height: 2.8rem;
@@ -48,7 +47,6 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-
       width: 100%;
       min-width: 0;
       height: 13.4rem;
@@ -137,7 +135,6 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-
       width: 100%;
       min-width: 0;
       height: 2.8rem;
@@ -146,9 +143,13 @@
    &_info_left {
       display: flex;
       align-items: center;
-
       min-width: 0;
       height: 2rem;
+   }
+
+   &_info_left_seats {
+      display: flex;
+      align-items: center;
    }
 
    &_seats {
@@ -165,11 +166,9 @@
       width: 0.8rem;
       height: 1.7rem;
       flex-shrink: 0;
-
       border-radius: 10rem;
       background: #d9e5f7;
       box-shadow: inset 0 0 0.6rem rgba(255, 255, 255, 0.2);
-
       transition:
          background 0.2s ease,
          border-color 0.2s ease;
@@ -248,5 +247,66 @@
       white-space: nowrap;
 
       @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #797a79);
+   }
+}
+
+.mob_dot {
+   display: none;
+}
+
+.card_seats_mobile {
+   display: none;
+   align-items: center;
+   justify-content: space-between;
+   width: 100%;
+}
+
+@include screenMD {
+   .card {
+      gap: 1.6rem;
+
+      &_background {
+         padding: 1.6rem 1.6rem 0.8rem;
+      }
+
+      &_content {
+         height: fit-content;
+      }
+
+      &_info_row {
+         justify-content: flex-start;
+      }
+
+      &_info_left_seats {
+         display: none;
+      }
+
+      &_seat {
+         width: 3.6rem;
+         height: 1rem;
+         background: #dae6f7;
+      }
+
+      &_seat_active {
+         border: 0.05rem solid rgba(255, 255, 255, 0.2);
+         background: linear-gradient(178.4deg, #4791ff 1.36%, #bfd2ed 122.98%);
+         box-shadow: inset 0 0 0.2rem rgba(255, 255, 255, 0.5);
+      }
+
+      &_dot {
+         margin-inline: 0.6rem;
+      }
+
+      &_payment {
+         margin-left: 0;
+      }
+   }
+
+   .mob_dot {
+      display: block;
+   }
+
+   .card_seats_mobile {
+      display: flex;
    }
 }

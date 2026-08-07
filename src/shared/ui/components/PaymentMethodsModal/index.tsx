@@ -116,6 +116,7 @@ export const PaymentMethodsModal: React.FC<Prop> = ({
       <Modal
          isOpen={isOpen}
          variant="modal"
+         mobileVariant="bottom-sheet"
          ariaLabel={t.paymentMethodsModal.title}
          contentClassName={clsx(css.payment_methods_modal, className)}
          onClose={onClose}

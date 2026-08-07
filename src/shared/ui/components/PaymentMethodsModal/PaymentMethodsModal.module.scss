@@ -417,22 +417,57 @@
    }
 }
 
-@media (max-width: 640px) {
+@include screenMD {
    .payment_methods_modal {
-      width: calc(100vw - 2rem);
+      width: 100%;
       max-width: none;
-      height: calc(100dvh - 2rem);
-      max-height: none;
-      padding-top: 1.6rem;
+      height: auto;
+      max-height: calc(100dvh - 1.6rem);
+      padding: 0 0 1.6rem;
+      overflow: hidden;
+
+      border-right: 0;
+      border-bottom: 0;
+      border-left: 0;
+      border-radius: 2rem 2rem 0 0;
+
+      &_content {
+         width: 100%;
+         height: auto;
+         max-height: calc(100dvh - 4.8rem);
+         min-height: 0;
+      }
 
       &_header {
+         height: 3.2rem;
          padding-inline: 1.6rem;
       }
 
-      &_search,
+      &_search {
+         width: 100%;
+         margin: 0;
+         padding: 1.6rem 1.6rem 0;
+      }
+
       &_regions {
          width: calc(100% - 3.2rem);
-         margin-inline: 1.6rem;
+         margin: 2rem 1.6rem 1.6rem;
+         overflow-x: auto;
+         overflow-y: hidden;
+         justify-content: flex-start;
+
+         &::-webkit-scrollbar {
+            display: none;
+         }
+      }
+
+      &_region {
+         flex-shrink: 0;
+      }
+
+      &_body {
+         min-height: 0;
+         flex: 1 1 auto;
       }
 
       &_scroll {
@@ -443,12 +478,12 @@
          padding-inline: 1.6rem;
       }
 
-      &_shortcut {
-         display: none;
-      }
-
       &_selected {
          max-width: 50%;
+      }
+
+      &_shortcut {
+         display: none;
       }
    }
 }

@@ -5,7 +5,6 @@
    align-items: flex-start;
    width: 100%;
    min-width: 0;
-
    padding: 2rem 0;
 
    &_background {
@@ -13,7 +12,7 @@
       overflow: hidden;
       border: 0.1rem solid #ffffff;
       border-radius: 1.2rem;
-      padding: 1.6rem
+      padding: 1.6rem;
    }
 
    @include transition((background-color, border-color));
@@ -254,41 +253,8 @@
    }
 }
 
-@media (max-width: 600px) {
+@include screenMD {
    .comment_layer {
-      padding: 1.4rem;
-
-      &.has_replies {
-         > .comment_layer_item {
-            > .comment_layer_body {
-               padding-left: 2.4rem;
-            }
-         }
-      }
-
-      &_actions {
-         gap: 1rem;
-      }
-
-      &_text {
-         line-height: 1.9rem;
-      }
-
-      &_replies {
-         padding: 1.4rem 0 1.4rem 2.4rem;
-
-         &::before {
-            top: -9.1rem;
-            left: 1.1rem;
-            width: 2.5rem;
-            height: 11.7rem;
-         }
-
-         > .comment_layer_item {
-            > .comment_layer_body {
-               padding-left: 0;
-            }
-         }
-      }
+      padding: 1.6rem 0;
    }
 }

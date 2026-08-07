@@ -56,3 +56,19 @@
          minmax(0, 1fr);
    }
 }
+
+@include screenMD {
+   .body {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      height: 100%;
+
+      > aside {
+         display: none;
+      }
+   }
+
+   .app {
+      padding: 0;
+   }
+}

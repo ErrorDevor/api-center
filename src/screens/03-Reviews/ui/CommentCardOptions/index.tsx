@@ -4,6 +4,7 @@ import React from "react";
 
 import type { CommentProviderDetails } from "screens/03-Reviews/lib/comments.type";
 
+import { useIsMobile } from "shared/lib/hooks/useIsMobile";
 import { useTranslation } from "shared/lib/i18n";
 import { formatProviderAge } from "shared/lib/i18n/formatters";
 import Image from "shared/ui/base/Image";
@@ -18,19 +19,31 @@ interface Prop {
 const INITIAL_COLUMN_WIDTHS: [number, number] = [50, 50];
 const MIN_COLUMN_WIDTHS: [number, number] = [32, 42];
 
+const MOBILE_VISIBLE_COUNT = 4;
+const MOBILE_VISIBLE_STEP = 4;
+
 export const CommentCardOptions: React.FC<Prop> = ({ data }) => {
    const { locale, t } = useTranslation();
-
+   const isMobile = useIsMobile();
    const translation = t.groupBuys.providerDetails;
-
+   const [visibleModelsCount, setVisibleModelsCount] = React.useState(MOBILE_VISIBLE_COUNT);
    const [tableColumnWidths, setTableColumnWidths] = React.useState<[number, number][]>([
       [...INITIAL_COLUMN_WIDTHS],
       [...INITIAL_COLUMN_WIDTHS],
    ]);
 
    const middleIndex = Math.ceil(data.models.length / 2);
-
    const modelColumns = [data.models.slice(0, middleIndex), data.models.slice(middleIndex)];
+
+   const visibleMobileModels = data.models.slice(0, visibleModelsCount);
+   const modelsLayout = isMobile ? [visibleMobileModels] : modelColumns;
+   const hasMoreModels = isMobile && visibleModelsCount < data.models.length;
+
+   const handleShowMoreModels = () => {
+      setVisibleModelsCount((current) =>
+         Math.min(current + MOBILE_VISIBLE_STEP, data.models.length)
+      );
+   };
 
    const handleResizeStart = (
       event: React.PointerEvent<HTMLButtonElement>,
@@ -95,10 +108,16 @@ export const CommentCardOptions: React.FC<Prop> = ({ data }) => {
       window.addEventListener("pointerup", handlePointerUp);
    };
 
+   React.useEffect(() => {
+      if (isMobile) {
+         setVisibleModelsCount(MOBILE_VISIBLE_COUNT);
+      }
+   }, [isMobile]);
+
    return (
       <div className={css.comment_card_options}>
          <div className={css.comment_card_options_info}>
-            <div className={css.comment_card_options_column}>
+            <div className={css.comment_card_options_row}>
                <div className={css.comment_card_options_item}>
                   <span className={css.comment_card_options_label}>{translation.link}:</span>
 
@@ -113,38 +132,22 @@ export const CommentCardOptions: React.FC<Prop> = ({ data }) => {
                </div>
 
                <div className={css.comment_card_options_item}>
-                  <span className={css.comment_card_options_label}>{translation.age}:</span>
-
-                  <span className={css.comment_card_options_value}>
-                     {formatProviderAge(data.age, locale)}
-                  </span>
-               </div>
-
-               <div className={css.comment_card_options_item}>
-                  <span className={css.comment_card_options_label}>
-                     {translation.paymentMethods}:
-                  </span>
-
-                  <span className={css.comment_card_options_value}>
-                     {data.paymentMethods.join(", ")}
-                  </span>
-
-                  <button type="button" className={css.comment_card_options_more}>
-                     <span>{translation.showAll}</span>
-
-                     <span className={css.comment_card_options_arrow} />
-                  </button>
-               </div>
-            </div>
-
-            <div className={css.comment_card_options_column}>
-               <div className={css.comment_card_options_item}>
                   <span className={css.comment_card_options_label}>{translation.rating}:</span>
 
                   <span className={css.comment_card_options_rating}>
                      <StarIcon className={css.comment_card_options_star} />
 
                      <span>{data.rating}</span>
+                  </span>
+               </div>
+            </div>
+
+            <div className={css.comment_card_options_row}>
+               <div className={css.comment_card_options_item}>
+                  <span className={css.comment_card_options_label}>{translation.age}:</span>
+
+                  <span className={css.comment_card_options_value}>
+                     {formatProviderAge(data.age, locale)}
                   </span>
                </div>
 
@@ -162,6 +165,23 @@ export const CommentCardOptions: React.FC<Prop> = ({ data }) => {
                   </span>
                </div>
             </div>
+
+            <div className={css.comment_card_options_row}>
+               <div className={css.comment_card_options_item}>
+                  <span className={css.comment_card_options_label}>
+                     {translation.paymentMethods}:
+                  </span>
+
+                  <span className={css.comment_card_options_value}>
+                     {data.paymentMethods.join(", ")}
+                  </span>
+               </div>
+               <button type="button" className={css.comment_card_options_more}>
+                  <span>{translation.showAll}</span>
+
+                  <span className={css.comment_card_options_arrow} />
+               </button>
+            </div>
          </div>
 
          <div className={css.comment_card_options_separator} />
@@ -178,7 +198,7 @@ export const CommentCardOptions: React.FC<Prop> = ({ data }) => {
             </div>
 
             <div className={css.comment_card_options_tables}>
-               {modelColumns.map((models, tableIndex) => {
+               {modelsLayout.map((models, tableIndex) => {
                   const widths = tableColumnWidths[tableIndex] ?? INITIAL_COLUMN_WIDTHS;
 
                   const tableStyle = {
@@ -224,6 +244,12 @@ export const CommentCardOptions: React.FC<Prop> = ({ data }) => {
                            {models.map((model) => (
                               <div key={model.id} className={css.comment_card_options_table_row}>
                                  <div className={css.comment_card_options_model}>
+                                    <span className={css.comment_card_options_mobile_label}>
+                                       {translation.modelName}
+                                    </span>
+
+                                    <span className={css.comment_card_options_mobile_dots} />
+
                                     <span className={css.comment_card_options_model_icon}>
                                        <Image.Default src={model.icon} alt="" aria-hidden="true" />
                                     </span>
@@ -232,36 +258,42 @@ export const CommentCardOptions: React.FC<Prop> = ({ data }) => {
                                  </div>
 
                                  <div className={css.comment_card_options_prices}>
-                                    <div className={css.comment_card_options_price}>
-                                       <span>{t.common.input}:</span>
+                                    <span className={css.comment_card_options_mobile_label}>
+                                       {translation.price}
+                                    </span>
 
-                                       <Image.Default
-                                          src="/icons/energy.svg"
-                                          alt=""
-                                          aria-hidden="true"
-                                       />
+                                    <span className={css.comment_card_options_mobile_dots} />
 
-                                       <strong>
-                                          ${model.inputPrice}
-                                          <small>/1M</small>
-                                       </strong>
-                                    </div>
+                                    <div className={css.comment_card_options_prices_values}>
+                                       <div className={css.comment_card_options_price}>
+                                          <span>{t.common.input}:</span>
 
-                                    <span className={css.comment_card_options_price_divider} />
+                                          <Image.Default
+                                             src="/icons/energy.svg"
+                                             alt=""
+                                             aria-hidden="true"
+                                          />
 
-                                    <div className={css.comment_card_options_price}>
-                                       <span>{t.common.output}:</span>
+                                          <strong>
+                                             ${model.inputPrice}
+                                             <small>/1M</small>
+                                          </strong>
+                                       </div>
 
-                                       <Image.Default
-                                          src="/icons/energy.svg"
-                                          alt=""
-                                          aria-hidden="true"
-                                       />
+                                       <div className={css.comment_card_options_price}>
+                                          <span>{t.common.output}:</span>
 
-                                       <strong>
-                                          ${model.outputPrice}
-                                          <small>/1M</small>
-                                       </strong>
+                                          <Image.Default
+                                             src="/icons/energy.svg"
+                                             alt=""
+                                             aria-hidden="true"
+                                          />
+
+                                          <strong>
+                                             ${model.outputPrice}
+                                             <small>/1M</small>
+                                          </strong>
+                                       </div>
                                     </div>
                                  </div>
                               </div>
@@ -271,6 +303,18 @@ export const CommentCardOptions: React.FC<Prop> = ({ data }) => {
                   );
                })}
             </div>
+
+            {hasMoreModels && (
+               <button
+                  type="button"
+                  className={css.comment_card_options_show_more}
+                  onClick={handleShowMoreModels}
+               >
+                  <span className={css.comment_card_options_show_more_arrow} />
+
+                  <span>{t.sidebar.showMore}</span>
+               </button>
+            )}
          </div>
       </div>
    );

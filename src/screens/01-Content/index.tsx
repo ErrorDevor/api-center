@@ -135,6 +135,8 @@ export const Content: React.FC<Prop> = ({ className }) => {
                </div>
             </div>
 
+            <ContentActions variant="api" className={css.content_actions} />
+
             <div className={css.content_list}>
                <ModelsTable />
 

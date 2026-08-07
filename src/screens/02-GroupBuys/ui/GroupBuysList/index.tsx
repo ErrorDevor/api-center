@@ -1,16 +1,54 @@
+"use client";
+
 import React from "react";
 
 import { groupBuys } from "../../lib/groupBuys.data";
+import clsx from "clsx";
+
+import { useIsMobile } from "shared/lib/hooks/useIsMobile";
+import { useTranslation } from "shared/lib/i18n";
+import { DropdownArrowIcon } from "shared/ui/icons";
+
 import { GroupBuyCard } from "../GroupBuyCard";
 
 import css from "./GroupBuysList.module.scss";
 
+const MOBILE_VISIBLE_COUNT = 3;
+const MOBILE_VISIBLE_STEP = 4;
+
 export const GroupBuysList: React.FC = () => {
+   const { t } = useTranslation();
+   const isMobile = useIsMobile();
+
+   const [visibleCount, setVisibleCount] = React.useState(MOBILE_VISIBLE_COUNT);
+
+   React.useEffect(() => {
+      setVisibleCount(isMobile ? MOBILE_VISIBLE_COUNT : groupBuys.length);
+   }, [isMobile]);
+
+   const visibleItems = isMobile ? groupBuys.slice(0, visibleCount) : groupBuys;
+
+   const hasMore = isMobile && visibleCount < groupBuys.length;
+
+   const handleShowMore = () => {
+      setVisibleCount((current) => Math.min(current + MOBILE_VISIBLE_STEP, groupBuys.length));
+   };
+
    return (
-      <div className={css.list}>
-         {groupBuys.map((item) => (
-            <GroupBuyCard key={item.id} item={item} />
-         ))}
-      </div>
+      <>
+         <div className={css.list}>
+            {visibleItems.map((item) => (
+               <GroupBuyCard key={item.id} item={item} />
+            ))}
+         </div>
+
+         {hasMore && (
+            <button type="button" className={css.show_more} onClick={handleShowMore}>
+               <DropdownArrowIcon className={css.show_more_icon} />
+
+               {t.sidebar.showMore}
+            </button>
+         )}
+      </>
    );
 };

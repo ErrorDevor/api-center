@@ -10,9 +10,9 @@ import { Button } from "shared/ui/ui-kit/Button";
 import css from "./LoginForm.module.scss";
 
 interface Props {
-   onBack: () => void;
-   onSubmit: () => void;
-   onClose: () => void;
+   onBack?: () => void;
+   onSubmit?: () => void;
+   onClose?: () => void;
 }
 
 export const LoginForm: React.FC<Props> = ({ onBack, onSubmit, onClose }) => {
@@ -26,7 +26,7 @@ export const LoginForm: React.FC<Props> = ({ onBack, onSubmit, onClose }) => {
 
    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      onSubmit();
+      onSubmit?.();
    };
 
    return (

@@ -23,7 +23,6 @@ export default function CreatePage() {
             <Sidebar
                mode={mode}
                collapsed={collapsed}
-               onModeChange={setMode}
                onToggleCollapsed={() => setCollapsed((prev) => !prev)}
             />
          }

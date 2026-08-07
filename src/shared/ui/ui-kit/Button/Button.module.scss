@@ -182,3 +182,11 @@
       }
    }
 }
+
+@include screenMD {
+   .button {
+      &--blue, &--grey {
+         padding: 0.4rem 1.6rem 0.4rem 1.2rem;
+      }
+   }
+}

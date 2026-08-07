@@ -24,7 +24,6 @@ export default function ReviewsPage() {
             <Sidebar
                mode={mode}
                collapsed={collapsed}
-               onModeChange={setMode}
                onToggleCollapsed={() => setCollapsed((prev) => !prev)}
             />
          }

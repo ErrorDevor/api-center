@@ -12,7 +12,7 @@ import {
    ProviderTooltip,
    type ProviderTooltipPosition,
 } from "shared/ui/components/ProviderTooltip";
-import { ModelIcon } from "shared/ui/icons";
+import { DropdownArrowIcon, ModelIcon } from "shared/ui/icons";
 
 import css from "./ModelRow.module.scss";
 
@@ -40,12 +40,10 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
 
    const providerTooltipId = React.useId();
    const pricesTooltipId = React.useId();
-
    const provider = providerDetails[model.provider];
    const prices = pricesDetails[model.provider];
-
    const providerRef = React.useRef<HTMLAnchorElement>(null);
-   const pricesRef = React.useRef<HTMLAnchorElement>(null);
+   const pricesRef = React.useRef<HTMLButtonElement>(null);
 
    const providerCloseTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -71,7 +69,6 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
          const rect = element.getBoundingClientRect();
 
          const leftPosition = rect.left - tooltipWidth - TOOLTIP_GAP;
-
          const rightPosition = rect.right + TOOLTIP_GAP;
 
          const maxLeft = Math.max(
@@ -177,6 +174,37 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
       }, CLOSE_DELAY);
    }, [clearPricesCloseTimeout]);
 
+   const handlePricesPointerEnter = (event: React.PointerEvent<HTMLButtonElement>) => {
+      if (event.pointerType !== "mouse") {
+         return;
+      }
+
+      openPricesTooltip();
+   };
+
+   const handlePricesPointerLeave = (event: React.PointerEvent<HTMLButtonElement>) => {
+      if (event.pointerType !== "mouse") {
+         return;
+      }
+
+      closePricesTooltip();
+   };
+
+   const handlePricesClick = () => {
+      if (!prices) {
+         return;
+      }
+
+      clearPricesCloseTimeout();
+
+      if (isPricesTooltipOpen) {
+         setIsPricesTooltipOpen(false);
+         return;
+      }
+
+      updatePricesTooltipPosition();
+      setIsPricesTooltipOpen(true);
+   };
    React.useEffect(() => {
       if (!isProviderTooltipOpen) {
          return;
@@ -187,12 +215,10 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
       };
 
       window.addEventListener("resize", handlePositionChange);
-
       window.addEventListener("scroll", handlePositionChange, true);
 
       return () => {
          window.removeEventListener("resize", handlePositionChange);
-
          window.removeEventListener("scroll", handlePositionChange, true);
       };
    }, [isProviderTooltipOpen, updateProviderTooltipPosition]);
@@ -207,12 +233,10 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
       };
 
       window.addEventListener("resize", handlePositionChange);
-
       window.addEventListener("scroll", handlePositionChange, true);
 
       return () => {
          window.removeEventListener("resize", handlePositionChange);
-
          window.removeEventListener("scroll", handlePositionChange, true);
       };
    }, [isPricesTooltipOpen, updatePricesTooltipPosition]);
@@ -227,7 +251,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
    const modelTranslation = t.models.items[model.translationKey];
 
    return (
-      <div className={css.table_row}>
+      <article className={css.table_row}>
          <div className={css.table_cell}>
             <div className={css.model}>
                <div className={css.model_icon}>
@@ -236,7 +260,6 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
 
                <div className={css.model_info}>
                   <strong>{model.name}</strong>
-
                   <span>{modelTranslation.description}</span>
                </div>
             </div>
@@ -245,27 +268,39 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
          <div className={css.table_cell}>
             <div className={css.prices}>
                <div className={css.price}>
-                  <span>{t.common.input}:</span>
-                  &nbsp;
-                  <Image.Default src="/icons/energy.svg" alt="" />
-                  &nbsp;
-                  <strong>
-                     ${model.inputPrice}
-                     <small>/1M</small>
-                  </strong>
+                  <span className={css.mobile_label}>{t.common.input}:</span>
+
+                  <span className={css.desktop_label}>{t.common.input}:</span>
+
+                  <span className={css.mobile_dots} />
+
+                  <div className={css.price_value}>
+                     <Image.Default src="/icons/energy.svg" alt="" />
+
+                     <strong>
+                        ${model.inputPrice}
+                        <small>/1M</small>
+                     </strong>
+                  </div>
                </div>
 
                <div className={css.price_divider} />
 
                <div className={css.price}>
-                  <span>{t.common.output}:</span>
-                  &nbsp;
-                  <Image.Default src="/icons/energy.svg" alt="" />
-                  &nbsp;
-                  <strong>
-                     ${model.outputPrice}
-                     <small>/1M</small>
-                  </strong>
+                  <span className={css.mobile_label}>{t.common.output}:</span>
+
+                  <span className={css.desktop_label}>{t.common.output}:</span>
+
+                  <span className={css.mobile_dots} />
+
+                  <div className={css.price_value}>
+                     <Image.Default src="/icons/energy.svg" alt="" />
+
+                     <strong>
+                        ${model.outputPrice}
+                        <small>/1M</small>
+                     </strong>
+                  </div>
                </div>
             </div>
 
@@ -275,21 +310,27 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
          </div>
 
          <div className={css.table_cell}>
-            <a
-               ref={pricesRef}
-               href="#prices"
-               className={css.we_chat}
-               aria-describedby={prices && isPricesTooltipOpen ? pricesTooltipId : undefined}
-               onMouseEnter={openPricesTooltip}
-               onMouseLeave={closePricesTooltip}
-               onFocus={openPricesTooltip}
-               onBlur={closePricesTooltip}
-               onClick={(event) => event.preventDefault()}
-            >
-               <Image.Default src="/icons/info.svg" alt="" />
-            </a>
+            <span className={css.mobile_label}>{t.content.table.tags}</span>
 
-            <p>{model.weChat}</p>
+            <span className={css.mobile_dots} />
+
+            <button
+               ref={pricesRef}
+               type="button"
+               className={css.payment_value}
+               aria-expanded={isPricesTooltipOpen}
+               aria-describedby={prices && isPricesTooltipOpen ? pricesTooltipId : undefined}
+               onPointerEnter={handlePricesPointerEnter}
+               onPointerLeave={handlePricesPointerLeave}
+               onBlur={closePricesTooltip}
+               onClick={handlePricesClick}
+            >
+               <Image.Default src="/icons/info.svg" alt="" className={css.payment_info_icon} />
+
+               <span className={css.payment_value_text}>{model.weChat}</span>
+
+               <DropdownArrowIcon className={css.payment_arrow} />
+            </button>
 
             {prices && isPricesTooltipOpen && (
                <PricesTooltip
@@ -303,6 +344,10 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
          </div>
 
          <div className={css.table_cell}>
+            <span className={css.mobile_label}>{t.content.table.provider}</span>
+
+            <span className={css.mobile_dots} />
+
             <div className={css.provider_wrapper}>
                <a
                   ref={providerRef}
@@ -318,8 +363,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                   onClick={(event) => event.preventDefault()}
                >
                   <Image.Default src="/icons/info.svg" alt="" />
-
-                  {model.provider}
+                  <span>{model.provider}</span>
                </a>
 
                {provider && isProviderTooltipOpen && (
@@ -336,6 +380,10 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
          </div>
 
          <div className={css.table_cell}>
+            <span className={css.mobile_label}>{t.content.table.reviews}</span>
+
+            <span className={css.mobile_dots} />
+
             <div className={css.reviews}>
                <span>{model.reviews}</span>
 
@@ -344,6 +392,6 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                </div>
             </div>
          </div>
-      </div>
+      </article>
    );
 };

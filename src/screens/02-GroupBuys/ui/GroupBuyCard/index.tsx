@@ -20,6 +20,7 @@ interface Props {
 }
 
 const SEATS_SEGMENTS_COUNT = 19;
+const SEATS_SEGMENTS_COUNT_MOBILE = 4;
 
 export const GroupBuyCard: React.FC<Props> = ({ item, withBackground = true }) => {
    const { locale, t } = useTranslation();
@@ -35,6 +36,11 @@ export const GroupBuyCard: React.FC<Props> = ({ item, withBackground = true }) =
       item.takenPersons === 0
          ? 0
          : Math.max(1, Math.floor((item.takenPersons / item.totalPersons) * SEATS_SEGMENTS_COUNT));
+
+         const activeSegmentsCountMob =
+      item.takenPersons === 0
+         ? 0
+         : Math.max(1, Math.floor((item.takenPersons / item.totalPersons) * SEATS_SEGMENTS_COUNT_MOBILE));
 
    return (
       <article className={clsx(css.card, withBackground && css.card_background)}>
@@ -59,26 +65,44 @@ export const GroupBuyCard: React.FC<Props> = ({ item, withBackground = true }) =
                </div>
             </div>
 
+            <div className={css.card_seats_mobile}>
+               <div className={css.card_seats} aria-label={seatsTakenLabel}>
+                  {Array.from({
+                     length: SEATS_SEGMENTS_COUNT_MOBILE,
+                  }).map((_, index) => (
+                     <span
+                        key={index}
+                        className={clsx(
+                           css.card_seat,
+                           index < activeSegmentsCountMob && css.card_seat_active
+                        )}
+                     />
+                  ))}
+               </div>
+               <span className={css.card_taken}>{seatsTakenLabel}</span>
+            </div>
+
             <div className={css.card_info}>
                <div className={css.card_info_row}>
                   <div className={css.card_info_left}>
-                     <div className={css.card_seats} aria-label={seatsTakenLabel}>
-                        {Array.from({
-                           length: SEATS_SEGMENTS_COUNT,
-                        }).map((_, index) => (
-                           <span
-                              key={index}
-                              className={clsx(
-                                 css.card_seat,
-                                 index < activeSegmentsCount && css.card_seat_active
-                              )}
-                           />
-                        ))}
+                     <div className={css.card_info_left_seats}>
+                        <div className={css.card_seats} aria-label={seatsTakenLabel}>
+                           {Array.from({
+                              length: SEATS_SEGMENTS_COUNT,
+                           }).map((_, index) => (
+                              <span
+                                 key={index}
+                                 className={clsx(
+                                    css.card_seat,
+                                    index < activeSegmentsCount && css.card_seat_active
+                                 )}
+                              />
+                           ))}
+                        </div>
+
+                        <span className={css.card_taken}>{seatsTakenLabel}</span>
+                        <span className={css.card_dot} />
                      </div>
-
-                     <span className={css.card_taken}>{seatsTakenLabel}</span>
-
-                     <span className={css.card_dot} />
 
                      <div className={css.card_price_block}>
                         <strong className={css.card_price}>${item.price}</strong>
@@ -106,7 +130,7 @@ export const GroupBuyCard: React.FC<Props> = ({ item, withBackground = true }) =
                         <span>{item.comments}</span>
                      </button>
                   </div>
-
+                  <span className={clsx(css.card_dot, css.mob_dot)} />
                   <span className={css.card_payment}>{item.paymentMethod}</span>
                </div>
             </div>

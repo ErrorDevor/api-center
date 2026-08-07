@@ -2,8 +2,6 @@
 
 import React from "react";
 
-import { useRouter } from "next/navigation";
-
 import { tabs } from "./lib/comments.data";
 import { commentsData } from "./lib/comments.data";
 import { CommentCard } from "./ui/CommentCard";
@@ -12,8 +10,10 @@ import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
 import { ContentActions } from "shared/ui/components/ContentActions";
+import { ContentHeader } from "shared/ui/components/ContentHeader";
+import { ContentHeaderTab } from "shared/ui/components/ContentHeader";
 import { Pagination } from "shared/ui/components/Pagination";
-import { ArrowIcon, PlusIcon } from "shared/ui/icons";
+import { PlusIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
 import { SortDropdown } from "shared/ui/ui-kit/SortDropdown";
 
@@ -27,50 +27,30 @@ interface Prop {
 
 export const Comments: React.FC<Prop> = ({ className }) => {
    const { t } = useTranslation();
-   const router = useRouter();
    const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
    const [currentPage, setCurrentPage] = React.useState(1);
 
    const totalPages = 10;
    const resultsCount = 158;
 
+   const headerTabs: ContentHeaderTab<TabId>[] = tabs.map((tab) => ({
+      id: tab.id,
+      label: t.groupBuys.tabs[tab.translationKey],
+   }));
+
    return (
       <div className={clsx(css.comments, className)}>
-         <div className={css.comments_top}>
-            <div className={css.comments_title}>
-               <button className={css.back_button} type="button" onClick={() => router.back()}>
-                  <ArrowIcon />
-               </button>
+         <ContentHeader
+            title="OpenAI"
+            resultsCount={resultsCount}
+            resultsLabel={t.content.results}
+            tabs={headerTabs}
+            activeTab={activeTab}
+            actionsVariant="group"
+            onTabChange={setActiveTab}
+         />
 
-               <h2>OpenAI</h2>
-
-               <span>
-                  (<strong>{resultsCount}</strong> {t.content.results})
-               </span>
-            </div>
-
-            <div className={css.divider} />
-
-            <div className={css.comments_buttons_nav}>
-               {tabs.map((tab) => {
-                  const isActive = activeTab === tab.id;
-
-                  return (
-                     <Button
-                        key={tab.id}
-                        variant="grey"
-                        className={clsx(css.button_nav, isActive && css.button_nav_active)}
-                        active={isActive}
-                        onClick={() => setActiveTab(tab.id)}
-                     >
-                        {t.groupBuys.tabs[tab.translationKey]}
-                     </Button>
-                  );
-               })}
-            </div>
-
-            <ContentActions variant="group" />
-         </div>
+         <ContentActions variant="api" className={css.comments_actions} />
 
          <div className={css.comments_list}>
             <CommentCard data={commentsData} />
@@ -90,11 +70,11 @@ export const Comments: React.FC<Prop> = ({ className }) => {
                </div>
 
                {commentsData.commentsData.reviews.map((item) => (
-                  <CommentLayer key={item.id} data={item} />
+                  <CommentLayer key={item.id} data={item} className={css.comments_padding}/>
                ))}
             </div>
 
-            <Pagination
+            <Pagination className={css.comments_pag}
                currentPage={currentPage}
                totalPages={totalPages}
                onChange={setCurrentPage}

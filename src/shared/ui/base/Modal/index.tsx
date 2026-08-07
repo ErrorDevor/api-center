@@ -6,12 +6,17 @@ import { createPortal } from "react-dom";
 import type { DropdownPlacement, ModalProps } from "./lib/Modal.types";
 import clsx from "clsx";
 
+import { useIsMobile } from "shared/lib/hooks/useIsMobile";
+
 import css from "./Modal.module.scss";
 
 interface Position {
    left: number;
    top: number;
 }
+
+const BOTTOM_SHEET_CLOSE_DISTANCE = 120;
+const BOTTOM_SHEET_CLOSE_VELOCITY = 0.5;
 
 const getDropdownPosition = (
    anchorRect: DOMRect,
@@ -69,6 +74,7 @@ export const Modal: React.FC<ModalProps> = ({
    onClose,
    children,
    variant = "modal",
+   mobileVariant,
    className,
    contentClassName,
    anchorRef,
@@ -81,14 +87,26 @@ export const Modal: React.FC<ModalProps> = ({
    ariaLabel,
    ariaLabelledBy,
 }) => {
+   const isMobile = useIsMobile();
+
    const contentRef = React.useRef<HTMLDivElement>(null);
+   const dragStartYRef = React.useRef(0);
+   const dragStartTimeRef = React.useRef(0);
+   const dragOffsetRef = React.useRef(0);
+   const isDraggingRef = React.useRef(false);
 
    const [mounted, setMounted] = React.useState(false);
+   const [dragOffset, setDragOffset] = React.useState(0);
+   const [isDragging, setIsDragging] = React.useState(false);
    const [position, setPosition] = React.useState<Position>({
       left: 0,
       top: 0,
    });
    const [isPositioned, setIsPositioned] = React.useState(variant === "modal");
+
+   const isBottomSheet = isMobile && mobileVariant === "bottom-sheet";
+   const isOverlayVariant = variant === "modal" || isBottomSheet;
+   const isDropdownVariant = variant === "dropdown" && !isBottomSheet;
 
    React.useEffect(() => {
       setMounted(true);
@@ -98,13 +116,23 @@ export const Modal: React.FC<ModalProps> = ({
       };
    }, []);
 
+   React.useEffect(() => {
+      if (!isOpen) {
+         setDragOffset(0);
+         setIsDragging(false);
+         dragOffsetRef.current = 0;
+         isDraggingRef.current = false;
+      }
+   }, [isOpen]);
+
    const updateDropdownPosition = React.useCallback(() => {
-      if (variant !== "dropdown" || !anchorRef?.current || !contentRef.current) {
+      if (!isDropdownVariant || !anchorRef?.current || !contentRef.current) {
          return;
       }
 
       const anchorRect = anchorRef.current.getBoundingClientRect();
       const modalRect = contentRef.current.getBoundingClientRect();
+
       const nextPosition = getDropdownPosition(
          anchorRect,
          modalRect,
@@ -115,10 +143,10 @@ export const Modal: React.FC<ModalProps> = ({
 
       setPosition(nextPosition);
       setIsPositioned(true);
-   }, [anchorRef, gap, placement, variant, viewportPadding]);
+   }, [anchorRef, gap, isDropdownVariant, placement, viewportPadding]);
 
    React.useLayoutEffect(() => {
-      if (!isOpen || variant !== "dropdown") {
+      if (!isOpen || !isDropdownVariant) {
          return;
       }
 
@@ -130,10 +158,10 @@ export const Modal: React.FC<ModalProps> = ({
       return () => {
          cancelAnimationFrame(animationFrame);
       };
-   }, [isOpen, updateDropdownPosition, variant, children]);
+   }, [children, isDropdownVariant, isOpen, updateDropdownPosition]);
 
    React.useEffect(() => {
-      if (!isOpen || variant !== "dropdown") {
+      if (!isOpen || !isDropdownVariant) {
          return;
       }
 
@@ -148,7 +176,7 @@ export const Modal: React.FC<ModalProps> = ({
          window.removeEventListener("resize", handlePositionUpdate);
          window.removeEventListener("scroll", handlePositionUpdate, true);
       };
-   }, [isOpen, updateDropdownPosition, variant]);
+   }, [isDropdownVariant, isOpen, updateDropdownPosition]);
 
    React.useEffect(() => {
       if (!isOpen || !closeOnEscape) {
@@ -162,6 +190,7 @@ export const Modal: React.FC<ModalProps> = ({
 
          event.preventDefault();
          event.stopImmediatePropagation();
+
          onClose();
       };
 
@@ -173,7 +202,7 @@ export const Modal: React.FC<ModalProps> = ({
    }, [closeOnEscape, isOpen, onClose]);
 
    React.useEffect(() => {
-      if (!isOpen || variant !== "dropdown" || !closeOnOutsideClick) {
+      if (!isOpen || !isDropdownVariant || !closeOnOutsideClick) {
          return;
       }
 
@@ -181,7 +210,6 @@ export const Modal: React.FC<ModalProps> = ({
          const target = event.target as Node;
 
          const isInsideContent = contentRef.current?.contains(target);
-
          const isInsideAnchor = anchorRef?.current?.contains(target);
 
          if (!isInsideContent && !isInsideAnchor) {
@@ -194,10 +222,10 @@ export const Modal: React.FC<ModalProps> = ({
       return () => {
          document.removeEventListener("pointerdown", handlePointerDown);
       };
-   }, [anchorRef, closeOnOutsideClick, isOpen, onClose, variant]);
+   }, [anchorRef, closeOnOutsideClick, isDropdownVariant, isOpen, onClose]);
 
    React.useEffect(() => {
-      if (!isOpen || variant !== "modal") {
+      if (!isOpen || !isOverlayVariant) {
          return;
       }
 
@@ -208,13 +236,68 @@ export const Modal: React.FC<ModalProps> = ({
       return () => {
          document.body.style.overflow = previousOverflow;
       };
-   }, [isOpen, variant]);
+   }, [isOpen, isOverlayVariant]);
+
+   const handleDragStart = (event: React.PointerEvent<HTMLButtonElement>) => {
+      if (!isBottomSheet) {
+         return;
+      }
+
+      event.currentTarget.setPointerCapture(event.pointerId);
+
+      dragStartYRef.current = event.clientY;
+      dragStartTimeRef.current = performance.now();
+      dragOffsetRef.current = 0;
+      isDraggingRef.current = true;
+
+      setIsDragging(true);
+   };
+
+   const handleDragMove = (event: React.PointerEvent<HTMLButtonElement>) => {
+      if (!isDraggingRef.current) {
+         return;
+      }
+
+      const nextOffset = Math.max(0, event.clientY - dragStartYRef.current);
+
+      dragOffsetRef.current = nextOffset;
+      setDragOffset(nextOffset);
+   };
+
+   const handleDragEnd = (event: React.PointerEvent<HTMLButtonElement>) => {
+      if (!isDraggingRef.current) {
+         return;
+      }
+
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+         event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+
+      const elapsedTime = Math.max(performance.now() - dragStartTimeRef.current, 1);
+
+      const velocity = dragOffsetRef.current / elapsedTime;
+
+      isDraggingRef.current = false;
+      setIsDragging(false);
+
+      const shouldClose =
+         dragOffsetRef.current >= BOTTOM_SHEET_CLOSE_DISTANCE ||
+         velocity >= BOTTOM_SHEET_CLOSE_VELOCITY;
+
+      if (shouldClose) {
+         onClose();
+         return;
+      }
+
+      dragOffsetRef.current = 0;
+      setDragOffset(0);
+   };
 
    if (!mounted || !isOpen) {
       return null;
    }
 
-   if (variant === "dropdown" && !anchorRef) {
+   if (isDropdownVariant && !anchorRef) {
       console.error('Modal: "anchorRef" is required for the "dropdown" variant.');
 
       return null;
@@ -222,14 +305,19 @@ export const Modal: React.FC<ModalProps> = ({
 
    const content = (
       <div
-         className={clsx(css.modal, css[`modal_${variant}`], className)}
+         className={clsx(
+            css.modal,
+            css[`modal_${variant}`],
+            isBottomSheet && css.modal_bottom_sheet,
+            className
+         )}
          onPointerDown={(event) => {
-            if (variant === "modal") {
+            if (isOverlayVariant) {
                event.stopPropagation();
             }
          }}
       >
-         {variant === "modal" && (
+         {isOverlayVariant && (
             <button
                type="button"
                className={css.modal_overlay}
@@ -241,22 +329,46 @@ export const Modal: React.FC<ModalProps> = ({
 
          <div
             ref={contentRef}
-            role={variant === "modal" ? "dialog" : undefined}
-            aria-modal={variant === "modal" ? true : undefined}
+            role={isOverlayVariant ? "dialog" : undefined}
+            aria-modal={isOverlayVariant ? true : undefined}
             aria-label={ariaLabel}
             aria-labelledby={ariaLabelledBy}
-            className={clsx(css.modal_content, css[`modal_content_${variant}`], contentClassName)}
+            className={clsx(
+               css.modal_content,
+               css[`modal_content_${variant}`],
+               isBottomSheet && css.modal_content_bottom_sheet,
+               isDragging && css.modal_content_dragging,
+               contentClassName
+            )}
             style={
-               variant === "dropdown"
+               isBottomSheet
                   ? {
-                       left: position.left,
-                       top: position.top,
-                       visibility: isPositioned ? "visible" : "hidden",
+                       transform: `translateY(${dragOffset}px)`,
                     }
-                  : undefined
+                  : isDropdownVariant
+                    ? {
+                         left: position.left,
+                         top: position.top,
+                         visibility: isPositioned ? "visible" : "hidden",
+                      }
+                    : undefined
             }
          >
-            {children}
+            {isBottomSheet && (
+               <button
+                  type="button"
+                  className={css.modal_drag_handle}
+                  aria-label="Close panel"
+                  onPointerDown={handleDragStart}
+                  onPointerMove={handleDragMove}
+                  onPointerUp={handleDragEnd}
+                  onPointerCancel={handleDragEnd}
+               >
+                  <span />
+               </button>
+            )}
+
+            <div className={clsx(isBottomSheet && css.modal_bottom_sheet_body)}>{children}</div>
          </div>
       </div>
    );
@@ -264,4 +376,9 @@ export const Modal: React.FC<ModalProps> = ({
    return createPortal(content, document.body);
 };
 
-export type { DropdownPlacement, ModalProps, ModalVariant } from "./lib/Modal.types";
+export type {
+   DropdownPlacement,
+   ModalMobileVariant,
+   ModalProps,
+   ModalVariant,
+} from "./lib/Modal.types";

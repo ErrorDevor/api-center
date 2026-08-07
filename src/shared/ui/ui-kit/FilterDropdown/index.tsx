@@ -97,6 +97,7 @@ export const FilterDropdown: React.FC<Prop> = ({ className, name, variant = "api
          <Modal
             isOpen={isOpen}
             variant="dropdown"
+            mobileVariant="bottom-sheet"
             anchorRef={buttonRef}
             placement="bottom-end"
             contentClassName={css.account_type_modal}

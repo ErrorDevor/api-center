@@ -1,15 +1,17 @@
-import type React from "react";
+import React from "react";
 
 export type ModalVariant = "modal" | "dropdown";
+
+export type ModalMobileVariant = "bottom-sheet";
 
 export type DropdownPlacement =
    "bottom-start" | "bottom-end" | "top-start" | "top-end" | "left" | "right";
 
 export interface ModalProps {
    isOpen: boolean;
-   onClose: () => void;
    children: React.ReactNode;
    variant?: ModalVariant;
+   mobileVariant?: ModalMobileVariant;
    className?: string;
    contentClassName?: string;
    anchorRef?: React.RefObject<HTMLElement | null>;
@@ -21,4 +23,5 @@ export interface ModalProps {
    closeOnEscape?: boolean;
    ariaLabel?: string;
    ariaLabelledBy?: string;
+   onClose: () => void;
 }
