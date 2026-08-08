@@ -14,7 +14,7 @@ import { ModelRow } from "../ModelRow";
 
 import css from "./ModelsTable.module.scss";
 
-const INITIAL_COLUMN_WIDTHS = [35, 32, 10, 13, 10];
+const INITIAL_COLUMN_WIDTHS = [27, 30, 20, 13, 10];
 const MIN_COLUMN_WIDTHS = [20, 22, 7, 9, 7];
 
 const MOBILE_VISIBLE_COUNT = 3;
