@@ -68,6 +68,13 @@
       }
    }
 
+   &_icon_image {
+      width: 2.2rem;
+      height: 2.2rem;
+      flex-shrink: 0;
+      object-fit: contain;
+   }
+
    &_info {
       display: flex;
       flex-direction: column;

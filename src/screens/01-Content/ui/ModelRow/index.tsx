@@ -6,6 +6,7 @@ import type { ModelItem } from "screens/01-Content/lib/content.data";
 import { pricesDetails, providerDetails } from "screens/01-Content/lib/provider.data";
 
 import { useTranslation } from "shared/lib/i18n";
+import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 import Image from "shared/ui/base/Image";
 import { PricesTooltip, type PricesTooltipPosition } from "shared/ui/components/PricesTooltip";
 import {
@@ -252,13 +253,18 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
    }, [clearPricesCloseTimeout, clearProviderCloseTimeout]);
 
    const modelTranslation = t.models.items[model.translationKey];
+   const vendorIcon = getVendorIcon(getVendorId(model.canonicalModelId));
 
    return (
       <article className={css.table_row}>
          <div className={css.table_cell}>
             <div className={css.model}>
                <div className={css.model_icon}>
-                  <ModelIcon />
+                  {vendorIcon ? (
+                     <Image.Default src={vendorIcon} alt="" className={css.model_icon_image} />
+                  ) : (
+                     <ModelIcon />
+                  )}
                </div>
 
                <div className={css.model_info}>
