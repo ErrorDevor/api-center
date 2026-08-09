@@ -2,7 +2,8 @@
 
 import React from "react";
 
-import { modelType, providers } from "../lib/sidebar.data";
+import { modelType } from "../lib/sidebar.data";
+import { toSidebarProviders } from "../lib/providers-to-sidebar";
 import type {
    ProviderItem as ProviderItemType,
    ProviderModel,
@@ -11,6 +12,7 @@ import type {
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
+import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
 import { DropdownArrowIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
 
@@ -21,19 +23,39 @@ import { SidebarSwitcher } from "./SidebarSwitcher";
 
 import css from "../Sidebar.module.scss";
 
+const VISIBLE_PROVIDERS_COUNT = 8;
+
 interface Props {
    className?: string;
 }
 
 export const SidebarContent: React.FC<Props> = ({ className }) => {
    const { t } = useTranslation();
+   const { records } = useProviderRecords();
 
-   const [activeProviderId, setActiveProviderId] = React.useState("openai");
-   const [activeModelId, setActiveModelId] = React.useState("gpt-5-6-terra");
+   const providers = React.useMemo(() => toSidebarProviders(records), [records]);
+
+   const [activeProviderId, setActiveProviderId] = React.useState<string | undefined>(undefined);
+   const [activeModelId, setActiveModelId] = React.useState<string | undefined>(undefined);
    const [activeModelType, setActiveModelType] = React.useState(modelType[0].id);
    const [showAll, setShowAll] = React.useState(false);
 
-   const visibleProviders = showAll ? providers : providers.slice(0, 8);
+   // Once real data arrives, default the selection to the first provider so
+   // something is highlighted instead of pointing at a vendor id that may
+   // not exist in the loaded dataset.
+   React.useEffect(() => {
+      if (activeProviderId !== undefined || providers.length === 0) {
+         return;
+      }
+
+      setActiveProviderId(providers[0].id);
+      setActiveModelId(providers[0].models?.[0]?.id);
+   }, [activeProviderId, providers]);
+
+   const visibleProviders =
+      showAll || providers.length <= VISIBLE_PROVIDERS_COUNT
+         ? providers
+         : providers.slice(0, VISIBLE_PROVIDERS_COUNT);
 
    const handleProviderClick = (providerId: string) => {
       setActiveProviderId(providerId);
@@ -80,17 +102,19 @@ export const SidebarContent: React.FC<Props> = ({ className }) => {
                   );
                })}
 
-               <button
-                  type="button"
-                  className={css.show_more}
-                  onClick={() => setShowAll((current) => !current)}
-               >
-                  <DropdownArrowIcon
-                     className={clsx(css.show_more_icon, showAll && css.show_more_icon_opened)}
-                  />
+               {providers.length > VISIBLE_PROVIDERS_COUNT && (
+                  <button
+                     type="button"
+                     className={css.show_more}
+                     onClick={() => setShowAll((current) => !current)}
+                  >
+                     <DropdownArrowIcon
+                        className={clsx(css.show_more_icon, showAll && css.show_more_icon_opened)}
+                     />
 
-                  {showAll ? t.sidebar.showLess : t.sidebar.showMore}
-               </button>
+                     {showAll ? t.sidebar.showLess : t.sidebar.showMore}
+                  </button>
+               )}
             </div>
 
             <SidebarList

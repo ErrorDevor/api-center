@@ -40,8 +40,11 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
 
    const providerTooltipId = React.useId();
    const pricesTooltipId = React.useId();
-   const provider = providerDetails[model.provider];
-   const prices = pricesDetails[model.provider];
+   // Real reseller names from providers.json won't match a dictionary key,
+   // so every provider falls back to the same placeholder tooltip content
+   // (see provider.data.ts) instead of the tooltip silently never opening.
+   const provider = providerDetails[model.provider] ?? providerDetails.OpenRouter;
+   const prices = pricesDetails[model.provider] ?? pricesDetails.OpenRouter;
    const providerRef = React.useRef<HTMLAnchorElement>(null);
    const pricesRef = React.useRef<HTMLButtonElement>(null);
 

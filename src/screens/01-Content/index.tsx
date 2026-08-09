@@ -3,10 +3,12 @@
 import React from "react";
 
 import { tabs } from "./lib/content.data";
+import { toModelItems } from "./lib/providers-to-models";
 import { ModelsTable } from "./ui/ModelsTable";
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
+import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
 import { ContentActions } from "shared/ui/components/ContentActions";
 import { ContentHeader } from "shared/ui/components/ContentHeader";
 import { ContentHeaderTab } from "shared/ui/components/ContentHeader";
@@ -23,6 +25,9 @@ interface Prop {
 
 export const Content: React.FC<Prop> = ({ className }) => {
    const { t } = useTranslation();
+   const { records } = useProviderRecords();
+
+   const models = React.useMemo(() => toModelItems(records), [records]);
 
    const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
    const [currentPage, setCurrentPage] = React.useState(1);
@@ -32,7 +37,7 @@ export const Content: React.FC<Prop> = ({ className }) => {
    const [descriptionHeight, setDescriptionHeight] = React.useState(0);
 
    const totalPages = 10;
-   const resultsCount = 158;
+   const resultsCount = models.length;
 
    const descriptionTranslation = t.content.modelDescription;
 
@@ -76,7 +81,7 @@ export const Content: React.FC<Prop> = ({ className }) => {
    return (
       <div className={clsx(css.content, className)}>
          <ContentHeader
-            title="OpenAI"
+            title={t.content.catalogTitle}
             resultsCount={resultsCount}
             resultsLabel={t.content.results}
             tabs={headerTabs}
@@ -138,7 +143,7 @@ export const Content: React.FC<Prop> = ({ className }) => {
             <ContentActions variant="api" className={css.content_actions} />
 
             <div className={css.content_list}>
-               <ModelsTable />
+               <ModelsTable models={models} />
 
                <Pagination
                   currentPage={currentPage}

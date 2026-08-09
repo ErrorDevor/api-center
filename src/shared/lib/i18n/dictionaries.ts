@@ -60,6 +60,7 @@ export const en = {
    },
 
    content: {
+      catalogTitle: "AI API providers",
       results: "results",
       tabs: {
          crypto: "Crypto",
@@ -81,6 +82,7 @@ export const en = {
          provider: "Provider",
          reviews: "Reviews",
          resizeColumn: "Resize column",
+         emptyState: "No models found",
       },
       modelDescription: {
          title: "Cheap GPT-5.6 Terra API",
@@ -468,6 +470,7 @@ export const ru: Dictionary = {
    },
 
    content: {
+      catalogTitle: "AI API провайдеры",
       results: "результатов",
       tabs: {
          crypto: "Крипта",
@@ -489,6 +492,7 @@ export const ru: Dictionary = {
          provider: "Поставщик",
          reviews: "Отзывы",
          resizeColumn: "Изменить ширину столбца",
+         emptyState: "Модели не найдены",
       },
       modelDescription: {
          title: "Дешевый GPT-5.6 Terra API",

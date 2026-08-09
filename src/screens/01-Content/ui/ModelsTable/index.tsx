@@ -3,7 +3,6 @@
 import React from "react";
 
 import clsx from "clsx";
-import { models } from "screens/01-Content/lib/content.data";
 import type { ModelItem } from "screens/01-Content/lib/content.data";
 
 import { useIsMobile } from "shared/lib/hooks/useIsMobile";
@@ -28,7 +27,11 @@ interface SortState {
    direction: SortDirection;
 }
 
-export const ModelsTable: React.FC = () => {
+interface Props {
+   models: ModelItem[];
+}
+
+export const ModelsTable: React.FC<Props> = ({ models }) => {
    const { t } = useTranslation();
 
    const tableRef = React.useRef<HTMLDivElement>(null);
@@ -90,7 +93,7 @@ export const ModelsTable: React.FC = () => {
 
          return sort.direction === "asc" ? result : -result;
       });
-   }, [sort]);
+   }, [models, sort]);
 
    const handleSort = (key: SortKey) => {
       setSort((currentSort) => {
@@ -254,9 +257,13 @@ export const ModelsTable: React.FC = () => {
 
             <div ref={bodyScrollRef} className={css.table_body_scroll}>
                <div className={css.table_body}>
-                  {visibleModels.map((model: ModelItem) => (
-                     <ModelRow key={model.id} model={model} />
-                  ))}
+                  {visibleModels.length === 0 ? (
+                     <div className={css.empty_state}>{t.content.table.emptyState}</div>
+                  ) : (
+                     visibleModels.map((model: ModelItem) => (
+                        <ModelRow key={model.id} model={model} />
+                     ))
+                  )}
                </div>
 
                {hasMore && (
