@@ -37,6 +37,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# providers feed — this is where the backend parser writes real data
+# directly on the server at runtime (see src/app/api/mock/providers for
+# the local dev fixture instead, under /mock)
+/public/data/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

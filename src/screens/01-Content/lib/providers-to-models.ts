@@ -27,9 +27,9 @@ const computeDiscountPercent = (record: ProviderPriceRecord): number => {
       discountFromPrice(record.outputPriceUsdPer1m, record.officialOutputPriceUsdPer1m) ??
       record.outputDiscountPercent;
 
-   // The pipeline is only supposed to publish listings that are actually
-   // cheaper than official (see bestai_price_parser_tz.md step 11), but
-   // clamp defensively so a stray bad record can't render "-5% cheaper".
+   // The backend pipeline is only supposed to publish listings that are
+   // actually cheaper than official, but clamp defensively so a stray bad
+   // record can't render "-5% cheaper".
    return Math.max(0, Math.round((inputDiscount + outputDiscount) / 2));
 };
 
