@@ -9,6 +9,20 @@ export const getVendorId = (canonicalModelId: string): string => {
    return vendorId || canonicalModelId;
 };
 
+// Fixed sidebar order — matches the original design's vendor list, kept
+// stable regardless of which vendors currently have records in
+// providers.json (a vendor with no data yet still shows up with count 0).
+export const KNOWN_VENDOR_IDS: string[] = [
+   "google",
+   "openai",
+   "deepseek",
+   "minimax",
+   "anthropic",
+   "xai",
+   "chatglm",
+   "grok",
+];
+
 export const VENDOR_DISPLAY_NAMES: Record<string, string> = {
    google: "Google",
    openai: "OpenAI",
