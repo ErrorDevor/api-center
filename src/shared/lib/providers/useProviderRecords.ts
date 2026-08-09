@@ -8,12 +8,11 @@ import type { ProviderPriceRecord } from "./types";
 // Defaults to the co-located static file: in production the backend
 // parser writes real data straight onto the server's disk at
 // public/data/providers.json (outside of git), so this path needs no
-// config there. Set NEXT_PUBLIC_PROVIDERS_JSON_URL to override — locally
-// that's the bundled mock route (see .env.example), or in general any
-// remote host (e.g. a backend served from a different domain/VPS). A
-// remote URL only works if that host sends CORS headers allowing this
-// site's origin — that's the backend's responsibility, not something this
-// fetch can work around.
+// config there. Set NEXT_PUBLIC_PROVIDERS_JSON_URL to override — e.g. a
+// remote host such as a backend served from a different domain/VPS (see
+// .env.example). A remote URL only works if that host sends CORS headers
+// allowing this site's origin — that's the backend's responsibility, not
+// something this fetch can work around.
 const PROVIDERS_JSON_URL =
    process.env.NEXT_PUBLIC_PROVIDERS_JSON_URL || "/data/providers.json";
 
