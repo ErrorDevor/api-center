@@ -56,7 +56,20 @@ export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedM
       ? getVendorDisplayName(selectedVendorId)
       : t.content.catalogTitle;
 
-   const descriptionTranslation = t.content.modelDescription;
+   // Below the fold, the description block used to always say "GPT-5.6
+   // Terra" no matter what — now it's generic by default and names the
+   // selected vendor, same as the header title above.
+   const descriptionProvider = selectedVendorId
+      ? getVendorDisplayName(selectedVendorId)
+      : t.content.modelDescription.defaultProvider;
+   const descriptionTitle = t.content.modelDescription.title.replace(
+      "{provider}",
+      descriptionProvider
+   );
+   const descriptionText = t.content.modelDescription.text.replace(
+      "{provider}",
+      descriptionProvider
+   );
 
    const headerTabs: ContentHeaderTab<TabId>[] = tabs.map((tab) => ({
       id: tab.id,
@@ -89,7 +102,7 @@ export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedM
       return () => {
          resizeObserver.disconnect();
       };
-   }, [descriptionTranslation.text]);
+   }, [descriptionText]);
 
    const handleDescriptionToggle = () => {
       setIsDescriptionExpanded((currentValue) => !currentValue);
@@ -109,7 +122,7 @@ export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedM
          <div className={css.content_scroll}>
             <div className={css.content_main}>
                <div className={css.content_main_inner}>
-                  <h4>{descriptionTranslation.title}</h4>
+                  <h4>{descriptionTitle}</h4>
 
                   <div
                      className={clsx(
@@ -123,7 +136,7 @@ export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedM
                      }
                   >
                      <p ref={descriptionRef} className={css.content_description_text}>
-                        {descriptionTranslation.text}
+                        {descriptionText}
                      </p>
 
                      {isDescriptionOverflowing && !isDescriptionExpanded && (
@@ -136,7 +149,7 @@ export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedM
                            aria-expanded={false}
                            onClick={handleDescriptionToggle}
                         >
-                           ... {descriptionTranslation.readMore}
+                           ... {t.content.modelDescription.readMore}
                         </button>
                      )}
                   </div>
@@ -151,7 +164,7 @@ export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedM
                         aria-expanded
                         onClick={handleDescriptionToggle}
                      >
-                        {descriptionTranslation.showLess}
+                        {t.content.modelDescription.showLess}
                      </button>
                   )}
                </div>
