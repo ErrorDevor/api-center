@@ -16,6 +16,8 @@ export interface ModelItem {
    weChat: string;
    tags: ModelTag[];
    provider: ProviderName;
+   // Reseller's site — the Provider column links out here.
+   providerUrl: string;
    reviews: number;
    reports: number;
 }

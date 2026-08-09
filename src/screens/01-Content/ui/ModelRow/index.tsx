@@ -360,7 +360,9 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
             <div className={css.provider_wrapper}>
                <a
                   ref={providerRef}
-                  href="#provider"
+                  href={model.providerUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={css.provider}
                   aria-describedby={
                      provider && isProviderTooltipOpen ? providerTooltipId : undefined
@@ -369,7 +371,6 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                   onMouseLeave={closeProviderTooltip}
                   onFocus={openProviderTooltip}
                   onBlur={closeProviderTooltip}
-                  onClick={(event) => event.preventDefault()}
                >
                   <Image.Default src="/icons/info.svg" alt="" />
                   <span>{model.provider}</span>
