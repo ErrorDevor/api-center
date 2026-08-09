@@ -13,7 +13,6 @@ import { getVendorDisplayName, getVendorId } from "shared/lib/providers/vendors"
 import { ContentActions } from "shared/ui/components/ContentActions";
 import { ContentHeader } from "shared/ui/components/ContentHeader";
 import { ContentHeaderTab } from "shared/ui/components/ContentHeader";
-import { Pagination } from "shared/ui/components/Pagination";
 import { Button } from "shared/ui/ui-kit/Button";
 
 import css from "./Content.module.scss";
@@ -47,13 +46,11 @@ export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedM
    }, [models, selectedVendorId, selectedModelId]);
 
    const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
-   const [currentPage, setCurrentPage] = React.useState(1);
    const [isDescriptionExpanded, setIsDescriptionExpanded] = React.useState(false);
    const descriptionRef = React.useRef<HTMLParagraphElement>(null);
    const [isDescriptionOverflowing, setIsDescriptionOverflowing] = React.useState(false);
    const [descriptionHeight, setDescriptionHeight] = React.useState(0);
 
-   const totalPages = 10;
    const resultsCount = filteredModels.length;
    const catalogTitle = selectedVendorId
       ? getVendorDisplayName(selectedVendorId)
@@ -164,12 +161,6 @@ export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedM
 
             <div className={css.content_list}>
                <ModelsTable models={filteredModels} />
-
-               <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onChange={setCurrentPage}
-               />
             </div>
          </div>
       </div>
