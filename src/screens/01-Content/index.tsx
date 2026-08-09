@@ -9,6 +9,7 @@ import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
+import { getVendorDisplayName, getVendorId } from "shared/lib/providers/vendors";
 import { ContentActions } from "shared/ui/components/ContentActions";
 import { ContentHeader } from "shared/ui/components/ContentHeader";
 import { ContentHeaderTab } from "shared/ui/components/ContentHeader";
@@ -21,13 +22,29 @@ type TabId = (typeof tabs)[number]["id"];
 
 interface Prop {
    className?: string;
+   // Set by the Sidebar's vendor/model selection (see /home page). Both
+   // undefined means "show everything".
+   selectedVendorId?: string;
+   selectedModelId?: string;
 }
 
-export const Content: React.FC<Prop> = ({ className }) => {
+export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedModelId }) => {
    const { t } = useTranslation();
    const { records } = useProviderRecords();
 
    const models = React.useMemo(() => toModelItems(records), [records]);
+
+   const filteredModels = React.useMemo(() => {
+      if (selectedModelId) {
+         return models.filter((model) => model.canonicalModelId === selectedModelId);
+      }
+
+      if (selectedVendorId) {
+         return models.filter((model) => getVendorId(model.canonicalModelId) === selectedVendorId);
+      }
+
+      return models;
+   }, [models, selectedVendorId, selectedModelId]);
 
    const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
    const [currentPage, setCurrentPage] = React.useState(1);
@@ -37,7 +54,10 @@ export const Content: React.FC<Prop> = ({ className }) => {
    const [descriptionHeight, setDescriptionHeight] = React.useState(0);
 
    const totalPages = 10;
-   const resultsCount = models.length;
+   const resultsCount = filteredModels.length;
+   const catalogTitle = selectedVendorId
+      ? getVendorDisplayName(selectedVendorId)
+      : t.content.catalogTitle;
 
    const descriptionTranslation = t.content.modelDescription;
 
@@ -81,7 +101,7 @@ export const Content: React.FC<Prop> = ({ className }) => {
    return (
       <div className={clsx(css.content, className)}>
          <ContentHeader
-            title={t.content.catalogTitle}
+            title={catalogTitle}
             resultsCount={resultsCount}
             resultsLabel={t.content.results}
             tabs={headerTabs}
@@ -143,7 +163,7 @@ export const Content: React.FC<Prop> = ({ className }) => {
             <ContentActions variant="api" className={css.content_actions} />
 
             <div className={css.content_list}>
-               <ModelsTable models={models} />
+               <ModelsTable models={filteredModels} />
 
                <Pagination
                   currentPage={currentPage}

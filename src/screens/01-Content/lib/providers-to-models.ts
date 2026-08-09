@@ -18,6 +18,7 @@ export const toModelItems = (records: ProviderPriceRecord[]): ModelItem[] => {
    return records.map((record): ModelItem => ({
       id: `${record.providerDomain}__${record.canonicalModelId}`,
       name: record.modelName,
+      canonicalModelId: record.canonicalModelId,
       translationKey: STUB_TRANSLATION_KEY,
       inputPrice: record.inputPriceUsdPer1m,
       outputPrice: record.outputPriceUsdPer1m,

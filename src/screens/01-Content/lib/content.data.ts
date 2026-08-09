@@ -6,6 +6,9 @@ export type ModelTag = "image" | "video";
 export interface ModelItem {
    id: string;
    name: string;
+   // "vendor/model" id (e.g. "anthropic/claude-sonnet-5") — lets the table
+   // be filtered by the Sidebar's vendor/model selection.
+   canonicalModelId: string;
    translationKey: ModelTranslationKey;
    inputPrice: number;
    outputPrice: number;

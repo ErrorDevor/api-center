@@ -14,6 +14,8 @@ export const dynamic = "force-dynamic";
 
 export default function HomePage() {
    const [collapsed, setCollapsed] = React.useState(false);
+   const [selectedVendorId, setSelectedVendorId] = React.useState<string | undefined>(undefined);
+   const [selectedModelId, setSelectedModelId] = React.useState<string | undefined>(undefined);
 
    const mode: SidebarMode = "api";
 
@@ -26,10 +28,12 @@ export default function HomePage() {
                mode={mode}
                collapsed={collapsed}
                onToggleCollapsed={() => setCollapsed((current) => !current)}
+               onSelectVendor={setSelectedVendorId}
+               onSelectModel={setSelectedModelId}
             />
          }
       >
-         <Content />
+         <Content selectedVendorId={selectedVendorId} selectedModelId={selectedModelId} />
       </AppLayout>
    );
 }

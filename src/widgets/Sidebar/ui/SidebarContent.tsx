@@ -27,9 +27,17 @@ const VISIBLE_PROVIDERS_COUNT = 8;
 
 interface Props {
    className?: string;
+   // Notified on every explicit user click so a page (e.g. /home) can filter
+   // its model table accordingly. Not called by internal-only state changes.
+   onSelectVendor?: (vendorId: string | undefined) => void;
+   onSelectModel?: (canonicalModelId: string | undefined) => void;
 }
 
-export const SidebarContent: React.FC<Props> = ({ className }) => {
+export const SidebarContent: React.FC<Props> = ({
+   className,
+   onSelectVendor,
+   onSelectModel,
+}) => {
    const { t } = useTranslation();
    const { records } = useProviderRecords();
 
@@ -40,30 +48,29 @@ export const SidebarContent: React.FC<Props> = ({ className }) => {
    const [activeModelType, setActiveModelType] = React.useState(modelType[0].id);
    const [showAll, setShowAll] = React.useState(false);
 
-   // Once real data arrives, default the selection to the first provider so
-   // something is highlighted instead of pointing at a vendor id that may
-   // not exist in the loaded dataset.
-   React.useEffect(() => {
-      if (activeProviderId !== undefined || providers.length === 0) {
-         return;
-      }
-
-      setActiveProviderId(providers[0].id);
-      setActiveModelId(providers[0].models?.[0]?.id);
-   }, [activeProviderId, providers]);
-
    const visibleProviders =
       showAll || providers.length <= VISIBLE_PROVIDERS_COUNT
          ? providers
          : providers.slice(0, VISIBLE_PROVIDERS_COUNT);
 
+   // Clicking the already-active provider/model clears the selection (shows
+   // everything again) instead of being a dead click.
    const handleProviderClick = (providerId: string) => {
-      setActiveProviderId(providerId);
+      const isDeselecting = activeProviderId === providerId && activeModelId === undefined;
+
+      setActiveProviderId(isDeselecting ? undefined : providerId);
+      setActiveModelId(undefined);
+      onSelectVendor?.(isDeselecting ? undefined : providerId);
+      onSelectModel?.(undefined);
    };
 
    const handleModelClick = (provider: ProviderItemType, model: ProviderModel) => {
+      const isDeselecting = activeModelId === model.id;
+
       setActiveProviderId(provider.id);
-      setActiveModelId(model.id);
+      setActiveModelId(isDeselecting ? undefined : model.id);
+      onSelectVendor?.(provider.id);
+      onSelectModel?.(isDeselecting ? undefined : model.id);
    };
 
    return (
