@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
+  turbopack: {
+    root: __dirname,
+  },
   reactStrictMode: false,
   allowedDevOrigins: ["172.25.107.9"],
   sassOptions: {
