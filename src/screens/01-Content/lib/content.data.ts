@@ -4,8 +4,11 @@ export type ModelTranslationKey = "gptTerra";
 export type ModelTag = "image" | "video";
 
 export interface ModelItem {
-   id: number;
+   id: string;
    name: string;
+   // "vendor/model" id (e.g. "anthropic/claude-sonnet-5") — lets the table
+   // be filtered by the Sidebar's vendor/model selection.
+   canonicalModelId: string;
    translationKey: ModelTranslationKey;
    inputPrice: number;
    outputPrice: number;
@@ -13,6 +16,8 @@ export interface ModelItem {
    weChat: string;
    tags: ModelTag[];
    provider: ProviderName;
+   // Reseller's site — the Provider column links out here.
+   providerUrl: string;
    reviews: number;
    reports: number;
 }
@@ -31,17 +36,3 @@ export const tabs = [
       translationKey: "freeTest",
    },
 ] as const;
-
-export const models: ModelItem[] = Array.from({ length: 11 }, (_, index): ModelItem => ({
-   id: index + 1,
-   name: "GPT-5.6 Terra",
-   translationKey: "gptTerra",
-   inputPrice: 4,
-   outputPrice: 8,
-   discountPercent: 90,
-   weChat: "WeChat +30",
-   tags: ["image", "video"],
-   provider: "OpenRouter",
-   reviews: 123,
-   reports: 12,
-}));

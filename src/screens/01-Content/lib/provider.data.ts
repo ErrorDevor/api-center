@@ -12,7 +12,16 @@ export interface ProviderDetails {
    negativeReviews: number;
 }
 
-export const providerDetails = {
+// The real dataset (providers.json) supplies arbitrary reseller names —
+// ProviderName can't be a closed literal union derived from a fixed
+// dictionary anymore. `providerDetails`/`pricesDetails` below now serve as a
+// single generic placeholder shown for any provider (see ModelRow's
+// fallback lookup), not a per-provider dictionary.
+export type ProviderName = string;
+
+// Typed as Record<string, ...> (not just `satisfies`) so it stays indexable
+// by arbitrary real provider names in ModelRow, not just its own literal key.
+export const providerDetails: Record<string, ProviderDetails> = {
    OpenRouter: {
       translationKey: "openRouter",
       age: {
@@ -22,9 +31,7 @@ export const providerDetails = {
       positiveReviews: 123,
       negativeReviews: 12,
    },
-} satisfies Record<string, ProviderDetails>;
-
-export type ProviderName = keyof typeof providerDetails;
+};
 
 /* Prices tooltip */
 export type PricesGroupTranslationKey = "quickSelect" | "cards";
@@ -56,7 +63,7 @@ export interface PricesDetails {
    groups: PricesGroup[];
 }
 
-export const pricesDetails = {
+export const pricesDetails: Record<string, PricesDetails> = {
    OpenRouter: {
       groups: [
          {
@@ -117,4 +124,4 @@ export const pricesDetails = {
          },
       ],
    },
-} satisfies Record<ProviderName, PricesDetails>;
+};

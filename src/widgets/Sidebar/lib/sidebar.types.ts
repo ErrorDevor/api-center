@@ -13,7 +13,7 @@ export interface ProviderItem {
    id: string;
    name: string;
    count: number;
-   icon: string;
+   icon?: string;
    models?: ProviderModel[];
 }
 

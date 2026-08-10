@@ -2,7 +2,8 @@
 
 import React from "react";
 
-import { modelType, providers } from "../lib/sidebar.data";
+import { modelType } from "../lib/sidebar.data";
+import { toSidebarProviders } from "../lib/providers-to-sidebar";
 import type {
    ProviderItem as ProviderItemType,
    ProviderModel,
@@ -11,6 +12,7 @@ import type {
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
+import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
 import { DropdownArrowIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
 
@@ -21,27 +23,54 @@ import { SidebarSwitcher } from "./SidebarSwitcher";
 
 import css from "../Sidebar.module.scss";
 
+const VISIBLE_PROVIDERS_COUNT = 8;
+
 interface Props {
    className?: string;
+   // Notified on every explicit user click so a page (e.g. /home) can filter
+   // its model table accordingly. Not called by internal-only state changes.
+   onSelectVendor?: (vendorId: string | undefined) => void;
+   onSelectModel?: (canonicalModelId: string | undefined) => void;
 }
 
-export const SidebarContent: React.FC<Props> = ({ className }) => {
+export const SidebarContent: React.FC<Props> = ({
+   className,
+   onSelectVendor,
+   onSelectModel,
+}) => {
    const { t } = useTranslation();
+   const { records } = useProviderRecords();
 
-   const [activeProviderId, setActiveProviderId] = React.useState("openai");
-   const [activeModelId, setActiveModelId] = React.useState("gpt-5-6-terra");
+   const providers = React.useMemo(() => toSidebarProviders(records), [records]);
+
+   const [activeProviderId, setActiveProviderId] = React.useState<string | undefined>(undefined);
+   const [activeModelId, setActiveModelId] = React.useState<string | undefined>(undefined);
    const [activeModelType, setActiveModelType] = React.useState(modelType[0].id);
    const [showAll, setShowAll] = React.useState(false);
 
-   const visibleProviders = showAll ? providers : providers.slice(0, 8);
+   const visibleProviders =
+      showAll || providers.length <= VISIBLE_PROVIDERS_COUNT
+         ? providers
+         : providers.slice(0, VISIBLE_PROVIDERS_COUNT);
 
+   // Clicking the already-active provider/model clears the selection (shows
+   // everything again) instead of being a dead click.
    const handleProviderClick = (providerId: string) => {
-      setActiveProviderId(providerId);
+      const isDeselecting = activeProviderId === providerId && activeModelId === undefined;
+
+      setActiveProviderId(isDeselecting ? undefined : providerId);
+      setActiveModelId(undefined);
+      onSelectVendor?.(isDeselecting ? undefined : providerId);
+      onSelectModel?.(undefined);
    };
 
    const handleModelClick = (provider: ProviderItemType, model: ProviderModel) => {
+      const isDeselecting = activeModelId === model.id;
+
       setActiveProviderId(provider.id);
-      setActiveModelId(model.id);
+      setActiveModelId(isDeselecting ? undefined : model.id);
+      onSelectVendor?.(provider.id);
+      onSelectModel?.(isDeselecting ? undefined : model.id);
    };
 
    return (
@@ -80,17 +109,19 @@ export const SidebarContent: React.FC<Props> = ({ className }) => {
                   );
                })}
 
-               <button
-                  type="button"
-                  className={css.show_more}
-                  onClick={() => setShowAll((current) => !current)}
-               >
-                  <DropdownArrowIcon
-                     className={clsx(css.show_more_icon, showAll && css.show_more_icon_opened)}
-                  />
+               {providers.length > VISIBLE_PROVIDERS_COUNT && (
+                  <button
+                     type="button"
+                     className={css.show_more}
+                     onClick={() => setShowAll((current) => !current)}
+                  >
+                     <DropdownArrowIcon
+                        className={clsx(css.show_more_icon, showAll && css.show_more_icon_opened)}
+                     />
 
-                  {showAll ? t.sidebar.showLess : t.sidebar.showMore}
-               </button>
+                     {showAll ? t.sidebar.showLess : t.sidebar.showMore}
+                  </button>
+               )}
             </div>
 
             <SidebarList

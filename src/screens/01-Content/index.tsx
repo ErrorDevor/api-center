@@ -3,14 +3,16 @@
 import React from "react";
 
 import { tabs } from "./lib/content.data";
+import { toModelItems } from "./lib/providers-to-models";
 import { ModelsTable } from "./ui/ModelsTable";
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
+import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
+import { getVendorDisplayName, getVendorId } from "shared/lib/providers/vendors";
 import { ContentActions } from "shared/ui/components/ContentActions";
 import { ContentHeader } from "shared/ui/components/ContentHeader";
 import { ContentHeaderTab } from "shared/ui/components/ContentHeader";
-import { Pagination } from "shared/ui/components/Pagination";
 import { Button } from "shared/ui/ui-kit/Button";
 
 import css from "./Content.module.scss";
@@ -19,22 +21,55 @@ type TabId = (typeof tabs)[number]["id"];
 
 interface Prop {
    className?: string;
+   // Set by the Sidebar's vendor/model selection (see /home page). Both
+   // undefined means "show everything".
+   selectedVendorId?: string;
+   selectedModelId?: string;
 }
 
-export const Content: React.FC<Prop> = ({ className }) => {
+export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedModelId }) => {
    const { t } = useTranslation();
+   const { records } = useProviderRecords();
+
+   const models = React.useMemo(() => toModelItems(records), [records]);
+
+   const filteredModels = React.useMemo(() => {
+      if (selectedModelId) {
+         return models.filter((model) => model.canonicalModelId === selectedModelId);
+      }
+
+      if (selectedVendorId) {
+         return models.filter((model) => getVendorId(model.canonicalModelId) === selectedVendorId);
+      }
+
+      return models;
+   }, [models, selectedVendorId, selectedModelId]);
 
    const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
-   const [currentPage, setCurrentPage] = React.useState(1);
    const [isDescriptionExpanded, setIsDescriptionExpanded] = React.useState(false);
    const descriptionRef = React.useRef<HTMLParagraphElement>(null);
    const [isDescriptionOverflowing, setIsDescriptionOverflowing] = React.useState(false);
    const [descriptionHeight, setDescriptionHeight] = React.useState(0);
 
-   const totalPages = 10;
-   const resultsCount = 158;
+   const resultsCount = filteredModels.length;
+   const catalogTitle = selectedVendorId
+      ? getVendorDisplayName(selectedVendorId)
+      : t.content.catalogTitle;
 
-   const descriptionTranslation = t.content.modelDescription;
+   // Below the fold, the description block used to always say "GPT-5.6
+   // Terra" no matter what — now it's generic by default and names the
+   // selected vendor, same as the header title above.
+   const descriptionProvider = selectedVendorId
+      ? getVendorDisplayName(selectedVendorId)
+      : t.content.modelDescription.defaultProvider;
+   const descriptionTitle = t.content.modelDescription.title.replace(
+      "{provider}",
+      descriptionProvider
+   );
+   const descriptionText = t.content.modelDescription.text.replace(
+      "{provider}",
+      descriptionProvider
+   );
 
    const headerTabs: ContentHeaderTab<TabId>[] = tabs.map((tab) => ({
       id: tab.id,
@@ -67,7 +102,7 @@ export const Content: React.FC<Prop> = ({ className }) => {
       return () => {
          resizeObserver.disconnect();
       };
-   }, [descriptionTranslation.text]);
+   }, [descriptionText]);
 
    const handleDescriptionToggle = () => {
       setIsDescriptionExpanded((currentValue) => !currentValue);
@@ -76,7 +111,7 @@ export const Content: React.FC<Prop> = ({ className }) => {
    return (
       <div className={clsx(css.content, className)}>
          <ContentHeader
-            title="OpenAI"
+            title={catalogTitle}
             resultsCount={resultsCount}
             resultsLabel={t.content.results}
             tabs={headerTabs}
@@ -87,7 +122,7 @@ export const Content: React.FC<Prop> = ({ className }) => {
          <div className={css.content_scroll}>
             <div className={css.content_main}>
                <div className={css.content_main_inner}>
-                  <h4>{descriptionTranslation.title}</h4>
+                  <h4>{descriptionTitle}</h4>
 
                   <div
                      className={clsx(
@@ -101,7 +136,7 @@ export const Content: React.FC<Prop> = ({ className }) => {
                      }
                   >
                      <p ref={descriptionRef} className={css.content_description_text}>
-                        {descriptionTranslation.text}
+                        {descriptionText}
                      </p>
 
                      {isDescriptionOverflowing && !isDescriptionExpanded && (
@@ -114,7 +149,7 @@ export const Content: React.FC<Prop> = ({ className }) => {
                            aria-expanded={false}
                            onClick={handleDescriptionToggle}
                         >
-                           ... {descriptionTranslation.readMore}
+                           ... {t.content.modelDescription.readMore}
                         </button>
                      )}
                   </div>
@@ -129,7 +164,7 @@ export const Content: React.FC<Prop> = ({ className }) => {
                         aria-expanded
                         onClick={handleDescriptionToggle}
                      >
-                        {descriptionTranslation.showLess}
+                        {t.content.modelDescription.showLess}
                      </button>
                   )}
                </div>
@@ -138,13 +173,7 @@ export const Content: React.FC<Prop> = ({ className }) => {
             <ContentActions variant="api" className={css.content_actions} />
 
             <div className={css.content_list}>
-               <ModelsTable />
-
-               <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onChange={setCurrentPage}
-               />
+               <ModelsTable models={filteredModels} />
             </div>
          </div>
       </div>

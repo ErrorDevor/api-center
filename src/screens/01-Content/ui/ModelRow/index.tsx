@@ -6,6 +6,7 @@ import type { ModelItem } from "screens/01-Content/lib/content.data";
 import { pricesDetails, providerDetails } from "screens/01-Content/lib/provider.data";
 
 import { useTranslation } from "shared/lib/i18n";
+import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 import Image from "shared/ui/base/Image";
 import { PricesTooltip, type PricesTooltipPosition } from "shared/ui/components/PricesTooltip";
 import {
@@ -40,8 +41,11 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
 
    const providerTooltipId = React.useId();
    const pricesTooltipId = React.useId();
-   const provider = providerDetails[model.provider];
-   const prices = pricesDetails[model.provider];
+   // Real reseller names from providers.json won't match a dictionary key,
+   // so every provider falls back to the same placeholder tooltip content
+   // (see provider.data.ts) instead of the tooltip silently never opening.
+   const provider = providerDetails[model.provider] ?? providerDetails.OpenRouter;
+   const prices = pricesDetails[model.provider] ?? pricesDetails.OpenRouter;
    const providerRef = React.useRef<HTMLAnchorElement>(null);
    const pricesRef = React.useRef<HTMLButtonElement>(null);
 
@@ -249,13 +253,18 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
    }, [clearPricesCloseTimeout, clearProviderCloseTimeout]);
 
    const modelTranslation = t.models.items[model.translationKey];
+   const vendorIcon = getVendorIcon(getVendorId(model.canonicalModelId));
 
    return (
       <article className={css.table_row}>
          <div className={css.table_cell}>
             <div className={css.model}>
                <div className={css.model_icon}>
-                  <ModelIcon />
+                  {vendorIcon ? (
+                     <Image.Default src={vendorIcon} alt="" className={css.model_icon_image} />
+                  ) : (
+                     <ModelIcon />
+                  )}
                </div>
 
                <div className={css.model_info}>
@@ -351,7 +360,9 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
             <div className={css.provider_wrapper}>
                <a
                   ref={providerRef}
-                  href="#provider"
+                  href={model.providerUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={css.provider}
                   aria-describedby={
                      provider && isProviderTooltipOpen ? providerTooltipId : undefined
@@ -360,7 +371,6 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                   onMouseLeave={closeProviderTooltip}
                   onFocus={openProviderTooltip}
                   onBlur={closeProviderTooltip}
-                  onClick={(event) => event.preventDefault()}
                >
                   <Image.Default src="/icons/info.svg" alt="" />
                   <span>{model.provider}</span>

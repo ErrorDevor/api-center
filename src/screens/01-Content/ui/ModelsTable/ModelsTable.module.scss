@@ -187,6 +187,17 @@
    }
 }
 
+.empty_state {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   width: 100%;
+   min-height: 12rem;
+   padding: 2rem 1.6rem;
+   color: #767676;
+   text-align: center;
+}
+
 .show_more {
    display: none;
 }

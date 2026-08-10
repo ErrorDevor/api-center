@@ -3,11 +3,11 @@
 import React from "react";
 
 import clsx from "clsx";
-import { models } from "screens/01-Content/lib/content.data";
 import type { ModelItem } from "screens/01-Content/lib/content.data";
 
 import { useIsMobile } from "shared/lib/hooks/useIsMobile";
 import { useTranslation } from "shared/lib/i18n";
+import { Pagination } from "shared/ui/components/Pagination";
 import { DropdownArrowIcon, SortIcon } from "shared/ui/icons";
 
 import { ModelRow } from "../ModelRow";
@@ -20,6 +20,10 @@ const MIN_COLUMN_WIDTHS = [20, 22, 7, 9, 7];
 const MOBILE_VISIBLE_COUNT = 3;
 const MOBILE_VISIBLE_STEP = 3;
 
+// Desktop pagination (the Pagination control is CSS-hidden on mobile,
+// which keeps its own separate "show more" reveal below).
+const PAGE_SIZE = 20;
+
 type SortKey = "name" | "price" | "reviews";
 type SortDirection = "asc" | "desc";
 
@@ -28,7 +32,11 @@ interface SortState {
    direction: SortDirection;
 }
 
-export const ModelsTable: React.FC = () => {
+interface Props {
+   models: ModelItem[];
+}
+
+export const ModelsTable: React.FC<Props> = ({ models }) => {
    const { t } = useTranslation();
 
    const tableRef = React.useRef<HTMLDivElement>(null);
@@ -40,6 +48,7 @@ export const ModelsTable: React.FC = () => {
       key: "name",
       direction: "asc",
    });
+   const [currentPage, setCurrentPage] = React.useState(1);
 
    React.useLayoutEffect(() => {
       const scrollElement = bodyScrollRef.current;
@@ -90,7 +99,13 @@ export const ModelsTable: React.FC = () => {
 
          return sort.direction === "asc" ? result : -result;
       });
-   }, [sort]);
+   }, [models, sort]);
+
+   // A new/re-sorted/re-filtered list makes the previous page number
+   // meaningless (or out of range) — jump back to page 1.
+   React.useEffect(() => {
+      setCurrentPage(1);
+   }, [models, sort]);
 
    const handleSort = (key: SortKey) => {
       setSort((currentSort) => {
@@ -188,7 +203,11 @@ export const ModelsTable: React.FC = () => {
       setVisibleCount(isMobile ? MOBILE_VISIBLE_COUNT : sortedModels.length);
    }, [isMobile, sortedModels.length]);
 
-   const visibleModels = isMobile ? sortedModels.slice(0, visibleCount) : sortedModels;
+   const totalPages = Math.max(1, Math.ceil(sortedModels.length / PAGE_SIZE));
+
+   const visibleModels = isMobile
+      ? sortedModels.slice(0, visibleCount)
+      : sortedModels.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
    const hasMore = isMobile && visibleCount < sortedModels.length;
 
@@ -197,77 +216,85 @@ export const ModelsTable: React.FC = () => {
    };
 
    return (
-      <div className={css.table_scroll}>
-         <div ref={tableRef} className={css.table} style={tableStyle}>
-            <div className={css.table_header_wrapper}>
-               <div className={css.table_header}>
-                  <HeaderCell
-                     columnIndex={0}
-                     sortKey="name"
-                     sort={sort}
-                     sortLabel={t.content.table.modelName}
-                     resizeLabel={t.content.table.resizeColumn}
-                     onSort={handleSort}
-                     onResizeStart={handleResizeStart}
-                  >
-                     {t.content.table.modelName}
-                  </HeaderCell>
+      <>
+         <div className={css.table_scroll}>
+            <div ref={tableRef} className={css.table} style={tableStyle}>
+               <div className={css.table_header_wrapper}>
+                  <div className={css.table_header}>
+                     <HeaderCell
+                        columnIndex={0}
+                        sortKey="name"
+                        sort={sort}
+                        sortLabel={t.content.table.modelName}
+                        resizeLabel={t.content.table.resizeColumn}
+                        onSort={handleSort}
+                        onResizeStart={handleResizeStart}
+                     >
+                        {t.content.table.modelName}
+                     </HeaderCell>
 
-                  <HeaderCell
-                     columnIndex={1}
-                     sortKey="price"
-                     sort={sort}
-                     sortLabel={t.content.table.price}
-                     resizeLabel={t.content.table.resizeColumn}
-                     onSort={handleSort}
-                     onResizeStart={handleResizeStart}
-                  >
-                     {t.content.table.price}
-                  </HeaderCell>
+                     <HeaderCell
+                        columnIndex={1}
+                        sortKey="price"
+                        sort={sort}
+                        sortLabel={t.content.table.price}
+                        resizeLabel={t.content.table.resizeColumn}
+                        onSort={handleSort}
+                        onResizeStart={handleResizeStart}
+                     >
+                        {t.content.table.price}
+                     </HeaderCell>
 
-                  <HeaderCell
-                     columnIndex={2}
-                     resizeLabel={t.content.table.resizeColumn}
-                     onResizeStart={handleResizeStart}
-                  >
-                     {t.content.table.tags}
-                  </HeaderCell>
+                     <HeaderCell
+                        columnIndex={2}
+                        resizeLabel={t.content.table.resizeColumn}
+                        onResizeStart={handleResizeStart}
+                     >
+                        {t.content.table.tags}
+                     </HeaderCell>
 
-                  <HeaderCell
-                     columnIndex={3}
-                     resizeLabel={t.content.table.resizeColumn}
-                     onResizeStart={handleResizeStart}
-                  >
-                     {t.content.table.provider}
-                  </HeaderCell>
+                     <HeaderCell
+                        columnIndex={3}
+                        resizeLabel={t.content.table.resizeColumn}
+                        onResizeStart={handleResizeStart}
+                     >
+                        {t.content.table.provider}
+                     </HeaderCell>
 
-                  <HeaderCell
-                     sortKey="reviews"
-                     sort={sort}
-                     sortLabel={t.content.table.reviews}
-                     onSort={handleSort}
-                  >
-                     {t.content.table.reviews}
-                  </HeaderCell>
-               </div>
-            </div>
-
-            <div ref={bodyScrollRef} className={css.table_body_scroll}>
-               <div className={css.table_body}>
-                  {visibleModels.map((model: ModelItem) => (
-                     <ModelRow key={model.id} model={model} />
-                  ))}
+                     <HeaderCell
+                        sortKey="reviews"
+                        sort={sort}
+                        sortLabel={t.content.table.reviews}
+                        onSort={handleSort}
+                     >
+                        {t.content.table.reviews}
+                     </HeaderCell>
+                  </div>
                </div>
 
-               {hasMore && (
-                  <button type="button" className={css.show_more} onClick={handleShowMore}>
-                     <DropdownArrowIcon className={css.show_more_icon} />
-                     {t.sidebar.showMore}
-                  </button>
-               )}
+               <div ref={bodyScrollRef} className={css.table_body_scroll}>
+                  <div className={css.table_body}>
+                     {visibleModels.length === 0 ? (
+                        <div className={css.empty_state}>{t.content.table.emptyState}</div>
+                     ) : (
+                        visibleModels.map((model: ModelItem) => (
+                           <ModelRow key={model.id} model={model} />
+                        ))
+                     )}
+                  </div>
+
+                  {hasMore && (
+                     <button type="button" className={css.show_more} onClick={handleShowMore}>
+                        <DropdownArrowIcon className={css.show_more_icon} />
+                        {t.sidebar.showMore}
+                     </button>
+                  )}
+               </div>
             </div>
          </div>
-      </div>
+
+         <Pagination currentPage={currentPage} totalPages={totalPages} onChange={setCurrentPage} />
+      </>
    );
 };
 

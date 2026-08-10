@@ -60,6 +60,7 @@ export const en = {
    },
 
    content: {
+      catalogTitle: "AI API providers",
       results: "results",
       tabs: {
          crypto: "Crypto",
@@ -81,10 +82,12 @@ export const en = {
          provider: "Provider",
          reviews: "Reviews",
          resizeColumn: "Resize column",
+         emptyState: "No models found",
       },
       modelDescription: {
-         title: "Cheap GPT-5.6 Terra API",
-         text: "Offers for the GPT-5.6 Terra API from various providers and aggregators are displayed here. Compare input and output token prices, check support for the features you need, and choose the most cost-effective API route for connecting the model to an application, bot, SaaS product, or internal AI tool. The table helps you find GPT-5.6 Terra at a lower price than the official one and quickly navigate to a provider with suitable terms. You can compare available payment methods, provider ratings, reviews, service age, supported model capabilities, request limits, and other important conditions before choosing an API provider.",
+         title: "Cheap {provider} API",
+         text: "Offers for {provider} API from various providers and aggregators are displayed here. Compare input and output token prices, check support for the features you need, and choose the most cost-effective API route for connecting a model to an application, bot, SaaS product, or internal AI tool. The table helps you find a model cheaper than the official price and quickly navigate to a provider with suitable terms. You can compare available payment methods, provider ratings, reviews, service age, supported model capabilities, request limits, and other important conditions before choosing an API provider.",
+         defaultProvider: "AI",
          readMore: "Read more",
          showLess: "Show less",
       },
@@ -468,6 +471,7 @@ export const ru: Dictionary = {
    },
 
    content: {
+      catalogTitle: "AI API провайдеры",
       results: "результатов",
       tabs: {
          crypto: "Крипта",
@@ -489,10 +493,12 @@ export const ru: Dictionary = {
          provider: "Поставщик",
          reviews: "Отзывы",
          resizeColumn: "Изменить ширину столбца",
+         emptyState: "Модели не найдены",
       },
       modelDescription: {
-         title: "Дешевый GPT-5.6 Terra API",
-         text: "Здесь показаны предложения GPT-5.6 Terra API от разных поставщиков и агрегаторов. Сравните цену входных и выходных токенов, проверьте поддержку нужных функций и выберите самый выгодный API-маршрут для подключения модели к приложению, боту, SaaS-продукту или внутреннему AI-инструменту. Таблица помогает найти GPT-5.6 Terra дешевле официальной цены и быстро перейти к поставщику с подходящими условиями. Здесь показаны предложения GPT-5.6 Terra API от разных поставщиков и агрегаторов. Сравните цену входных и выходных токенов, проверьте поддержку нужных функций и выберите самый выгодный API-маршрут для подключения модели к приложению, боту, SaaS-продукту или внутреннему AI-инструменту. Таблица помогает найти GPT-5.6 Terra дешевле официальной цены и быстро перейти к поставщику с подходящими условиями",
+         title: "Дешёвый {provider} API",
+         text: "Здесь показаны предложения {provider} API от разных поставщиков и агрегаторов. Сравните цену входных и выходных токенов, проверьте поддержку нужных функций и выберите самый выгодный API-маршрут для подключения модели к приложению, боту, SaaS-продукту или внутреннему AI-инструменту. Таблица помогает найти модель дешевле официальной цены и быстро перейти к поставщику с подходящими условиями. Вы можете сравнить доступные способы оплаты, рейтинг поставщика, отзывы, возраст сервиса, поддерживаемые возможности модели, лимиты запросов и другие важные условия перед выбором API-провайдера.",
+         defaultProvider: "AI",
          readMore: "Читать далее",
          showLess: "Скрыть",
       },
