@@ -1,19 +1,9 @@
 import React from "react";
 
-import { redirect } from "next/navigation";
-
-import { isOnboardingCompleted } from "shared/lib/onboarding/onboarding-server";
-
 interface Props {
    children: React.ReactNode;
 }
 
-export default async function HomeLayout({ children }: Props) {
-   const onboardingCompleted = await isOnboardingCompleted();
-
-   if (!onboardingCompleted) {
-      redirect("/start");
-   }
-
+export default function HomeLayout({ children }: Props) {
    return children;
 }
