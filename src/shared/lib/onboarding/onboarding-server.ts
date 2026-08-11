@@ -1,18 +1,13 @@
 import { cookies } from "next/headers";
 
 import {
-   ONBOARDING_COOKIE_ENABLED,
-   ONBOARDING_COOKIE_NAME,
-   ONBOARDING_COOKIE_VALUE,
+   ONBOARDING_NEW_USER_COOKIE_NAME,
+   ONBOARDING_NEW_USER_COOKIE_VALUE,
 } from "./onboarding.constants";
 
-export const isOnboardingCompleted = async (): Promise<boolean> => {
-   if (!ONBOARDING_COOKIE_ENABLED) {
-      return false;
-   }
-
+export const shouldShowOnboarding = async (): Promise<boolean> => {
    const cookieStore = await cookies();
-   const onboardingCookie = cookieStore.get(ONBOARDING_COOKIE_NAME);
+   const onboardingCookie = cookieStore.get(ONBOARDING_NEW_USER_COOKIE_NAME);
 
-   return onboardingCookie?.value === ONBOARDING_COOKIE_VALUE;
+   return onboardingCookie?.value === ONBOARDING_NEW_USER_COOKIE_VALUE;
 };

@@ -2,16 +2,16 @@ import React from "react";
 
 import { redirect } from "next/navigation";
 
-import { isOnboardingCompleted } from "shared/lib/onboarding/onboarding-server";
+import { shouldShowOnboarding } from "shared/lib/onboarding/onboarding-server";
 
 interface Props {
    children: React.ReactNode;
 }
 
 export default async function OnboardingLayout({ children }: Props) {
-   const onboardingCompleted = await isOnboardingCompleted();
+   const shouldShow = await shouldShowOnboarding();
 
-   if (onboardingCompleted) {
+   if (!shouldShow) {
       redirect("/home");
    }
 

@@ -8,8 +8,6 @@ import { ONBOARDING_INITIAL_SLIDE_INDEX } from "./lib/onboarding.config";
 import { ONBOARDING_ROLE_DATA } from "./lib/onboarding.data";
 import type { OnboardingRole, OnboardingScreen } from "./lib/onboarding.types";
 import { IntroSlide } from "./ui/IntroSlide";
-import { LoginForm } from "./ui/LoginForm";
-import { RegistrationForm } from "./ui/RegistrationForm";
 import { RoleSelector } from "./ui/RoleSelector";
 
 import { completeOnboarding } from "shared/lib/onboarding";
@@ -20,9 +18,7 @@ export const Onboarding: React.FC = () => {
    const router = useRouter();
 
    const [screen, setScreen] = React.useState<OnboardingScreen>("role");
-
    const [selectedRole, setSelectedRole] = React.useState<OnboardingRole>("distribution");
-
    const [slideIndex, setSlideIndex] = React.useState(ONBOARDING_INITIAL_SLIDE_INDEX);
 
    const selectedRoleData = ONBOARDING_ROLE_DATA[selectedRole];
@@ -47,6 +43,11 @@ export const Onboarding: React.FC = () => {
       setScreen("role");
    };
 
+   const handleComplete = () => {
+      completeOnboarding();
+      router.replace("/home");
+   };
+
    const handleNext = () => {
       const isLastSlide = slideIndex === selectedRoleData.slides.length - 1;
 
@@ -55,20 +56,11 @@ export const Onboarding: React.FC = () => {
          return;
       }
 
-      setScreen(selectedRole === "distribution" ? "registration" : "login");
-   };
-
-   const handleFormBack = () => {
-      setSlideIndex(selectedRoleData.slides.length - 1);
-      setScreen("intro");
-   };
-
-   const handleComplete = () => {
-      completeOnboarding();
-      router.replace("/home");
+      handleComplete();
    };
 
    const handleClose = () => {
+      completeOnboarding();
       router.replace("/home");
    };
 
@@ -94,18 +86,6 @@ export const Onboarding: React.FC = () => {
                   onNext={handleNext}
                   onClose={handleClose}
                />
-            )}
-
-            {screen === "registration" && (
-               <RegistrationForm
-                  onBack={handleFormBack}
-                  onSubmit={handleComplete}
-                  onClose={handleClose}
-               />
-            )}
-
-            {screen === "login" && (
-               <LoginForm onBack={handleFormBack} onSubmit={handleComplete} onClose={handleClose} />
             )}
          </div>
       </section>
