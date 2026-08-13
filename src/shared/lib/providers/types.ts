@@ -15,6 +15,7 @@ export interface ProviderPriceRecord {
    trustStatus: TrustStatus;
    sourceUrl: string;
    lastCheckedAt: string;
+   paymentMethods: string[];
 }
 
 const TRUST_STATUSES: readonly TrustStatus[] = ["green", "yellow", "red"];
@@ -58,6 +59,12 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
       const trustStatus = raw.trust_status;
       const sourceUrl = raw.source_url;
       const lastCheckedAt = raw.last_checked_at;
+      // Optional: newer field the backend may not have backfilled onto
+      // every record yet, so an absent/malformed value defaults to an
+      // empty array instead of dropping the whole record.
+      const paymentMethods = Array.isArray(raw.payment_methods)
+         ? raw.payment_methods.filter(isNonEmptyString)
+         : [];
 
       const isValid =
          isNonEmptyString(providerName) &&
@@ -95,6 +102,7 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
          trustStatus: trustStatus as TrustStatus,
          sourceUrl,
          lastCheckedAt,
+         paymentMethods,
       });
    }
 

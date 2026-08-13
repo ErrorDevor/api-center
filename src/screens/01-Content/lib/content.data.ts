@@ -1,7 +1,6 @@
 import type { ProviderName } from "./provider.data";
 
 export type ModelTranslationKey = "gptTerra";
-export type ModelTag = "image" | "video";
 
 export interface ModelItem {
    id: string;
@@ -13,8 +12,7 @@ export interface ModelItem {
    inputPrice: number;
    outputPrice: number;
    discountPercent: number;
-   weChat: string;
-   tags: ModelTag[];
+   paymentMethods: string[];
    provider: ProviderName;
    // Reseller's site — the Provider column links out here.
    providerUrl: string;
