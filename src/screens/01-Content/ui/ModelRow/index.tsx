@@ -41,7 +41,7 @@ interface TooltipPosition {
 }
 
 export const ModelRow: React.FC<Prop> = ({ model }) => {
-   const { t } = useTranslation();
+   const { t, locale } = useTranslation();
 
    const providerTooltipId = React.useId();
    const pricesTooltipId = React.useId();
@@ -256,10 +256,10 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
       };
    }, [clearPricesCloseTimeout, clearProviderCloseTimeout]);
 
-   const modelTranslation = t.models.items[model.translationKey];
    const vendorIcon = getVendorIcon(getVendorId(model.canonicalModelId));
    const paymentMethodsText =
       model.paymentMethods.length > 0 ? model.paymentMethods.join(", ") : "-";
+   const description = model.description[locale] || t.content.table.descriptionUnavailable;
 
    return (
       <article className={css.table_row}>
@@ -275,7 +275,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
 
                <div className={css.model_info}>
                   <strong>{model.name}</strong>
-                  <span>{modelTranslation.description}</span>
+                  <span>{description}</span>
                </div>
             </div>
          </div>

@@ -26,12 +26,6 @@ export const en = {
 
    models: {
       discount: "{percent}% cheaper",
-
-      items: {
-         gptTerra: {
-            description: "GPT-5.6 Terra is the flagship base model of the GPT-5.6 family",
-         },
-      },
    },
 
    header: {
@@ -83,6 +77,7 @@ export const en = {
          reviews: "Reviews",
          resizeColumn: "Resize column",
          emptyState: "No models found",
+         descriptionUnavailable: "No description available yet",
       },
       modelDescription: {
          title: "Cheap {provider} API",
@@ -431,13 +426,6 @@ export const ru: Dictionary = {
 
    models: {
       discount: "На {percent}% дешевле",
-
-      items: {
-         gptTerra: {
-            description:
-               "GPT-5.6 Sol — флагманская базовая модель серии GPT-5.6, соответствующая оригинальной базовой версии GPT-5 без суффикса.",
-         },
-      },
    },
 
    header: {
@@ -489,6 +477,7 @@ export const ru: Dictionary = {
          reviews: "Отзывы",
          resizeColumn: "Изменить ширину столбца",
          emptyState: "Модели не найдены",
+         descriptionUnavailable: "Описание пока недоступно",
       },
       modelDescription: {
          title: "Дешёвый {provider} API",

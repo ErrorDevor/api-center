@@ -1,6 +1,13 @@
 import type { ProviderName } from "./provider.data";
 
-export type ModelTranslationKey = "gptTerra";
+// Localized model description, keyed by Locale ("ru"/"en" — see
+// shared/lib/i18n/types.ts). Sourced from models.json (see
+// useModelCatalog), not the UI translation dictionary — every model gets
+// its own text instead of one static blurb shared by every row.
+export interface ModelDescription {
+   ru: string;
+   en: string;
+}
 
 export interface ModelItem {
    id: string;
@@ -8,7 +15,7 @@ export interface ModelItem {
    // "vendor/model" id (e.g. "anthropic/claude-sonnet-5") — lets the table
    // be filtered by the Sidebar's vendor/model selection.
    canonicalModelId: string;
-   translationKey: ModelTranslationKey;
+   description: ModelDescription;
    inputPrice: number;
    outputPrice: number;
    discountPercent: number;
