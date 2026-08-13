@@ -27,6 +27,10 @@ const TOOLTIP_GAP = 12;
 const VIEWPORT_PADDING = 8;
 const CLOSE_DELAY = 120;
 
+// Hidden per product request: keep the tooltip and its data/handlers intact
+// (not deleted) so it can be turned back on later — just never render it.
+const SHOW_PRICES_TOOLTIP = false;
+
 interface Prop {
    model: ModelItem;
 }
@@ -161,7 +165,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
    }, [calculateTooltipPosition]);
 
    const openPricesTooltip = React.useCallback(() => {
-      if (!prices) {
+      if (!prices || !SHOW_PRICES_TOOLTIP) {
          return;
       }
 
@@ -195,7 +199,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
    };
 
    const handlePricesClick = () => {
-      if (!prices) {
+      if (!prices || !SHOW_PRICES_TOOLTIP) {
          return;
       }
 
@@ -254,6 +258,8 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
 
    const modelTranslation = t.models.items[model.translationKey];
    const vendorIcon = getVendorIcon(getVendorId(model.canonicalModelId));
+   const paymentMethodsText =
+      model.paymentMethods.length > 0 ? model.paymentMethods.join(", ") : "-";
 
    return (
       <article className={css.table_row}>
@@ -336,12 +342,14 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
             >
                <Image.Default src="/icons/info.svg" alt="" className={css.payment_info_icon} />
 
-               <span className={css.payment_value_text}>{model.weChat}</span>
+               <span className={css.payment_value_text}>{paymentMethodsText}</span>
 
                <DropdownArrowIcon className={css.payment_arrow} />
             </button>
 
-            {prices && isPricesTooltipOpen && (
+            {/* Popup hidden per product request — see SHOW_PRICES_TOOLTIP above.
+                Component, data and open/close logic stay in place, just not rendered. */}
+            {SHOW_PRICES_TOOLTIP && prices && isPricesTooltipOpen && (
                <PricesTooltip
                   id={pricesTooltipId}
                   details={prices}

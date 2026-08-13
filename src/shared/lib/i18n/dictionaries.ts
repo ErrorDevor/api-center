@@ -159,11 +159,6 @@ export const en = {
       next: "Next",
    },
 
-   tags: {
-      image: "Image",
-      video: "Video",
-   },
-
    providers: {
       age: "Age",
       reviews: "Reviews",
@@ -568,11 +563,6 @@ export const ru: Dictionary = {
       of: "из",
       previous: "Назад",
       next: "Далее",
-   },
-
-   tags: {
-      image: "Изображение",
-      video: "Видео",
    },
 
    providers: {

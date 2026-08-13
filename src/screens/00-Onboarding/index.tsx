@@ -10,7 +10,10 @@ import type { OnboardingRole, OnboardingScreen } from "./lib/onboarding.types";
 import { IntroSlide } from "./ui/IntroSlide";
 import { RoleSelector } from "./ui/RoleSelector";
 
-import { completeOnboarding } from "shared/lib/onboarding";
+// completeOnboarding is commented out in shared/lib/onboarding (feature
+// disabled), so its call sites below are commented out too — importing it
+// here would break the build with a "does not exist" export error.
+// import { completeOnboarding } from "shared/lib/onboarding";
 
 import css from "./Onboarding.module.scss";
 
@@ -44,7 +47,7 @@ export const Onboarding: React.FC = () => {
    };
 
    const handleComplete = () => {
-      completeOnboarding();
+      // completeOnboarding();
       router.replace("/home");
    };
 
@@ -60,7 +63,7 @@ export const Onboarding: React.FC = () => {
    };
 
    const handleClose = () => {
-      completeOnboarding();
+      // completeOnboarding();
       router.replace("/home");
    };
 
