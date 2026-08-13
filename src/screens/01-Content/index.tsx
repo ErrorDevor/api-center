@@ -8,6 +8,7 @@ import { ModelsTable } from "./ui/ModelsTable";
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
+import { useModelCatalog } from "shared/lib/models/useModelCatalog";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
 import { getVendorDisplayName, getVendorId } from "shared/lib/providers/vendors";
 import { ContentActions } from "shared/ui/components/ContentActions";
@@ -30,8 +31,12 @@ interface Prop {
 export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedModelId }) => {
    const { t } = useTranslation();
    const { records } = useProviderRecords();
+   const { entries: modelCatalog } = useModelCatalog();
 
-   const models = React.useMemo(() => toModelItems(records), [records]);
+   const models = React.useMemo(
+      () => toModelItems(records, modelCatalog),
+      [records, modelCatalog]
+   );
 
    const filteredModels = React.useMemo(() => {
       if (selectedModelId) {
