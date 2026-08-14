@@ -21,7 +21,7 @@ export const en = {
       signup: "Sign Up",
       addProvider: "Add provider",
       replyPlaceholder: "Post your reply",
-      buttonText:"Reply"
+      buttonText: "Reply",
    },
 
    models: {
@@ -386,6 +386,135 @@ export const en = {
          personsRequired: "Enter the number of people",
       },
    },
+
+   rating: {
+      categories: {
+         programming: {
+            title: "Best AI for programming",
+            description: "Code generation and debugging",
+         },
+         texts: {
+            title: "Best AI for writing",
+            description: "Content creation and creative writing",
+         },
+         research: {
+            title: "Best AI for research",
+            description: "Analysis and reasoning tasks",
+         },
+         images: {
+            title: "Best AI for image generation",
+            description: "Text-to-image generation models",
+         },
+      },
+
+      tabs: {
+         text: "Text",
+         coding: "Coding",
+         video: "Video",
+         audio: "Audio",
+         image: "Images",
+      },
+
+      explore: {
+         badge: "Model overview",
+         title: "Explore category leaderboards",
+         description: "Find the best model for your task — by capability, modality, or industry.",
+
+         groups: {
+            capabilities: "By capability",
+            modality: "By modality",
+            industries: "By industry",
+         },
+
+         items: {
+            coding: {
+               title: "Coding",
+               description: "Code generation and debugging",
+            },
+            reasoning: {
+               title: "Reasoning",
+               description: "Logic, planning, and problem solving",
+            },
+            research: {
+               title: "Research",
+               description: "Analysis and reasoning tasks",
+            },
+            tools: {
+               title: "Tool calling",
+               description: "Function calling and tool usage",
+            },
+            writing: {
+               title: "Writing",
+               description: "Content creation and creative writing",
+            },
+            context: {
+               title: "Long context",
+               description: "Understanding long context",
+            },
+            chat: {
+               title: "Chat",
+               description: "Conversation and instruction following",
+            },
+
+            speech: {
+               title: "Speech",
+               description: "Text-to-speech and voice synthesis",
+            },
+            computerUse: {
+               title: "Computer use",
+               description: "PC and browser automation",
+            },
+            videoGeneration: {
+               title: "Video generation",
+               description: "AI video generation and editing",
+            },
+            transcription: {
+               title: "Transcription",
+               description: "Speech recognition and audio-to-text",
+            },
+            imageUnderstanding: {
+               title: "Image understanding",
+               description: "Visual perception and image analysis",
+            },
+            imageGeneration: {
+               title: "Image generation",
+               description: "Text-to-image generation models",
+            },
+
+            law: {
+               title: "Law",
+               description: "Legal knowledge and jurisprudence",
+            },
+            roleplay: {
+               title: "Roleplay",
+               description: "Character and role simulation",
+            },
+            math: {
+               title: "Math & Science",
+               description: "Mathematical reasoning and problem solving",
+            },
+            finance: {
+               title: "Finance & Accounting",
+               description: "Financial analysis and economic reasoning",
+            },
+            healthcare: {
+               title: "Healthcare",
+               description: "Medical knowledge and healthcare domains",
+            },
+         },
+      },
+      table: {
+         rating: "Rating",
+         modelName: "Model name",
+         tts: "TTS",
+         speed: "Speed",
+         latency: "Latency",
+         pricePerMillion: "$ / 1M",
+         license: "License",
+         sortTts: "Sort by TTS",
+         resizeColumn: "Resize column",
+      },
+   },
 } as const;
 
 type DeepStringValues<T> = {
@@ -421,7 +550,7 @@ export const ru: Dictionary = {
       signup: "Зарегистрироваться",
       addProvider: "Добавить провайдер",
       replyPlaceholder: "Post your reply",
-      buttonText:"Ответить"
+      buttonText: "Ответить",
    },
 
    models: {
@@ -785,6 +914,137 @@ export const ru: Dictionary = {
          modelRequired: "Выберите модель",
          priceRequired: "Введите цену",
          personsRequired: "Введите количество человек",
+      },
+   },
+
+   rating: {
+      categories: {
+         programming: {
+            title: "Лучший ИИ для программирования",
+            description: "Генерация кода и отладка",
+         },
+         texts: {
+            title: "Лучший ИИ для текстов",
+            description: "Создание контента и креативное письмо",
+         },
+         research: {
+            title: "Лучший ИИ для исследований",
+            description: "Задачи анализа и логического мышления",
+         },
+         images: {
+            title: "Лучший ИИ для генерации изображений",
+            description: "Модели преобразования текста в изображения",
+         },
+      },
+
+      tabs: {
+         text: "Текст",
+         coding: "Кодинг",
+         video: "Видео",
+         audio: "Аудио",
+         image: "Картинки",
+      },
+
+      explore: {
+         badge: "Обзор моделей",
+         title: "Исследовать таблицы лидеров по категориям",
+         description:
+            "Найдите лучшую модель для задачи — по возможностям, модальности или отрасли.",
+
+         groups: {
+            capabilities: "По возможностям",
+            modality: "По модальности",
+            industries: "По отраслям",
+         },
+
+         items: {
+            coding: {
+               title: "Кодинг",
+               description: "Генерация кода и отладка",
+            },
+            reasoning: {
+               title: "Логические рассуждения",
+               description: "Логика, планирование и решение задач",
+            },
+            research: {
+               title: "Исследования",
+               description: "Задачи анализа и логического мышления",
+            },
+            tools: {
+               title: "Вызов инструментов",
+               description: "Вызов функций и использование инструментов",
+            },
+            writing: {
+               title: "Создание текстов",
+               description: "Создание контента и креативное письмо",
+            },
+            context: {
+               title: "Большой контекст",
+               description: "Понимание длинного контекста",
+            },
+            chat: {
+               title: "Чат",
+               description: "Диалог и следование инструкциям",
+            },
+
+            speech: {
+               title: "Речь",
+               description: "Синтез речи из текста и голосовой синтез",
+            },
+            computerUse: {
+               title: "Использование компьютера",
+               description: "Автоматизация работы ПК и браузера",
+            },
+            videoGeneration: {
+               title: "Генерация видео",
+               description: "ИИ-генерация и редактирование видео",
+            },
+            transcription: {
+               title: "Транскрипция",
+               description: "Распознавание речи и перевод аудио в текст",
+            },
+            imageUnderstanding: {
+               title: "Понимание изображений",
+               description: "Визуальное восприятие и анализ изображений",
+            },
+            imageGeneration: {
+               title: "Генерация изображений",
+               description: "Модели преобразования текста в изображения",
+            },
+
+            law: {
+               title: "Юриспруденция",
+               description: "Юридические знания и правоведение",
+            },
+            roleplay: {
+               title: "Ролевые игры",
+               description: "Симуляция персонажей и ролей",
+            },
+            math: {
+               title: "Математика и науки",
+               description: "Математические рассуждения и решение задач",
+            },
+            finance: {
+               title: "Финансы и бухгалтерия",
+               description: "Финансовый анализ и экономические рассуждения",
+            },
+            healthcare: {
+               title: "Здравоохранение",
+               description: "Медицинские знания и сферы здравоохранения",
+            },
+         },
+      },
+
+      table: {
+         rating: "Рейтинг",
+         modelName: "Название модели",
+         tts: "TTS",
+         speed: "Скорость",
+         latency: "Задержка",
+         pricePerMillion: "$ / 1M",
+         license: "Лицензия",
+         sortTts: "Сортировать по TTS",
+         resizeColumn: "Изменить ширину колонки",
       },
    },
 };
