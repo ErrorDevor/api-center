@@ -1,0 +1,109 @@
+.rating_row {
+   display: grid;
+   grid-template-columns:
+      var(--column-1)
+      var(--column-2)
+      var(--column-3)
+      var(--column-4)
+      var(--column-5)
+      var(--column-6)
+      var(--column-7);
+   width: 100%;
+   min-width: 0;
+   height: 6.8rem;
+
+   &:last-child {
+      .rating_row_cell {
+         border-bottom: 0;
+      }
+   }
+
+   &_cell {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      height: 6.8rem;
+      padding: 1.3rem 1.6rem;
+      border-right: 0.1rem solid rgba(0, 0, 0, 0.08);
+      border-bottom: 0.1rem solid rgba(0, 0, 0, 0.08);
+      background: #f7f7f7;
+
+      &:first-child {
+         justify-content: center;
+      }
+
+      &:last-child {
+         justify-content: center;
+         border-right: 0;
+      }
+   }
+
+   &_rank {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 2.8rem;
+      height: 2.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.6rem;
+      background: #ffffff;
+      @include fontInterTight(1.2rem, 1.5rem, -0.01em, 500, #797a79);
+
+      &_first {
+         border: 0.1rem solid #ff8d28;
+         background: #fff4ea;
+         color: #ff8d28;
+      }
+   }
+
+   &_model {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-width: 0;
+      gap: 0.8rem;
+   }
+
+   &_model_icon {
+      @include box(4rem);
+      flex-shrink: 0;
+      padding: 1rem;
+      border-radius: 0.8rem;
+      background: linear-gradient(178.65deg, #ededed 7.92%, #f2f2f2 64.53%);
+      object-fit: contain;
+   }
+
+   &_model_content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+      flex: 1;
+      gap: 0.2rem;
+
+      strong,
+      span {
+         overflow: hidden;
+         white-space: nowrap;
+         text-overflow: ellipsis;
+      }
+
+      strong {
+         @include fontInterTight(1.4rem, 2rem, -0.01em, 500, #212121);
+      }
+
+      span {
+         @include fontInterTight(1.3rem, 1.8rem, -0.01em, 400, #797a79);
+      }
+   }
+
+   &_value {
+      white-space: nowrap;
+      @include fontInterTight(1.4rem, 2rem, -0.01em, 500, #212121);
+   }
+
+   &_license {
+      @include box(2rem);
+      flex-shrink: 0;
+   }
+}
