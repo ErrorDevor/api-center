@@ -24,7 +24,7 @@ const MOBILE_VISIBLE_STEP = 3;
 
 const PAGE_SIZE = 10;
 
-type SortKey = "rank" | "name" | "tts" | "speed" | "latency" | "price";
+type SortKey = "tts";
 type SortDirection = "asc" | "desc";
 
 interface SortState {
@@ -46,7 +46,7 @@ export const RatingTable: React.FC<Prop> = ({ className }) => {
    const [scrollbarWidth, setScrollbarWidth] = React.useState(0);
 
    const [sort, setSort] = React.useState<SortState>({
-      key: "rank",
+      key: "tts",
       direction: "asc",
    });
 
@@ -82,33 +82,7 @@ export const RatingTable: React.FC<Prop> = ({ className }) => {
 
    const sortedModels = React.useMemo(() => {
       return [...ratingModels].sort((firstModel, secondModel) => {
-         let result = 0;
-
-         switch (sort.key) {
-            case "rank":
-               result = firstModel.rank - secondModel.rank;
-               break;
-
-            case "name":
-               result = firstModel.name.localeCompare(secondModel.name);
-               break;
-
-            case "tts":
-               result = firstModel.tts - secondModel.tts;
-               break;
-
-            case "speed":
-               result = firstModel.speed - secondModel.speed;
-               break;
-
-            case "latency":
-               result = firstModel.latency - secondModel.latency;
-               break;
-
-            case "price":
-               result = firstModel.price - secondModel.price;
-               break;
-         }
+         const result = firstModel.tts - secondModel.tts;
 
          return sort.direction === "asc" ? result : -result;
       });
@@ -231,6 +205,8 @@ export const RatingTable: React.FC<Prop> = ({ className }) => {
 
    return (
       <section className={clsx(css.rating_table, className)}>
+         <h3 className={css.rating_table_title}>{t.rating.title}</h3>
+
          <div className={css.rating_table_tabs}>
             {ratingTabs.map((tab) => {
                const isActive = activeTab === tab.id;

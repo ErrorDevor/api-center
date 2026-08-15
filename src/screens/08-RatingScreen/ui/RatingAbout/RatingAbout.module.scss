@@ -1,0 +1,114 @@
+.rating_about {
+   width: 100%;
+   min-width: 0;
+   padding: 2.4rem;
+   flex-shrink: 0;
+   border-radius: 1.6rem;
+   background: #eeeff1;
+
+   &_content {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+      width: 100%;
+      min-width: 0;
+      padding: 1.6rem;
+      column-gap: 4rem;
+      row-gap: 2.4rem;
+      border: 0.1rem solid #ffffff;
+      border-radius: 1.6rem;
+      background: #f7f7f7;
+   }
+
+   &_block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      min-width: 0;
+      gap: 1.6rem;
+
+      h2 {
+         width: 100%;
+         margin: 0;
+         @include fontInterTight(2.4rem, 2.4rem, -0.01em, 500, #212121);
+      }
+
+      > p {
+         margin: 0;
+         @include fontInterTight(1.6rem, 2.2rem, -0.01em, 400, #797a79);
+      }
+   }
+
+   &_text {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-width: 0;
+      gap: 2.4rem;
+
+      p {
+         margin: 0;
+         @include fontInterTight(1.6rem, 2.2rem, -0.01em, 400, #797a79);
+      }
+
+      ul {
+         display: flex;
+         flex-direction: column;
+         width: 100%;
+         margin: 0;
+         padding-left: 2.4rem;
+          list-style: disc;
+      list-style-position: outside;
+      }
+
+      li {
+         padding-left: 0.2rem;
+         @include fontInterTight(1.6rem, 2.2rem, -0.01em, 400, #797a79);
+
+         &::marker {
+            color: #797a79;
+         }
+      }
+   }
+}
+
+@include screenMD {
+   .rating_about {
+      padding: 0.8rem;
+
+      &_content {
+         grid-template-columns: 1fr;
+         padding: 1.6rem;
+         gap: 3.2rem;
+      }
+
+      &_block {
+         gap: 1.2rem;
+
+         h2 {
+            font-size: 2rem;
+            line-height: 2.2rem;
+         }
+
+         > p {
+            font-size: 1.4rem;
+            line-height: 2rem;
+         }
+      }
+
+      &_text {
+         gap: 1.6rem;
+
+         p,
+         li {
+            font-size: 1.4rem;
+            line-height: 2rem;
+         }
+
+         ul {
+            padding-left: 2rem;
+         }
+      }
+   }
+}

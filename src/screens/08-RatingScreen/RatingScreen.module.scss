@@ -36,4 +36,21 @@
          background: rgba(0, 0, 0, 0.15);
       }
    }
+
+   &_header {
+      display: none;
+   }
+}
+
+@include screenMD {
+   .rating {
+      &_content {
+         padding: 1.6rem;
+         gap: 1.6rem;
+      }
+
+      &_header {
+         display: flex;
+      }
+   }
 }
