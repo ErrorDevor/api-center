@@ -6,6 +6,8 @@ import clsx from "clsx";
 
 import { MobileSidebar } from "widgets/Sidebar/ui/MobileSidebar";
 
+import Image from "shared/ui/base/Image";
+import { NextLink } from "shared/ui/base/NextLink";
 import { ContentActions } from "shared/ui/components/ContentActions";
 import { BurgerButton } from "shared/ui/ui-kit/BurgerButton";
 import { Button } from "shared/ui/ui-kit/Button";
@@ -19,17 +21,19 @@ export interface ContentHeaderTab<T extends string> {
 
 interface Props<T extends string> {
    className?: string;
-   title: string;
-   resultsCount: number;
-   resultsLabel: string;
-   tabs: readonly ContentHeaderTab<T>[];
-   activeTab: T;
+   variant?: "main" | "simple";
+   title?: string;
+   resultsCount?: number;
+   resultsLabel?: string;
+   tabs?: readonly ContentHeaderTab<T>[];
+   activeTab?: T;
    actionsVariant?: "group";
-   onTabChange: (tabId: T) => void;
+   onTabChange?: (tabId: T) => void;
 }
 
 export const ContentHeader = <T extends string>({
    className,
+   variant = "main",
    title,
    resultsCount,
    resultsLabel,
@@ -48,15 +52,34 @@ export const ContentHeader = <T extends string>({
       setIsMobileSidebarOpened(false);
    }, []);
 
+   if (variant === "simple") {
+      return (
+         <>
+            <div className={clsx(css.content_header, css.content_header_simple, className)}>
+               <NextLink href="/" className={css.content_header_logo}>
+                  <Image.Default src="/images/Logo.svg" alt="" />
+                  Best Api Price
+               </NextLink>
+
+               <BurgerButton onClick={handleOpenMobileSidebar} />
+            </div>
+
+            <MobileSidebar opened={isMobileSidebarOpened} onClose={handleCloseMobileSidebar} />
+         </>
+      );
+   }
+
    return (
       <>
          <div className={clsx(css.content_header, className)}>
             <div className={css.content_header_title}>
                <h2>{title}</h2>
 
-               <span>
-                  (<strong>{resultsCount}</strong> {resultsLabel})
-               </span>
+               {resultsCount !== undefined && resultsLabel && (
+                  <span>
+                     (<strong>{resultsCount}</strong> {resultsLabel})
+                  </span>
+               )}
             </div>
 
             <BurgerButton onClick={handleOpenMobileSidebar} />
@@ -64,7 +87,7 @@ export const ContentHeader = <T extends string>({
             <div className={css.content_header_divider} />
 
             <div className={css.content_header_navigation}>
-               {tabs.map((tab) => {
+               {tabs?.map((tab) => {
                   const isActive = activeTab === tab.id;
 
                   return (
@@ -76,7 +99,7 @@ export const ContentHeader = <T extends string>({
                            isActive && css.content_header_button_active
                         )}
                         active={isActive}
-                        onClick={() => onTabChange(tab.id)}
+                        onClick={() => onTabChange?.(tab.id)}
                      >
                         {tab.label}
                      </Button>

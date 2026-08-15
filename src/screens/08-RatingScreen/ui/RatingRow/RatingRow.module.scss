@@ -106,4 +106,135 @@
       @include box(2rem);
       flex-shrink: 0;
    }
+
+   &_mobile_label,
+   &_mobile_label_info,
+   &_mobile_dots {
+      display: none;
+   }
+}
+
+@include screenMD {
+   .rating_row {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: auto;
+      min-width: 0;
+      padding: 1.2rem;
+      gap: 1.2rem;
+      border: 0.1rem solid rgba(0, 0, 0, 0.07);
+      border-radius: 1.2rem;
+      background: #f7f7f7;
+
+      &_cell {
+         display: flex;
+         align-items: center;
+         width: 100%;
+         min-width: 0;
+         height: 2rem;
+         padding: 0;
+         gap: 0.8rem;
+         border: 0;
+         background: transparent;
+
+         &:first-child,
+         &:last-child {
+            justify-content: flex-start;
+         }
+
+         &:not(:last-child) {
+            position: relative;
+
+            &::after {
+               content: "";
+               position: absolute;
+               left: 0;
+               right: 0;
+               bottom: -0.6rem;
+               height: 0.1rem;
+               background: rgba(0, 0, 0, 0.04);
+            }
+         }
+
+         &:first-child {
+            height: 2.5rem;
+         }
+      }
+
+      &_mobile_label {
+         display: block;
+         flex-shrink: 0;
+         @include fontInterTight(1.3rem, 1.8rem, -0.01em, 400, #797a79);
+      }
+
+      &_mobile_label_info {
+         display: flex;
+         align-items: center;
+         flex-shrink: 0;
+         gap: 0.4rem;
+         @include fontInterTight(1.3rem, 1.8rem, -0.01em, 400, #797a79);
+
+         img {
+            @include box(1.2rem);
+         }
+      }
+
+      &_mobile_dots {
+         display: block;
+         min-width: 0;
+         height: 0;
+         flex: 1;
+         border-top: 0.1rem dashed rgba(0, 0, 0, 0.1);
+      }
+
+      &_rank {
+         min-width: 2.5rem;
+         height: 2.5rem;
+         padding: 0.5rem;
+         flex-shrink: 0;
+
+         &_first {
+            border-width: 0.1rem 0.1rem 0.2rem;
+         }
+      }
+
+      &_model {
+         justify-content: flex-end;
+         width: auto;
+         flex-shrink: 0;
+         gap: 0.4rem;
+      }
+
+      &_model_icon {
+         @include box(1.6rem);
+         padding: 0;
+         border-radius: 0;
+         background: transparent;
+      }
+
+      &_model_content {
+         display: block;
+         width: auto;
+         flex: none;
+
+         strong {
+            @include fontInterTight(1.4rem, 2rem, -0.01em, 500, #212121);
+         }
+
+         span {
+            display: none;
+         }
+      }
+
+      &_value {
+         flex-shrink: 0;
+         @include fontInterTight(1.4rem, 2rem, -0.01em, 500, #212121);
+      }
+
+      &_license {
+         @include box(1.6rem);
+         flex-shrink: 0;
+      }
+   }
 }

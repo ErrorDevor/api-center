@@ -80,13 +80,13 @@ export const PostEditorActions: React.FC<Props> = ({
          </div>
 
          <Button
-   type="submit"
-   disabled={submitDisabled}
-   className={css.post_editor_actions_publish}
-   variant="black"
->
-   {t.createPost.actions.publish}
-</Button>
+            type="submit"
+            disabled={submitDisabled}
+            className={css.post_editor_actions_publish}
+            variant="black"
+         >
+            {t.createPost.actions.publish}
+         </Button>
       </div>
    );
 };

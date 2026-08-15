@@ -388,6 +388,8 @@ export const en = {
    },
 
    rating: {
+      title: "Top best AI in the category",
+
       categories: {
          programming: {
             title: "Best AI for programming",
@@ -513,6 +515,48 @@ export const en = {
          license: "License",
          sortTts: "Sort by TTS",
          resizeColumn: "Resize column",
+      },
+      about: {
+         overview: {
+            title: "Comprehensive AI model rating, comparison, and analytics platform",
+            description:
+               "This page is an advanced rating and comparison hub designed for professionals, developers, researchers, and digital content creators who use artificial intelligence (AI) technologies. In a rapidly evolving digital world, choosing the right tool is critical for saving both time and budget. This page allows users to analyze products from leading global AI providers in depth and select the model that best fits their tasks.",
+         },
+
+         providers: {
+            title: "Global providers and model diversity",
+            intro: "Leading global artificial intelligence developers and their models are systematically grouped in the navigation panel and throughout the platform:",
+            google:
+               "Google, OpenAI and DeepSeek: Industry-leading flagship models capable of handling complex reasoning tasks, large-volume text processing, and deep analytics.",
+            alternatives:
+               "Anthropic, xAI, Minimax, ChatGLM and Grok: Alternative high-performance and innovative AI solutions specializing in different areas.",
+            outro: "Hundreds of models can be filtered by different categories, including all types, images, search, audio, video, text, and chat, allowing users to find the right model more precisely.",
+         },
+
+         categories: {
+            title: "Main AI categories and use cases",
+            intro: "The quick-access panel at the top of the platform and the sections below classify models by their functionality:",
+            programming:
+               "Programming and coding: The best AI models for automatic code generation, finding and fixing errors (debugging), and software development.",
+            writing:
+               "Text and creative writing: Tools for creating high-quality content, editing text, creative writing, and brand communications.",
+            research:
+               "Research and analysis: Specialized models for analyzing complex data, scientific research, and solving analytical reasoning tasks.",
+            media: "Media, graphics and audio: Services for image generation, visual understanding, video editing, speech synthesis (TTS), and transcription.",
+         },
+
+         metrics: {
+            title: "Technical metrics and transparent comparison table",
+            intro: "The category leaderboard displays detailed metrics required for an objective evaluation of each model's performance:",
+            ranking:
+               "Ranking position: Sequential model ranking based on overall performance and user feedback.",
+            model: "Model name and description: Flagship base models, such as GPT-5.6 Terra, together with a short description.",
+            tts: "TTS and speed (c/s): Speech synthesis capabilities and character processing speed per second.",
+            latency:
+               "Latency (ms): Response delay in milliseconds, indicating how quickly the model responds to a request.",
+            price: "Pricing ($ / 1M): Cost per one million tokens.",
+            license: "License status: Usage rights and model availability indicators.",
+         },
       },
    },
 } as const;
@@ -918,6 +962,8 @@ export const ru: Dictionary = {
    },
 
    rating: {
+      title: "Tоп лучших ии в категории",
+
       categories: {
          programming: {
             title: "Лучший ИИ для программирования",
@@ -1045,6 +1091,48 @@ export const ru: Dictionary = {
          license: "Лицензия",
          sortTts: "Сортировать по TTS",
          resizeColumn: "Изменить ширину колонки",
+      },
+      about: {
+         overview: {
+            title: "Комплексный рейтинг, сравнение и аналитическая платформа моделей искусственного интеллекта (ИИ)",
+            description:
+               "Представленная страница представляет собой передовой центр рейтингов и сравнения, специально разработанный для специалистов, программистов, исследователей и создателей цифрового контента, использующих технологии искусственного интеллекта (ИИ). В быстро развивающемся цифровом мире выбор правильного инструмента критически важен для экономии как времени, так и бюджета. Данная страница позволяет пользователям глубоко анализировать продукты ведущих мировых провайдеров ИИ и выбирать наиболее подходящую модель под свои задачи.",
+         },
+
+         providers: {
+            title: "Глобальные провайдеры и разнообразие моделей",
+            intro: "В левой части страницы и на панели навигации систематически сгруппированы ведущие мировые разработчики искусственного интеллекта и предлагаемые ими модели:",
+            google:
+               "Google, OpenAI и DeepSeek: Передовые модели, являющиеся флагманами индустрии, которые справляются со сложными логическими задачами, обработкой текстов большого объема и глубокой аналитикой.",
+            alternatives:
+               "Anthropic, xAI, Minimax, ChatGLM и Grok: Альтернативные и высокопроизводительные инновационные ИИ-решения, специализирующиеся в различных областях.",
+            outro: "На странице сотни моделей могут фильтроваться по различным категориям (все типы, изображения, поиск, аудио, видео, текст и чаты), что обеспечивает пользователю возможность точного поиска.",
+         },
+
+         categories: {
+            title: "Основные категории ИИ и направления использования",
+            intro: "Панель быстрых переходов в верхней части платформы и разделы ниже представляют классификацию моделей по их функционалу:",
+            programming:
+               "Программирование и кодинг: Лучшие ИИ-модели для автоматической генерации кода, поиска и исправления ошибок (отладки), а также разработки программного обеспечения.",
+            writing:
+               "Текст и креативное письмо: Инструменты для создания качественного контента, редактирования текста, творческого письма и бренд-коммуникаций.",
+            research:
+               "Исследования и анализ: Специализированные модели для анализа сложных данных, научных исследований и решения аналитических логических задач.",
+            media: "Медиа, графика и звук: Сервисы генерации изображений, визуального восприятия, редактирования видео, синтеза речи (TTS) и транскрипции.",
+         },
+
+         metrics: {
+            title: "Технические показатели и прозрачная таблица сравнения",
+            intro: "Таблица «Топ лучших ИИ в категории» отображает детальные метрики, необходимые для объективной оценки производительности каждой модели:",
+            ranking:
+               "Номер рейтинга: Последовательное ранжирование моделей на основе общей производительности и пользовательских отзывов.",
+            model: "Название модели и характеристика: Базовые флагманские модели (например, GPT-5.6 Terra) и их краткое описание.",
+            tts: "TTS и скорость (с/с): Возможности синтеза речи модели и скорость обработки символов в секунду.",
+            latency:
+               "Задержка (мс): Время задержки в миллисекундах, определяющее скорость ответа на запрос.",
+            price: "Ценовая политика ($ / 1M): Стоимость за 1 миллион токенов.",
+            license: "Статус лицензии: Метки прав на использование модели и доступности.",
+         },
       },
    },
 };
