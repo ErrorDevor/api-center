@@ -27,6 +27,11 @@ interface Props {
    // (see ModelRow's useProviderDescriptions wiring). Falls back to the
    // generic stub translation when no feed entry matches yet.
    description?: string;
+   // Real per-provider counts from useProviderCommentSummary (see ModelRow).
+   // Fall back to details.positiveReviews/negativeReviews (the static stub)
+   // while the summary is still loading or failed to load.
+   reviewsCount?: number;
+   reportsCount?: number;
    onMouseEnter?: () => void;
    onMouseLeave?: () => void;
 }
@@ -38,6 +43,8 @@ export const ProviderTooltip: React.FC<Props> = ({
    position,
    className,
    description,
+   reviewsCount,
+   reportsCount,
    onMouseEnter,
    onMouseLeave,
 }) => {
@@ -103,10 +110,12 @@ export const ProviderTooltip: React.FC<Props> = ({
                <span>{t.providers.reviews}:</span>
 
                <div className={css.provider_modal_reviews}>
-                  <strong>{details.positiveReviews}</strong>
+                  <strong>{reviewsCount ?? details.positiveReviews}</strong>
 
                   <div className={css.reports}>
-                     <div className={css.reports_inner}>{details.negativeReviews}</div>
+                     <div className={css.reports_inner}>
+                        {reportsCount ?? details.negativeReviews}
+                     </div>
                   </div>
                </div>
             </div>

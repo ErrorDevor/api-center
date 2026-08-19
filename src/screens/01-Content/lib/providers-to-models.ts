@@ -3,11 +3,13 @@ import type { ModelDescription, ModelItem } from "./content.data";
 import type { ModelCatalogEntry } from "shared/lib/models/types";
 import type { ProviderPriceRecord } from "shared/lib/providers/types";
 
-// Fields with no real-data equivalent (review/report counters) intentionally
-// stay static placeholders shared by every row — see ModelRow's fallback
-// lookup in provider.data.ts.
-const STUB_REVIEWS = 123;
-const STUB_REPORTS = 12;
+// Placeholder shown only until ModelRow's useProviderCommentSummary loads
+// the real per-provider counts (see shared/lib/providerComments) — this
+// pure function has no hook access, so it can't fetch them itself. 0 rather
+// than some plausible-looking fake number, so a slow/failed fetch reads as
+// "unknown" instead of quietly lying.
+const PLACEHOLDER_REVIEWS = 0;
+const PLACEHOLDER_REPORTS = 0;
 
 // Shown when a model has no matching entry in the catalog feed (models.json)
 // — e.g. a brand-new listing the catalog hasn't caught up with yet. Actual
@@ -63,8 +65,8 @@ export const toModelItems = (
          provider: record.providerName,
          providerUrl: record.providerUrl,
          providerDomain: record.providerDomain,
-         reviews: STUB_REVIEWS,
-         reports: STUB_REPORTS,
+         reviews: PLACEHOLDER_REVIEWS,
+         reports: PLACEHOLDER_REPORTS,
       };
    });
 };

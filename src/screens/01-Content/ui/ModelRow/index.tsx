@@ -8,10 +8,14 @@ import type { ModelItem } from "screens/01-Content/lib/content.data";
 import { pricesDetails, providerDetails } from "screens/01-Content/lib/provider.data";
 
 import { useTranslation } from "shared/lib/i18n";
+import { useProviderCommentSummary } from "shared/lib/providerComments/useProviderCommentSummary";
 import { useProviderDescriptions } from "shared/lib/providerDescriptions/useProviderDescriptions";
 import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 import Image from "shared/ui/base/Image";
-import { DiscountTooltip, type DiscountTooltipPosition } from "shared/ui/components/DiscountTooltip";
+import {
+   DiscountTooltip,
+   type DiscountTooltipPosition,
+} from "shared/ui/components/DiscountTooltip";
 import { PricesTooltip, type PricesTooltipPosition } from "shared/ui/components/PricesTooltip";
 import {
    ProviderTooltip,
@@ -74,6 +78,15 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
          ? providerDescriptionEntry.descriptionRu
          : providerDescriptionEntry.descriptionEn
       : undefined;
+
+   // Real per-provider counts from the comments backend (COMMENTS_API_GUIDE.md),
+   // shared across every row for the same reseller via the hook's per-domain
+   // cache. Falls back to the placeholder 0s from providers-to-models.ts
+   // while loading/on failure — see the Отзывы cell and ProviderTooltip below.
+   const { summary: commentSummary } = useProviderCommentSummary(model.providerDomain);
+   const reviewsCount = commentSummary?.totalComments ?? model.reviews;
+   const reportsCount = commentSummary?.negativeCount ?? model.reports;
+
    const providerRef = React.useRef<HTMLAnchorElement>(null);
    const pricesRef = React.useRef<HTMLButtonElement>(null);
    const discountRef = React.useRef<HTMLSpanElement>(null);
@@ -482,6 +495,8 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                      providerName={model.provider}
                      details={provider}
                      description={providerDescription}
+                     reviewsCount={commentSummary?.totalComments}
+                     reportsCount={commentSummary?.negativeCount}
                      position={providerTooltipPosition}
                      onMouseEnter={openProviderTooltip}
                      onMouseLeave={closeProviderTooltip}
@@ -503,10 +518,10 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                   router.push(reviewsHref);
                }}
             >
-               <span>{model.reviews}</span>
+               <span>{reviewsCount}</span>
 
                <div className={css.reports}>
-                  <div className={css.reports_inner}>{model.reports}</div>
+                  <div className={css.reports_inner}>{reportsCount}</div>
                </div>
             </a>
          </div>
