@@ -5,6 +5,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # NEXT_PUBLIC_* vars get baked into the client bundle at build time
+      # (a container restart alone won't pick up a change here — rebuild
+      # the image). Defaults match the Dockerfile's own ARG defaults;
+      # override any of them via a .env file next to this compose file if
+      # the gateway ever needs to be reached differently.
+      args:
+        NEXT_PUBLIC_PROVIDERS_JSON_URL: ${NEXT_PUBLIC_PROVIDERS_JSON_URL:-/gateway/data/providers.json}
+        NEXT_PUBLIC_MODELS_JSON_URL: ${NEXT_PUBLIC_MODELS_JSON_URL:-/gateway/data/models.json}
+        NEXT_PUBLIC_API_DESCRIPTIONS_JSON_URL: ${NEXT_PUBLIC_API_DESCRIPTIONS_JSON_URL:-/gateway/data/api_descriptions.json}
+        NEXT_PUBLIC_PROVIDER_DESCRIPTIONS_JSON_URL: ${NEXT_PUBLIC_PROVIDER_DESCRIPTIONS_JSON_URL:-/gateway/data/provider_descriptions.json}
     container_name: bestaiprice-web
     restart: always
     environment:

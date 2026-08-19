@@ -47,6 +47,14 @@ export const ProviderTooltip: React.FC<Props> = ({
    const providerTranslation = t.providers.items[details.translationKey];
    const resolvedDescription = description ?? providerTranslation.description;
 
+   // The description already opens with the provider/product name (real
+   // feed entries: "OneHop – ...", stub fallback: "OpenRouter is a..."), so
+   // prepending providerName again read as the name twice in a row (see
+   // the header right above). Bold just that leading word instead of
+   // repeating it.
+   const [firstWord, ...restWords] = resolvedDescription.split(" ");
+   const restOfDescription = restWords.length > 0 ? ` ${restWords.join(" ")}` : "";
+
    React.useEffect(() => {
       setMounted(true);
 
@@ -79,7 +87,8 @@ export const ProviderTooltip: React.FC<Props> = ({
 
          <div className={css.provider_modal_body}>
             <p className={css.provider_modal_description}>
-               <strong>{providerName}</strong> — {resolvedDescription}
+               <strong>{firstWord}</strong>
+               {restOfDescription}
             </p>
 
             <div className={css.provider_modal_divider} />
