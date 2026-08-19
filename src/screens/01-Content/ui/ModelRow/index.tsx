@@ -11,6 +11,7 @@ import { useTranslation } from "shared/lib/i18n";
 import { useProviderDescriptions } from "shared/lib/providerDescriptions/useProviderDescriptions";
 import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 import Image from "shared/ui/base/Image";
+import { DiscountTooltip, type DiscountTooltipPosition } from "shared/ui/components/DiscountTooltip";
 import { PricesTooltip, type PricesTooltipPosition } from "shared/ui/components/PricesTooltip";
 import {
    ProviderTooltip,
@@ -25,6 +26,9 @@ const PROVIDER_TOOLTIP_HEIGHT = 195;
 
 const PRICES_TOOLTIP_WIDTH = 243;
 const PRICES_TOOLTIP_HEIGHT = 352;
+
+const DISCOUNT_TOOLTIP_WIDTH = 200;
+const DISCOUNT_TOOLTIP_HEIGHT = 70;
 
 const TOOLTIP_GAP = 12;
 const VIEWPORT_PADDING = 8;
@@ -51,6 +55,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
 
    const providerTooltipId = React.useId();
    const pricesTooltipId = React.useId();
+   const discountTooltipId = React.useId();
    // Real reseller names from providers.json won't match a dictionary key,
    // so every provider falls back to the same placeholder tooltip content
    // (see provider.data.ts) instead of the tooltip silently never opening.
@@ -71,6 +76,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
       : undefined;
    const providerRef = React.useRef<HTMLAnchorElement>(null);
    const pricesRef = React.useRef<HTMLButtonElement>(null);
+   const discountRef = React.useRef<HTMLSpanElement>(null);
 
    const providerCloseTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -90,6 +96,14 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
       left: 0,
       top: 0,
    });
+
+   const [isDiscountTooltipOpen, setIsDiscountTooltipOpen] = React.useState(false);
+
+   const [discountTooltipPosition, setDiscountTooltipPosition] =
+      React.useState<DiscountTooltipPosition>({
+         left: 0,
+         top: 0,
+      });
 
    const calculateTooltipPosition = React.useCallback(
       (element: HTMLElement, tooltipWidth: number, tooltipHeight: number): TooltipPosition => {
@@ -232,6 +246,28 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
       updatePricesTooltipPosition();
       setIsPricesTooltipOpen(true);
    };
+
+   const updateDiscountTooltipPosition = React.useCallback(() => {
+      const element = discountRef.current;
+
+      if (!element) {
+         return;
+      }
+
+      setDiscountTooltipPosition(
+         calculateTooltipPosition(element, DISCOUNT_TOOLTIP_WIDTH, DISCOUNT_TOOLTIP_HEIGHT)
+      );
+   }, [calculateTooltipPosition]);
+
+   const openDiscountTooltip = () => {
+      updateDiscountTooltipPosition();
+      setIsDiscountTooltipOpen(true);
+   };
+
+   const closeDiscountTooltip = () => {
+      setIsDiscountTooltipOpen(false);
+   };
+
    React.useEffect(() => {
       if (!isProviderTooltipOpen) {
          return;
@@ -267,6 +303,24 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
          window.removeEventListener("scroll", handlePositionChange, true);
       };
    }, [isPricesTooltipOpen, updatePricesTooltipPosition]);
+
+   React.useEffect(() => {
+      if (!isDiscountTooltipOpen) {
+         return;
+      }
+
+      const handlePositionChange = () => {
+         updateDiscountTooltipPosition();
+      };
+
+      window.addEventListener("resize", handlePositionChange);
+      window.addEventListener("scroll", handlePositionChange, true);
+
+      return () => {
+         window.removeEventListener("resize", handlePositionChange);
+         window.removeEventListener("scroll", handlePositionChange, true);
+      };
+   }, [isDiscountTooltipOpen, updateDiscountTooltipPosition]);
 
    React.useEffect(() => {
       return () => {
@@ -338,9 +392,28 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                </div>
             </div>
 
-            <span className={css.discount}>
-               {t.models.discount.replace("{percent}", String(model.discountPercent))}
+            <span
+               ref={discountRef}
+               className={css.discount}
+               tabIndex={0}
+               aria-describedby={isDiscountTooltipOpen ? discountTooltipId : undefined}
+               onMouseEnter={openDiscountTooltip}
+               onMouseLeave={closeDiscountTooltip}
+               onFocus={openDiscountTooltip}
+               onBlur={closeDiscountTooltip}
+            >
+               <span className={css.discount_text}>
+                  {t.models.discount.replace("{percent}", String(model.discountPercent))}
+               </span>
             </span>
+
+            {isDiscountTooltipOpen && (
+               <DiscountTooltip
+                  id={discountTooltipId}
+                  text={t.models.discountTooltip}
+                  position={discountTooltipPosition}
+               />
+            )}
          </div>
 
          <div className={css.table_cell}>

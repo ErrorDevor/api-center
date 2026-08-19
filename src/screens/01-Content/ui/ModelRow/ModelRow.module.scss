@@ -107,8 +107,8 @@
 .prices {
    display: flex;
    align-items: center;
+   flex-shrink: 0;
    gap: 0.8rem;
-   min-width: 0;
    white-space: nowrap;
 }
 
@@ -144,11 +144,12 @@
    display: flex;
    align-items: center;
    justify-content: center;
-   width: fit-content;
-   flex-shrink: 0;
+   min-width: 0;
+   flex-shrink: 1;
    padding: 0.7rem;
    white-space: nowrap;
    border-radius: 10rem;
+   cursor: default;
 
    @include strokeGradient(
       linear-gradient(#f9e5e8, #f9cad2),
@@ -163,6 +164,18 @@
    text-shadow: 0 -0.05rem 0 rgba(255, 255, 255, 0.8);
 
    @include fontInterTight(1.3rem, 1rem, -0.01em, 400, #c81734);
+
+   &:focus-visible {
+      outline: 0.2rem solid rgba(71, 145, 255, 0.25);
+      outline-offset: 0.2rem;
+   }
+}
+
+.discount_text {
+   min-width: 0;
+   overflow: hidden;
+   white-space: nowrap;
+   text-overflow: ellipsis;
 }
 
 .tags {
