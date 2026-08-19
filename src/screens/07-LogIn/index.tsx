@@ -20,7 +20,7 @@ export const LogIn: React.FC = () => {
          <div className={css.login_card}>
             <LoginForm
                onBack={handleComplete}
-               onSubmit={handleComplete}
+               onSuccess={handleComplete}
                onClose={handleComplete}
             />
          </div>

@@ -19,6 +19,7 @@ export const en = {
       feedback: "Feedback",
       login: "Log In",
       signup: "Sign Up",
+      logout: "Log Out",
       addProvider: "Add provider",
       replyPlaceholder: "Post your reply",
       buttonText: "Reply",
@@ -100,12 +101,35 @@ export const en = {
 
       reviewsTitle: "Reviews of participants",
       reply: "Reply",
+      hideReplies: "Hide replies",
+      viewReplies: "View {count} replies",
+      noReviewsYet: "No reviews yet — be the first to leave one.",
+      loadError: "Couldn't load reviews. Please try again later.",
+
+      sentimentTabs: {
+         all: "All",
+         positive: "Positive",
+         negative: "Negative",
+      },
+
+      noProviderSelected: {
+         title: "No provider selected",
+         description: "Open a provider from the Home page to see its reviews.",
+      },
+
+      leaveReview: {
+         title: "Leave a review",
+         placeholder: "Share your experience with this provider",
+         submit: "Post review",
+         positive: "Positive",
+         negative: "Negative",
+      },
 
       providerDetails: {
          link: "Link",
          age: "Age",
          paymentMethods: "Payment methods",
-         rating: "Rating",
+         positiveRatio: "Positive",
          reviews: "Reviews",
          showAll: "See all",
          topModelsPrices: "Top 10 model prices",
@@ -133,7 +157,6 @@ export const en = {
       actions: {
          like: "Like",
          dislike: "Dislike",
-         favorite: "Add to favorites",
          share: "Share",
       },
 
@@ -191,6 +214,7 @@ export const en = {
       popular: "Most popular first",
       positive: "Positive first",
       negative: "Negative first",
+      mostReplies: "Most replies",
    },
 
    filterDropdown: {
@@ -277,6 +301,8 @@ export const en = {
          next: "Next",
          or: "or",
          telegram: "Continue with Telegram",
+         genericError: "Something went wrong. Please try again.",
+         networkError: "Network error. Please check your connection and try again.",
       },
 
       roleSelector: {
@@ -592,6 +618,7 @@ export const ru: Dictionary = {
       feedback: "Оставить отзыв",
       login: "Войти",
       signup: "Зарегистрироваться",
+      logout: "Выйти",
       addProvider: "Добавить провайдер",
       replyPlaceholder: "Post your reply",
       buttonText: "Ответить",
@@ -673,12 +700,35 @@ export const ru: Dictionary = {
 
       reviewsTitle: "Отзывы участников",
       reply: "Ответить",
+      hideReplies: "Скрыть ответы",
+      viewReplies: "Показать ответы ({count})",
+      noReviewsYet: "Пока нет отзывов — оставьте первый.",
+      loadError: "Не удалось загрузить отзывы. Попробуйте позже.",
+
+      sentimentTabs: {
+         all: "Все",
+         positive: "Положительные",
+         negative: "Отрицательные",
+      },
+
+      noProviderSelected: {
+         title: "Провайдер не выбран",
+         description: "Откройте провайдера на главной странице, чтобы увидеть его отзывы.",
+      },
+
+      leaveReview: {
+         title: "Оставить отзыв",
+         placeholder: "Поделитесь впечатлением об этом провайдере",
+         submit: "Опубликовать отзыв",
+         positive: "Положительный",
+         negative: "Отрицательный",
+      },
 
       providerDetails: {
          link: "Ссылка",
          age: "Возраст",
          paymentMethods: "Способы оплаты",
-         rating: "Оценка",
+         positiveRatio: "Положительные",
          reviews: "Отзывы",
          showAll: "Смотреть все",
          topModelsPrices: "Цены топ-10 моделей",
@@ -706,7 +756,6 @@ export const ru: Dictionary = {
       actions: {
          like: "Нравится",
          dislike: "Не нравится",
-         favorite: "Добавить в избранное",
          share: "Поделиться",
       },
 
@@ -764,6 +813,7 @@ export const ru: Dictionary = {
       popular: "Сначала популярные",
       positive: "Сначала положительные",
       negative: "Сначала отрицательные",
+      mostReplies: "Больше всего ответов",
    },
 
    filterDropdown: {
@@ -850,6 +900,8 @@ export const ru: Dictionary = {
          next: "Далее",
          or: "или",
          telegram: "Продолжить через Telegram",
+         genericError: "Что-то пошло не так. Попробуйте ещё раз.",
+         networkError: "Ошибка сети. Проверьте подключение и попробуйте ещё раз.",
       },
 
       roleSelector: {

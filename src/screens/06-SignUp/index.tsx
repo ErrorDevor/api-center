@@ -20,7 +20,7 @@ export const SignUp: React.FC = () => {
          <div className={css.signup_card}>
             <RegistrationForm
                onBack={handleComplete}
-               onSubmit={handleComplete}
+               onSuccess={handleComplete}
                onClose={handleComplete}
             />
          </div>

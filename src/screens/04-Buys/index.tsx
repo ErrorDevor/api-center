@@ -5,7 +5,7 @@ import React from "react";
 import { card, tabs } from "./lib/buys.data";
 import clsx from "clsx";
 import { GroupBuyCard } from "screens/02-GroupBuys/ui/GroupBuyCard";
-import { commentsData } from "screens/03-Reviews/lib/comments.data";
+import { mockReviews } from "screens/03-Reviews/lib/comments.data";
 import { CommentLayer } from "screens/03-Reviews/ui/CommentLayer";
 
 import { useTranslation } from "shared/lib/i18n";
@@ -58,11 +58,11 @@ export const Buys: React.FC<Prop> = ({ className }) => {
                <div className={css.buys_data_list}>
                   <h6>{t.common.participants}</h6>
 
-                  {commentsData.commentsData.reviews.map((item, index) => (
+                  {mockReviews.map((item, index) => (
                      <React.Fragment key={item.id}>
                         <CommentLayer data={item} withBackground={false} />
 
-                        {index < commentsData.commentsData.reviews.length - 1 && (
+                        {index < mockReviews.length - 1 && (
                            <div className={css.horizontal_divider} />
                         )}
                      </React.Fragment>

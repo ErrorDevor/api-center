@@ -2,6 +2,7 @@
 
 import React from "react";
 
+import { useAuth } from "shared/lib/auth";
 import { useTranslation } from "shared/lib/i18n";
 import Image from "shared/ui/base/Image";
 import { ArrowIcon, PasswordEyeIcon } from "shared/ui/icons";
@@ -11,22 +12,44 @@ import css from "./RegistrationForm.module.scss";
 
 interface Props {
    onBack?: () => void;
-   onSubmit?: () => void;
+   onSuccess?: () => void;
    onClose?: () => void;
 }
 
-export const RegistrationForm: React.FC<Props> = ({ onBack, onSubmit, onClose }) => {
+export const RegistrationForm: React.FC<Props> = ({ onBack, onSuccess, onClose }) => {
    const { t } = useTranslation();
+   const { register } = useAuth();
 
    const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
+   const [isSubmitting, setIsSubmitting] = React.useState(false);
+   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
    const togglePasswordVisibility = () => {
       setIsPasswordVisible((current) => !current);
    };
 
-   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      onSubmit?.();
+
+      // sub2api's /auth/register has no username/name field (see
+      // AUTH_API_GUIDE.md §4) — the "name" input below is kept for UX
+      // continuity but its value is intentionally not read/sent.
+      const formData = new FormData(event.currentTarget);
+      const email = String(formData.get("email") ?? "");
+      const password = String(formData.get("password") ?? "");
+
+      setIsSubmitting(true);
+      setErrorMessage(null);
+
+      const result = await register(email, password);
+
+      setIsSubmitting(false);
+
+      if (result.ok) {
+         onSuccess?.();
+      } else {
+         setErrorMessage(result.message);
+      }
    };
 
    return (
@@ -94,7 +117,14 @@ export const RegistrationForm: React.FC<Props> = ({ onBack, onSubmit, onClose })
                </button>
             </div>
 
-            <Button type="submit" variant="black" className={css.registration_form_submit}>
+            {errorMessage && <p className={css.registration_form_error}>{errorMessage}</p>}
+
+            <Button
+               type="submit"
+               variant="black"
+               className={css.registration_form_submit}
+               disabled={isSubmitting}
+            >
                {t.onboarding.registration.submit}
             </Button>
          </form>

@@ -11,6 +11,8 @@ import { useTranslation } from "shared/lib/i18n";
 import { useModelCatalog } from "shared/lib/models/useModelCatalog";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
 import { getVendorDisplayName, getVendorId } from "shared/lib/providers/vendors";
+import { GENERIC_VENDOR_SLUG } from "shared/lib/vendorDescriptions/types";
+import { useVendorDescriptions } from "shared/lib/vendorDescriptions/useVendorDescriptions";
 import { ContentActions } from "shared/ui/components/ContentActions";
 import { ContentHeader } from "shared/ui/components/ContentHeader";
 import { ContentHeaderTab } from "shared/ui/components/ContentHeader";
@@ -29,9 +31,10 @@ interface Prop {
 }
 
 export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedModelId }) => {
-   const { t } = useTranslation();
+   const { t, locale } = useTranslation();
    const { records } = useProviderRecords();
    const { entries: modelCatalog } = useModelCatalog();
+   const { entries: vendorDescriptions } = useVendorDescriptions();
 
    const models = React.useMemo(
       () => toModelItems(records, modelCatalog),
@@ -63,18 +66,29 @@ export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedM
 
    // Below the fold, the description block used to always say "GPT-5.6
    // Terra" no matter what — now it's generic by default and names the
-   // selected vendor, same as the header title above.
+   // selected vendor, same as the header title above. Text is sourced from
+   // api_descriptions.json (see useVendorDescriptions) — a per-vendor,
+   // already-localized title/blurb pair, keyed by vendor_slug — falling
+   // back to the templated i18n strings while that feed is loading/missing
+   // a matching entry (e.g. a vendor not yet in the feed).
+   const vendorDescriptionEntry =
+      vendorDescriptions.find(
+         (entry) => entry.vendorSlug === (selectedVendorId ?? GENERIC_VENDOR_SLUG)
+      ) ?? vendorDescriptions.find((entry) => entry.vendorSlug === GENERIC_VENDOR_SLUG);
+
    const descriptionProvider = selectedVendorId
       ? getVendorDisplayName(selectedVendorId)
       : t.content.modelDescription.defaultProvider;
-   const descriptionTitle = t.content.modelDescription.title.replace(
-      "{provider}",
-      descriptionProvider
-   );
-   const descriptionText = t.content.modelDescription.text.replace(
-      "{provider}",
-      descriptionProvider
-   );
+   const descriptionTitle = vendorDescriptionEntry
+      ? locale === "ru"
+         ? vendorDescriptionEntry.titleRu
+         : vendorDescriptionEntry.titleEn
+      : t.content.modelDescription.title.replace("{provider}", descriptionProvider);
+   const descriptionText = vendorDescriptionEntry
+      ? locale === "ru"
+         ? vendorDescriptionEntry.descriptionRu
+         : vendorDescriptionEntry.descriptionEn
+      : t.content.modelDescription.text.replace("{provider}", descriptionProvider);
 
    const headerTabs: ContentHeaderTab<TabId>[] = tabs.map((tab) => ({
       id: tab.id,

@@ -87,6 +87,11 @@
    color: getColorBlack(1);
 }
 
+.logout_button {
+   height: 3.6rem;
+   color: getColorBlack(1);
+}
+
 @include screenMD {
    .header {
       display: none;

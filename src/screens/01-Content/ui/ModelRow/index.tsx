@@ -2,10 +2,13 @@
 
 import React from "react";
 
+import { useRouter } from "next/navigation";
+
 import type { ModelItem } from "screens/01-Content/lib/content.data";
 import { pricesDetails, providerDetails } from "screens/01-Content/lib/provider.data";
 
 import { useTranslation } from "shared/lib/i18n";
+import { useProviderDescriptions } from "shared/lib/providerDescriptions/useProviderDescriptions";
 import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 import Image from "shared/ui/base/Image";
 import { PricesTooltip, type PricesTooltipPosition } from "shared/ui/components/PricesTooltip";
@@ -42,6 +45,9 @@ interface TooltipPosition {
 
 export const ModelRow: React.FC<Prop> = ({ model }) => {
    const { t, locale } = useTranslation();
+   const router = useRouter();
+   const { entries: providerDescriptions } = useProviderDescriptions();
+   const reviewsHref = `/reviews?provider=${encodeURIComponent(model.providerDomain)}`;
 
    const providerTooltipId = React.useId();
    const pricesTooltipId = React.useId();
@@ -50,6 +56,19 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
    // (see provider.data.ts) instead of the tooltip silently never opening.
    const provider = providerDetails[model.provider] ?? providerDetails.OpenRouter;
    const prices = pricesDetails[model.provider] ?? pricesDetails.OpenRouter;
+
+   // Real per-provider blurb from provider_descriptions.json (joined by
+   // domain), same feed CommentCard uses on /reviews — falls back to
+   // `provider`'s generic stub description inside ProviderTooltip itself
+   // when no entry matches yet.
+   const providerDescriptionEntry = providerDescriptions.find(
+      (entry) => entry.providerDomain === model.providerDomain
+   );
+   const providerDescription = providerDescriptionEntry
+      ? locale === "ru"
+         ? providerDescriptionEntry.descriptionRu
+         : providerDescriptionEntry.descriptionEn
+      : undefined;
    const providerRef = React.useRef<HTMLAnchorElement>(null);
    const pricesRef = React.useRef<HTMLButtonElement>(null);
 
@@ -368,9 +387,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
             <div className={css.provider_wrapper}>
                <a
                   ref={providerRef}
-                  href={model.providerUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={reviewsHref}
                   className={css.provider}
                   aria-describedby={
                      provider && isProviderTooltipOpen ? providerTooltipId : undefined
@@ -379,6 +396,10 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                   onMouseLeave={closeProviderTooltip}
                   onFocus={openProviderTooltip}
                   onBlur={closeProviderTooltip}
+                  onClick={(event) => {
+                     event.preventDefault();
+                     router.push(reviewsHref);
+                  }}
                >
                   <Image.Default src="/icons/info.svg" alt="" />
                   <span>{model.provider}</span>
@@ -389,6 +410,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                      id={providerTooltipId}
                      providerName={model.provider}
                      details={provider}
+                     description={providerDescription}
                      position={providerTooltipPosition}
                      onMouseEnter={openProviderTooltip}
                      onMouseLeave={closeProviderTooltip}
