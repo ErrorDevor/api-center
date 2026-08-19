@@ -132,35 +132,39 @@ export const CommentCardOptions: React.FC<Prop> = ({ data }) => {
                </div>
 
                <div className={css.comment_card_options_item}>
-                  <span className={css.comment_card_options_label}>{translation.rating}:</span>
+                  <span className={css.comment_card_options_label}>
+                     {translation.positiveRatio}:
+                  </span>
 
                   <span className={css.comment_card_options_rating}>
                      <StarIcon className={css.comment_card_options_star} />
 
-                     <span>{data.rating}</span>
+                     <span>{Math.round(data.positiveRatio)}%</span>
                   </span>
                </div>
             </div>
 
             <div className={css.comment_card_options_row}>
-               <div className={css.comment_card_options_item}>
-                  <span className={css.comment_card_options_label}>{translation.age}:</span>
+               {data.age && (
+                  <div className={css.comment_card_options_item}>
+                     <span className={css.comment_card_options_label}>{translation.age}:</span>
 
-                  <span className={css.comment_card_options_value}>
-                     {formatProviderAge(data.age, locale)}
-                  </span>
-               </div>
+                     <span className={css.comment_card_options_value}>
+                        {formatProviderAge(data.age, locale)}
+                     </span>
+                  </div>
+               )}
 
                <div className={css.comment_card_options_item}>
                   <span className={css.comment_card_options_label}>{translation.reviews}:</span>
 
                   <span className={css.comment_card_options_reviews}>
                      <span className={css.comment_card_options_positive}>
-                        {data.positiveReviews}
+                        {data.positiveCount}
                      </span>
 
                      <div className={css.reports}>
-                        <div className={css.reports_inner}>{data.negativeReviews}</div>
+                        <div className={css.reports_inner}>{data.negativeCount}</div>
                      </div>
                   </span>
                </div>
@@ -184,20 +188,22 @@ export const CommentCardOptions: React.FC<Prop> = ({ data }) => {
             </div>
          </div>
 
-         <div className={css.comment_card_options_separator} />
+         {data.models.length > 0 && (
+            <>
+               <div className={css.comment_card_options_separator} />
 
-         <div className={css.comment_card_options_models}>
-            <div className={css.comment_card_options_models_header}>
-               <h4>{translation.topModelsPrices}</h4>
+               <div className={css.comment_card_options_models}>
+                  <div className={css.comment_card_options_models_header}>
+                     <h4>{translation.topModelsPrices}</h4>
 
-               <button type="button" className={css.comment_card_options_more}>
-                  <span>{translation.showAll}</span>
+                     <button type="button" className={css.comment_card_options_more}>
+                        <span>{translation.showAll}</span>
 
-                  <span className={css.comment_card_options_arrow} />
-               </button>
-            </div>
+                        <span className={css.comment_card_options_arrow} />
+                     </button>
+                  </div>
 
-            <div className={css.comment_card_options_tables}>
+                  <div className={css.comment_card_options_tables}>
                {modelsLayout.map((models, tableIndex) => {
                   const widths = tableColumnWidths[tableIndex] ?? INITIAL_COLUMN_WIDTHS;
 
@@ -251,7 +257,13 @@ export const CommentCardOptions: React.FC<Prop> = ({ data }) => {
                                     <span className={css.comment_card_options_mobile_dots} />
 
                                     <span className={css.comment_card_options_model_icon}>
-                                       <Image.Default src={model.icon} alt="" aria-hidden="true" />
+                                       {model.icon && (
+                                          <Image.Default
+                                             src={model.icon}
+                                             alt=""
+                                             aria-hidden="true"
+                                          />
+                                       )}
                                     </span>
 
                                     <strong>{model.name}</strong>
@@ -315,7 +327,9 @@ export const CommentCardOptions: React.FC<Prop> = ({ data }) => {
                   <span>{t.sidebar.showMore}</span>
                </button>
             )}
-         </div>
+               </div>
+            </>
+         )}
       </div>
    );
 };

@@ -37,34 +37,6 @@ const computeDiscountPercent = (record: ProviderPriceRecord): number => {
    return Math.max(0, Math.round((inputDiscount + outputDiscount) / 2));
 };
 
-// Dozens of resellers can list the same canonical model — showing every
-// single listing floods the table with near-duplicate rows for whichever
-// model happens to be popular (same name/description, differing only by
-// provider) and crowds out everything else. Cap it to the cheapest few
-// offers per model instead.
-const MAX_LISTINGS_PER_MODEL = 2;
-
-const selectCheapestPerModel = (records: ProviderPriceRecord[]): ProviderPriceRecord[] => {
-   const totalPrice = (record: ProviderPriceRecord): number =>
-      record.inputPriceUsdPer1m + record.outputPriceUsdPer1m;
-
-   const groupsByModel = new Map<string, ProviderPriceRecord[]>();
-
-   for (const record of records) {
-      const group = groupsByModel.get(record.canonicalModelId);
-
-      if (group) {
-         group.push(record);
-      } else {
-         groupsByModel.set(record.canonicalModelId, [record]);
-      }
-   }
-
-   return Array.from(groupsByModel.values()).flatMap((group) =>
-      [...group].sort((a, b) => totalPrice(a) - totalPrice(b)).slice(0, MAX_LISTINGS_PER_MODEL)
-   );
-};
-
 export const toModelItems = (
    records: ProviderPriceRecord[],
    catalog: ModelCatalogEntry[] = []
@@ -73,7 +45,7 @@ export const toModelItems = (
    // per reseller), so index the catalog once instead of scanning it per row.
    const catalogById = new Map(catalog.map((entry) => [entry.canonicalModelId, entry]));
 
-   return selectCheapestPerModel(records).map((record): ModelItem => {
+   return records.map((record): ModelItem => {
       const catalogEntry = catalogById.get(record.canonicalModelId);
       const description: ModelDescription = catalogEntry
          ? { ru: catalogEntry.descriptionRu, en: catalogEntry.descriptionEn }
@@ -90,6 +62,7 @@ export const toModelItems = (
          paymentMethods: record.paymentMethods,
          provider: record.providerName,
          providerUrl: record.providerUrl,
+         providerDomain: record.providerDomain,
          reviews: STUB_REVIEWS,
          reports: STUB_REPORTS,
       };

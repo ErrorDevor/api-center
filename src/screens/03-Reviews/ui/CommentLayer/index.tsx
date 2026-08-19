@@ -8,23 +8,41 @@ import type { CommentLayerType } from "screens/03-Reviews/lib/comments.type";
 import { useTranslation } from "shared/lib/i18n";
 import { formatRelativeDate } from "shared/lib/i18n/formatters";
 import Image from "shared/ui/base/Image";
+import { Reply } from "shared/ui/components/Reply";
 import { UserInfo } from "shared/ui/components/UserInfo";
-import { ReplyIcon, ShareIcon, StarIcon } from "shared/ui/icons";
+import { ReplyIcon, ShareIcon } from "shared/ui/icons";
 
 import css from "./CommentLayer.module.scss";
+
+// Optional real backend wiring — the Reviews screen passes this so
+// like/dislike/reply actually round-trip through COMMENTS_API_GUIDE.md.
+// When omitted (04-Buys' still-mock "participants" list), the actions just
+// render as static counts instead of pretending to be interactive.
+export interface CommentLayerActions {
+   isAuthenticated: boolean;
+   onRequireAuth: () => void;
+   onVote: (commentId: string | number, voteType: "like" | "dislike" | "none") => Promise<void>;
+   onLoadReplies: (commentId: string | number) => Promise<CommentLayerType[]>;
+   onReply: (commentId: string | number, content: string) => Promise<boolean>;
+}
 
 interface Prop {
    className?: string;
    data: CommentLayerType;
    withBackground?: boolean;
+   actions?: CommentLayerActions;
 }
 
 interface CommentItemProp {
    data: CommentLayerType;
    isReply?: boolean;
+   actions?: CommentLayerActions;
+   replyCount?: number;
+   areRepliesExpanded?: boolean;
+   isLoadingReplies?: boolean;
+   onToggleReplies?: () => void;
+   onReplyPosted?: () => void;
 }
-
-type VoteType = "like" | "dislike" | null;
 
 type CommentTone = "orange" | "blue" | "white";
 
@@ -43,28 +61,86 @@ const getCommentTone = (id: string | number): CommentTone => {
 const CommentItem: React.FC<CommentItemProp> = ({
    data,
    isReply = false,
+   actions,
+   replyCount = 0,
+   areRepliesExpanded = false,
+   isLoadingReplies = false,
+   onToggleReplies,
+   onReplyPosted,
 }) => {
    const { locale, t } = useTranslation();
 
-   const translation = t.groupBuys.items[data.translationKey];
+   const [likeCount, setLikeCount] = React.useState(data.reactions.likes);
+   const [dislikeCount, setDislikeCount] = React.useState(data.reactions.dislikes);
+   const [userVote, setUserVote] = React.useState<"like" | "dislike" | "">(data.userVote ?? "");
+   const [isVoting, setIsVoting] = React.useState(false);
 
-   const [vote, setVote] = React.useState<VoteType>(null);
-   const [isFavorite, setIsFavorite] = React.useState(false);
+   const [isComposingReply, setIsComposingReply] = React.useState(false);
+   const [isSubmittingReply, setIsSubmittingReply] = React.useState(false);
 
-   const likes = data.reactions.likes + (vote === "like" ? 1 : 0);
-   const dislikes = data.reactions.dislikes + (vote === "dislike" ? 1 : 0);
-   const favorites = data.reactions.favorites + (isFavorite ? 1 : 0);
+   const handleVote = async (voteType: "like" | "dislike") => {
+      if (!actions || isVoting) {
+         return;
+      }
 
-   const handleLike = () => {
-      setVote((currentVote) => (currentVote === "like" ? null : "like"));
+      if (!actions.isAuthenticated) {
+         actions.onRequireAuth();
+         return;
+      }
+
+      const nextVote = userVote === voteType ? "none" : voteType;
+      const previous = { likeCount, dislikeCount, userVote };
+
+      // Optimistic update — rolled back below if the request fails.
+      setUserVote(nextVote === "none" ? "" : nextVote);
+      setLikeCount((count) => count + (nextVote === "like" ? 1 : 0) - (userVote === "like" ? 1 : 0));
+      setDislikeCount(
+         (count) => count + (nextVote === "dislike" ? 1 : 0) - (userVote === "dislike" ? 1 : 0)
+      );
+
+      setIsVoting(true);
+
+      try {
+         await actions.onVote(data.id, nextVote);
+      } catch {
+         setLikeCount(previous.likeCount);
+         setDislikeCount(previous.dislikeCount);
+         setUserVote(previous.userVote);
+      } finally {
+         setIsVoting(false);
+      }
    };
 
-   const handleDislike = () => {
-      setVote((currentVote) => (currentVote === "dislike" ? null : "dislike"));
+   const handleToggleReplyCompose = () => {
+      if (!actions) {
+         return;
+      }
+
+      if (!actions.isAuthenticated) {
+         actions.onRequireAuth();
+         return;
+      }
+
+      setIsComposingReply((current) => !current);
    };
 
-   const handleFavorite = () => {
-      setIsFavorite((currentValue) => !currentValue);
+   const handleSubmitReply = async (content: string) => {
+      if (!actions) {
+         return;
+      }
+
+      setIsSubmittingReply(true);
+
+      try {
+         const ok = await actions.onReply(data.id, content);
+
+         if (ok) {
+            setIsComposingReply(false);
+            onReplyPosted?.();
+         }
+      } finally {
+         setIsSubmittingReply(false);
+      }
    };
 
    return (
@@ -84,7 +160,7 @@ const CommentItem: React.FC<CommentItemProp> = ({
          </div>
 
          <div className={css.comment_layer_body}>
-            <p className={css.comment_layer_text}>{translation.review}</p>
+            <p className={css.comment_layer_text}>{data.content}</p>
 
             <div className={css.comment_layer_actions}>
                <button
@@ -92,20 +168,16 @@ const CommentItem: React.FC<CommentItemProp> = ({
                   className={clsx(
                      css.comment_layer_action,
                      css.comment_layer_reaction,
-                     vote === "like" && css.is_active
+                     userVote === "like" && css.is_active
                   )}
                   aria-label={t.groupBuys.actions.like}
-                  aria-pressed={vote === "like"}
-                  onClick={handleLike}
+                  aria-pressed={userVote === "like"}
+                  disabled={!actions || isVoting}
+                  onClick={() => handleVote("like")}
                >
-                  <Image.Default
-                     className={css.comment_layer_reaction_icon}
-                     src={vote === "like" ? "/icons/like-fill.svg" : "/icons/like.svg"}
-                     alt=""
-                     aria-hidden="true"
-                  />
+                  <ReactionIcon variant="like" active={userVote === "like"} />
 
-                  <span>{likes}</span>
+                  <span>{likeCount}</span>
                </button>
 
                <button
@@ -113,47 +185,42 @@ const CommentItem: React.FC<CommentItemProp> = ({
                   className={clsx(
                      css.comment_layer_action,
                      css.comment_layer_reaction,
-                     vote === "dislike" && css.is_active
+                     userVote === "dislike" && css.is_active
                   )}
                   aria-label={t.groupBuys.actions.dislike}
-                  aria-pressed={vote === "dislike"}
-                  onClick={handleDislike}
+                  aria-pressed={userVote === "dislike"}
+                  disabled={!actions || isVoting}
+                  onClick={() => handleVote("dislike")}
                >
-                  <Image.Default
-                     className={css.comment_layer_reaction_icon}
-                     src={vote === "dislike" ? "/icons/dislike-fill.svg" : "/icons/dislike.svg"}
-                     alt=""
-                     aria-hidden="true"
-                  />
+                  <ReactionIcon variant="dislike" active={userVote === "dislike"} />
 
-                  <span>{dislikes}</span>
-               </button>
-
-               <button
-                  type="button"
-                  className={clsx(
-                     css.comment_layer_action,
-                     css.comment_layer_reaction,
-                     css.comment_layer_favorite,
-                     isFavorite && css.is_active
-                  )}
-                  aria-label={t.groupBuys.actions.favorite}
-                  aria-pressed={isFavorite}
-                  onClick={handleFavorite}
-               >
-                  <StarIcon className={css.comment_layer_reaction_icon} />
-
-                  <span>{favorites}</span>
+                  <span>{dislikeCount}</span>
                </button>
 
                {!isReply && (
                   <button
                      type="button"
                      className={clsx(css.comment_layer_action, css.comment_layer_simple_action)}
+                     onClick={handleToggleReplyCompose}
                   >
                      <ReplyIcon />
 
                      <span>{t.groupBuys.reply}</span>
+                  </button>
+               )}
+
+               {!isReply && replyCount > 0 && (
+                  <button
+                     type="button"
+                     className={clsx(css.comment_layer_action, css.comment_layer_simple_action)}
+                     disabled={isLoadingReplies}
+                     onClick={onToggleReplies}
+                  >
+                     <span>
+                        {areRepliesExpanded
+                           ? t.groupBuys.hideReplies
+                           : t.groupBuys.viewReplies.replace("{count}", String(replyCount))}
+                     </span>
                   </button>
                )}
 
@@ -169,14 +236,78 @@ const CommentItem: React.FC<CommentItemProp> = ({
                   <ShareIcon />
                </button>
             </div>
+
+            {!isReply && isComposingReply && (
+               <Reply
+                  className={css.comment_layer_reply_form}
+                  placeholder={t.common.replyPlaceholder}
+                  buttonText={t.common.buttonText}
+                  disabled={isSubmittingReply}
+                  onSubmit={handleSubmitReply}
+               />
+            )}
          </div>
       </div>
    );
 };
 
-export const CommentLayer: React.FC<Prop> = ({ className, data, withBackground = true }) => {
+interface ReactionIconProp {
+   variant: "like" | "dislike";
+   active: boolean;
+}
+
+const ReactionIcon: React.FC<ReactionIconProp> = ({ variant, active }) => (
+   <Image.Default
+      className={css.comment_layer_reaction_icon}
+      src={active ? `/icons/${variant}-fill.svg` : `/icons/${variant}.svg`}
+      alt=""
+      aria-hidden="true"
+   />
+);
+
+export const CommentLayer: React.FC<Prop> = ({ className, data, withBackground = true, actions }) => {
    const tone = withBackground ? getCommentTone(data.id) : undefined;
-   const hasReplies = Boolean(data.replies?.length);
+   const replyCount = data.replyCount ?? data.replies?.length ?? 0;
+
+   const [replies, setReplies] = React.useState<CommentLayerType[] | null>(data.replies ?? null);
+   const [areRepliesExpanded, setAreRepliesExpanded] = React.useState(Boolean(data.replies?.length));
+   const [isLoadingReplies, setIsLoadingReplies] = React.useState(false);
+
+   const loadReplies = async () => {
+      if (!actions) {
+         return;
+      }
+
+      setIsLoadingReplies(true);
+
+      try {
+         const loaded = await actions.onLoadReplies(data.id);
+
+         setReplies(loaded);
+      } finally {
+         setIsLoadingReplies(false);
+      }
+   };
+
+   const handleToggleReplies = async () => {
+      if (areRepliesExpanded) {
+         setAreRepliesExpanded(false);
+         return;
+      }
+
+      if (replies === null && actions) {
+         await loadReplies();
+      }
+
+      setAreRepliesExpanded(true);
+   };
+
+   const handleReplyPosted = async () => {
+      await loadReplies();
+      setAreRepliesExpanded(true);
+   };
+
+   const hasReplies = replyCount > 0;
 
    return (
       <article
@@ -184,15 +315,24 @@ export const CommentLayer: React.FC<Prop> = ({ className, data, withBackground =
             css.comment_layer,
             css[`comment_layer_${tone}`],
             hasReplies && css.has_replies,
-            className, withBackground && css.comment_layer_background
+            className,
+            withBackground && css.comment_layer_background
          )}
       >
-         <CommentItem data={data} />
+         <CommentItem
+            data={data}
+            actions={actions}
+            replyCount={replyCount}
+            areRepliesExpanded={areRepliesExpanded}
+            isLoadingReplies={isLoadingReplies}
+            onToggleReplies={handleToggleReplies}
+            onReplyPosted={handleReplyPosted}
+         />
 
-         {hasReplies && (
+         {areRepliesExpanded && replies && replies.length > 0 && (
             <div className={css.comment_layer_replies}>
-               {data.replies?.map((reply) => (
-                  <CommentItem key={reply.id} data={reply} isReply />
+               {replies.map((reply) => (
+                  <CommentItem key={reply.id} data={reply} isReply actions={actions} />
                ))}
             </div>
          )}

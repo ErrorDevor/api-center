@@ -3,10 +3,7 @@
 import React from "react";
 
 import clsx from "clsx";
-import type { CommentType } from "screens/03-Reviews/lib/comments.type";
-
-import { useTranslation } from "shared/lib/i18n";
-import { UserInfo } from "shared/ui/components/UserInfo";
+import type { CommentProviderDetails } from "screens/03-Reviews/lib/comments.type";
 
 import { CommentCardOptions } from "../CommentCardOptions";
 
@@ -14,34 +11,35 @@ import css from "./CommentCard.module.scss";
 
 interface Prop {
    className?: string;
-   data: CommentType;
+   providerName: string;
+   description: string;
+   providerDetails: CommentProviderDetails;
 }
 
-export const CommentCard: React.FC<Prop> = ({ className, data }) => {
-   const { t } = useTranslation();
-
-   const { commentsData } = data;
-   const translation = t.groupBuys.items[commentsData.translationKey];
-
+// Renders one provider's summary card: name, description (both real data,
+// resolved by the Comments screen from providers.json/provider_descriptions
+// .json — see useProviderRecords/useProviderDescriptions), plus the
+// link/rating/payment-methods/top-models panel (CommentCardOptions).
+export const CommentCard: React.FC<Prop> = ({
+   className,
+   providerName,
+   description,
+   providerDetails,
+}) => {
    return (
       <div className={clsx(css.comment_card, className)}>
-         <div className={css.comment_card_header}>
-            <div className={css.comment_card_author}>
-               <UserInfo userName={data.userName} userAvatar={data.userAvatar} withName />
-            </div>
-         </div>
-
          <div className={css.comment_card_content}>
             <div className={css.comment_card_main}>
-               <h3 className={css.comment_card_title}>{translation.title}</h3>
+               <h3 className={css.comment_card_title}>{providerName}</h3>
 
-               <div className={css.comment_card_description}>
-                  <span className={css.comment_card_description_mark} />
+               {description && (
+                  <div className={css.comment_card_description}>
+                     <span className={css.comment_card_description_mark} />
+                     <p>{description}</p>
+                  </div>
+               )}
 
-                  <p>{translation.description}</p>
-               </div>
-
-               <CommentCardOptions data={commentsData.providerDetails} />
+               <CommentCardOptions data={providerDetails} />
             </div>
          </div>
       </div>

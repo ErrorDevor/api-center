@@ -1,0 +1,59 @@
+.leave_review_modal {
+   width: 48rem;
+   max-width: calc(100vw - 3.2rem);
+   padding: 2.4rem;
+   border: 0.1rem solid rgba(0, 0, 0, 0.07);
+   border-radius: 1.6rem;
+   background: linear-gradient(178.65deg, #ffffff 7.92%, #f7f7f7 98.85%);
+   box-shadow: 0 0 2rem rgba(0, 0, 0, 0.05);
+
+   &_content {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 1.6rem;
+   }
+
+   &_header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      gap: 2.4rem;
+   }
+
+   &_title {
+      margin: 0;
+
+      @include fontInterTight(1.8rem, 2.4rem, -0.01em, 500, #212121);
+   }
+
+   &_close {
+      @include flexCenter();
+      @include box(3.2rem);
+
+      flex-shrink: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0.8rem;
+      background-color: #f9f9fb;
+      cursor: pointer;
+
+      transition: background-color 0.2s ease;
+
+      img,
+      svg {
+         @include box(2rem);
+      }
+
+      &:hover {
+         background-color: #f0f0f2;
+      }
+   }
+
+   &_sentiment {
+      display: flex;
+      align-items: center;
+      gap: 1.6rem;
+   }
+}

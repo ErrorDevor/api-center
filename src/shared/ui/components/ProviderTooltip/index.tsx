@@ -23,6 +23,10 @@ interface Props {
    id: string;
    position: ProviderTooltipPosition;
    className?: string;
+   // Real, per-provider description sourced from provider_descriptions.json
+   // (see ModelRow's useProviderDescriptions wiring). Falls back to the
+   // generic stub translation when no feed entry matches yet.
+   description?: string;
    onMouseEnter?: () => void;
    onMouseLeave?: () => void;
 }
@@ -33,6 +37,7 @@ export const ProviderTooltip: React.FC<Props> = ({
    id,
    position,
    className,
+   description,
    onMouseEnter,
    onMouseLeave,
 }) => {
@@ -40,6 +45,7 @@ export const ProviderTooltip: React.FC<Props> = ({
    const { locale, t } = useTranslation();
 
    const providerTranslation = t.providers.items[details.translationKey];
+   const resolvedDescription = description ?? providerTranslation.description;
 
    React.useEffect(() => {
       setMounted(true);
@@ -73,7 +79,7 @@ export const ProviderTooltip: React.FC<Props> = ({
 
          <div className={css.provider_modal_body}>
             <p className={css.provider_modal_description}>
-               <strong>{providerName}</strong> — {providerTranslation.description}
+               <strong>{providerName}</strong> — {resolvedDescription}
             </p>
 
             <div className={css.provider_modal_divider} />

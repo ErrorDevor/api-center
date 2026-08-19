@@ -13,45 +13,59 @@ import { Checkbox } from "../Checkbox";
 
 import css from "./SortDropdown.module.scss";
 
-type SortValue = "newest" | "popular" | "positive" | "negative";
+export type SortValue = "newest" | "popular" | "positive" | "negative";
 
-interface Prop {
-   className?: string;
-   name: string;
+export interface SortDropdownOption<T extends string> {
+   value: T;
+   label: string;
 }
 
-export const SortDropdown: React.FC<Prop> = ({ className, name }) => {
+interface Prop<T extends string> {
+   className?: string;
+   name: string;
+   // Uncontrolled + the 4 default options when omitted (today's behavior,
+   // used by ContentActions). Pass all three to drive a different option
+   // set from outside — see Comments' sort/sentiment controls.
+   options?: SortDropdownOption<T>[];
+   value?: T;
+   onChange?: (value: T) => void;
+}
+
+export const SortDropdown = <T extends string = SortValue>({
+   className,
+   name,
+   options,
+   value,
+   onChange,
+}: Prop<T>) => {
    const buttonRef = React.useRef<HTMLButtonElement>(null);
 
    const [isOpen, setIsOpen] = React.useState(false);
-   const [sort, setSort] = React.useState<SortValue>("newest");
 
    const { t } = useTranslation();
 
-   const options: Array<{
-      value: SortValue;
-      label: string;
-   }> = [
-      {
-         value: "newest",
-         label: t.sortDropdown.newest,
-      },
-      {
-         value: "popular",
-         label: t.sortDropdown.popular,
-      },
-      {
-         value: "positive",
-         label: t.sortDropdown.positive,
-      },
-      {
-         value: "negative",
-         label: t.sortDropdown.negative,
-      },
+   const defaultOptions: SortDropdownOption<T>[] = [
+      { value: "newest" as T, label: t.sortDropdown.newest },
+      { value: "popular" as T, label: t.sortDropdown.popular },
+      { value: "positive" as T, label: t.sortDropdown.positive },
+      { value: "negative" as T, label: t.sortDropdown.negative },
    ];
 
-   const handleSelect = (value: SortValue) => {
-      setSort(value);
+   const resolvedOptions = options ?? defaultOptions;
+
+   const [internalSort, setInternalSort] = React.useState<T>(
+      (resolvedOptions[0]?.value ?? "newest") as T
+   );
+
+   const currentValue = value ?? internalSort;
+
+   const handleSelect = (nextValue: T) => {
+      if (onChange) {
+         onChange(nextValue);
+      } else {
+         setInternalSort(nextValue);
+      }
+
       setIsOpen(false);
    };
 
@@ -81,13 +95,13 @@ export const SortDropdown: React.FC<Prop> = ({ className, name }) => {
             onClose={() => setIsOpen(false)}
          >
             <ul className={css.sort_list} role="menu">
-               {options.map((option) => (
+               {resolvedOptions.map((option) => (
                   <li key={option.value} className={css.sort_list_item} role="none">
                      <Checkbox
                         variant="radio"
                         name="sort"
                         value={option.value}
-                        checked={sort === option.value}
+                        checked={currentValue === option.value}
                         label={option.label}
                         className={css.sort_option}
                         onChange={() => handleSelect(option.value)}

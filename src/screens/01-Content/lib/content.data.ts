@@ -23,6 +23,11 @@ export interface ModelItem {
    provider: ProviderName;
    // Reseller's site — the Provider column links out here.
    providerUrl: string;
+   // Bare domain (e.g. "xiaojingai.com") straight from providers.json —
+   // providerUrl can carry a subdomain ("https://open.xiaojingai.com"), so
+   // this is the reliable join key against provider_descriptions.json's
+   // provider_domain (see useProviderDescriptions consumers).
+   providerDomain: string;
    reviews: number;
    reports: number;
 }
