@@ -4,6 +4,7 @@ import React from "react";
 
 import clsx from "clsx";
 import type { ModelItem } from "screens/01-Content/lib/content.data";
+import { diversifyAdjacentProviders } from "screens/01-Content/lib/diversifyProviders";
 
 import { useIsMobile } from "shared/lib/hooks/useIsMobile";
 import { useTranslation } from "shared/lib/i18n";
@@ -75,7 +76,7 @@ export const ModelsTable: React.FC<Props> = ({ models }) => {
    }, []);
 
    const sortedModels = React.useMemo(() => {
-      return [...models].sort((firstModel, secondModel) => {
+      const sorted = [...models].sort((firstModel, secondModel) => {
          let result = 0;
 
          switch (sort.key) {
@@ -99,6 +100,12 @@ export const ModelsTable: React.FC<Props> = ({ models }) => {
 
          return sort.direction === "asc" ? result : -result;
       });
+
+      // One reseller can happen to be cheapest/first across many models in a
+      // row (e.g. onehop.ai for every Claude model) — break that up so the
+      // page doesn't read as a single provider's listing. Applied after
+      // sorting, before pagination, so page boundaries don't reshuffle it.
+      return diversifyAdjacentProviders(sorted);
    }, [models, sort]);
 
    // A new/re-sorted/re-filtered list makes the previous page number
