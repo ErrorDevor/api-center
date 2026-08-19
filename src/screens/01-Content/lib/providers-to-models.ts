@@ -67,6 +67,7 @@ export const toModelItems = (
          providerDomain: record.providerDomain,
          reviews: PLACEHOLDER_REVIEWS,
          reports: PLACEHOLDER_REPORTS,
+         domainAgeDays: record.domainAgeDays,
       };
    });
 };

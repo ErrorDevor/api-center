@@ -30,6 +30,10 @@ export interface ModelItem {
    providerDomain: string;
    reviews: number;
    reports: number;
+   // Whois-derived domain age from providers.json's domain_age_days — null
+   // when the backend hasn't backfilled it for this record yet (see
+   // ModelRow's ProviderTooltip "Возраст" row).
+   domainAgeDays: number | null;
 }
 
 export const tabs = [

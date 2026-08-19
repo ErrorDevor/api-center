@@ -8,6 +8,7 @@ import type { ModelItem } from "screens/01-Content/lib/content.data";
 import { pricesDetails, providerDetails } from "screens/01-Content/lib/provider.data";
 
 import { useTranslation } from "shared/lib/i18n";
+import { daysToProviderAge } from "shared/lib/i18n/formatters";
 import { useProviderCommentSummary } from "shared/lib/providerComments/useProviderCommentSummary";
 import { useProviderDescriptions } from "shared/lib/providerDescriptions/useProviderDescriptions";
 import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
@@ -86,6 +87,12 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
    const { summary: commentSummary } = useProviderCommentSummary(model.providerDomain);
    const reviewsCount = commentSummary?.totalComments ?? model.reviews;
    const reportsCount = commentSummary?.negativeCount ?? model.reports;
+
+   // Real domain age from providers.json's domain_age_days — not backfilled
+   // for every record yet, so undefined (ProviderTooltip's static stub)
+   // when this row's record doesn't have it.
+   const providerAge =
+      model.domainAgeDays != null ? daysToProviderAge(model.domainAgeDays) : undefined;
 
    const providerRef = React.useRef<HTMLAnchorElement>(null);
    const pricesRef = React.useRef<HTMLButtonElement>(null);
@@ -497,6 +504,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                      description={providerDescription}
                      reviewsCount={commentSummary?.totalComments}
                      reportsCount={commentSummary?.negativeCount}
+                     age={providerAge}
                      position={providerTooltipPosition}
                      onMouseEnter={openProviderTooltip}
                      onMouseLeave={closeProviderTooltip}

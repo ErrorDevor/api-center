@@ -8,6 +8,7 @@ import type { ProviderDetails } from "screens/01-Content/lib/provider.data";
 
 import { useTranslation } from "shared/lib/i18n";
 import { formatProviderAge } from "shared/lib/i18n/formatters";
+import type { ProviderAge } from "shared/lib/i18n/formatters";
 import Image from "shared/ui/base/Image";
 
 import css from "./ProviderTooltip.module.scss";
@@ -32,6 +33,10 @@ interface Props {
    // while the summary is still loading or failed to load.
    reviewsCount?: number;
    reportsCount?: number;
+   // Real domain age from providers.json's domain_age_days (see ModelRow's
+   // daysToProviderAge). Falls back to details.age (the static stub) when
+   // the backend hasn't backfilled it for this record yet.
+   age?: ProviderAge;
    onMouseEnter?: () => void;
    onMouseLeave?: () => void;
 }
@@ -45,6 +50,7 @@ export const ProviderTooltip: React.FC<Props> = ({
    description,
    reviewsCount,
    reportsCount,
+   age,
    onMouseEnter,
    onMouseLeave,
 }) => {
@@ -103,7 +109,7 @@ export const ProviderTooltip: React.FC<Props> = ({
             <div className={css.provider_modal_row}>
                <span>{t.providers.age}:</span>
 
-               <strong>{formatProviderAge(details.age, locale)}</strong>
+               <strong>{formatProviderAge(age ?? details.age, locale)}</strong>
             </div>
 
             <div className={css.provider_modal_row}>

@@ -8,7 +8,12 @@ import {
    parseRepliesResult,
    parseVoteResult,
 } from "./comments.type";
-import type { ApiComment, ProviderCommentsResult, RepliesResult, VoteResult } from "./comments.type";
+import type {
+   ApiComment,
+   ProviderCommentsResult,
+   RepliesResult,
+   VoteResult,
+} from "./comments.type";
 
 // Client-side data layer for COMMENTS_API_GUIDE.md, talking only to our own
 // same-origin /api/providers/*/comments and /api/comments/* routes (see
@@ -16,7 +21,14 @@ import type { ApiComment, ProviderCommentsResult, RepliesResult, VoteResult } fr
 // src/app/api/comments/[id]/*) — never the sub2api gateway directly, same
 // convention as AuthProvider/LoginForm.
 
-export type CommentsSort = "latest" | "top_liked" | "most_replies";
+// "negative_first" is client-only — the backend only knows the first three
+// (COMMENTS_API_GUIDE.md never documented a sentiment-ordering sort value,
+// and the sentiment *filter* param already exists separately and means
+// something different: hide the other sentiment entirely, not just
+// reorder). Requesting it would forward an unrecognized value, so it's
+// mapped to a safe backend sort below and reordered client-side instead —
+// see Comments' `comments` memo.
+export type CommentsSort = "latest" | "top_liked" | "most_replies" | "negative_first";
 export type CommentsSentimentFilter = "positive" | "negative" | undefined;
 
 export type CommentActionResult<T> = { ok: true; data: T } | { ok: false; status: number };
@@ -70,7 +82,7 @@ export const useProviderComments = (
 
       const params = new URLSearchParams({
          page: String(page),
-         sort,
+         sort: sort === "negative_first" ? "latest" : sort,
          ...(sentiment ? { sentiment } : {}),
       });
 

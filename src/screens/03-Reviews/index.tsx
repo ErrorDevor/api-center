@@ -4,8 +4,6 @@ import React from "react";
 
 import { useRouter } from "next/navigation";
 
-import clsx from "clsx";
-
 import { apiCommentToCommentLayer } from "./lib/comments.type";
 import type { CommentProviderDetails, CommentProviderModel } from "./lib/comments.type";
 import {
@@ -20,12 +18,14 @@ import { CommentCard } from "./ui/CommentCard";
 import { CommentLayer } from "./ui/CommentLayer";
 import type { CommentLayerActions } from "./ui/CommentLayer";
 import { LeaveReviewModal } from "./ui/LeaveReviewModal";
+import clsx from "clsx";
 
 import { useAuth } from "shared/lib/auth";
 import { useTranslation } from "shared/lib/i18n";
+import { daysToProviderAge } from "shared/lib/i18n/formatters";
 import { useProviderDescriptions } from "shared/lib/providerDescriptions/useProviderDescriptions";
-import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
+import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 import { ContentActions } from "shared/ui/components/ContentActions";
 import { ContentHeader } from "shared/ui/components/ContentHeader";
 import type { ContentHeaderTab } from "shared/ui/components/ContentHeader";
@@ -117,6 +117,13 @@ export const Comments: React.FC<Prop> = ({ className, providerDomain }) => {
 
    const providerDetails: CommentProviderDetails = {
       url: providerRecord?.providerUrl ?? (providerDomain ? `https://${providerDomain}` : ""),
+      // Real domain age from providers.json's domain_age_days — not
+      // backfilled for every record yet, so the "Возраст" row (see
+      // CommentCardOptions) just stays hidden when it's missing.
+      age:
+         providerRecord?.domainAgeDays != null
+            ? daysToProviderAge(providerRecord.domainAgeDays)
+            : undefined,
       paymentMethods,
       positiveCount: result?.summary.positiveCount ?? 0,
       negativeCount: result?.summary.negativeCount ?? 0,
@@ -126,10 +133,25 @@ export const Comments: React.FC<Prop> = ({ className, providerDomain }) => {
 
    const resultsCount = result?.summary.totalComments ?? 0;
    const totalPages = Math.max(1, result?.pagination.pages ?? 1);
-   const comments = React.useMemo(
-      () => result?.comments.map(apiCommentToCommentLayer) ?? [],
-      [result]
-   );
+   const comments = React.useMemo(() => {
+      const apiComments = result?.comments ?? [];
+
+      // "negative_first" is client-only (see useProviderComments' CommentsSort) —
+      // reorders the already-fetched page so negative reviews float to the
+      // top, stable otherwise. Only reorders within the current page, since
+      // there's no backend sort value to do it across the whole list.
+      const ordered =
+         sort === "negative_first"
+            ? [...apiComments].sort((a, b) => {
+                 const aWeight = a.sentiment === "negative" ? 0 : 1;
+                 const bWeight = b.sentiment === "negative" ? 0 : 1;
+
+                 return aWeight - bWeight;
+              })
+            : apiComments;
+
+      return ordered.map(apiCommentToCommentLayer);
+   }, [result, sort]);
 
    const requireAuth = React.useCallback(() => {
       router.push("/login");
@@ -189,6 +211,7 @@ export const Comments: React.FC<Prop> = ({ className, providerDomain }) => {
       { value: "latest" as CommentsSort, label: t.sortDropdown.newest },
       { value: "top_liked" as CommentsSort, label: t.sortDropdown.popular },
       { value: "most_replies" as CommentsSort, label: t.sortDropdown.mostReplies },
+      { value: "negative_first" as CommentsSort, label: t.sortDropdown.negative },
    ];
 
    const handleSentimentTabChange = (tabId: SentimentTabId) => {
@@ -210,10 +233,7 @@ export const Comments: React.FC<Prop> = ({ className, providerDomain }) => {
       setIsReviewModalOpen(true);
    };
 
-   const handleSubmitReview = async (
-      content: string,
-      reviewSentiment: "positive" | "negative"
-   ) => {
+   const handleSubmitReview = async (content: string, reviewSentiment: "positive" | "negative") => {
       if (!providerDomain) {
          return;
       }

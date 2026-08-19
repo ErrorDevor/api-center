@@ -5,10 +5,26 @@ const localeMap: Record<Locale, string> = {
    ru: "ru-RU",
 };
 
-interface ProviderAge {
+export interface ProviderAge {
    years: number;
    months: number;
 }
+
+const DAYS_PER_YEAR = 365;
+const DAYS_PER_MONTH = 30;
+
+// Converts providers.json's domain_age_days (a whois-derived day count)
+// into the {years, months} shape formatProviderAge already expects —
+// calendar-approximate (365/30-day years/months), same as any other
+// "X years, Y months" age display.
+export const daysToProviderAge = (days: number): ProviderAge => {
+   const wholeDays = Math.max(0, Math.floor(days));
+
+   return {
+      years: Math.floor(wholeDays / DAYS_PER_YEAR),
+      months: Math.floor((wholeDays % DAYS_PER_YEAR) / DAYS_PER_MONTH),
+   };
+};
 
 export const formatRelativeDate = (value: string | Date, locale: Locale) => {
    const date = new Date(value);

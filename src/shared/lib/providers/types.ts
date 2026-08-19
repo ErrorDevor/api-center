@@ -16,6 +16,10 @@ export interface ProviderPriceRecord {
    sourceUrl: string;
    lastCheckedAt: string;
    paymentMethods: string[];
+   // Whois-derived domain age (see ProviderTooltip / CommentCardOptions'
+   // "Возраст" row). Not backfilled onto every record yet — null rather
+   // than dropping the record when it's absent/malformed.
+   domainAgeDays: number | null;
 }
 
 const TRUST_STATUSES: readonly TrustStatus[] = ["green", "yellow", "red"];
@@ -65,6 +69,8 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
       const paymentMethods = Array.isArray(raw.payment_methods)
          ? raw.payment_methods.filter(isNonEmptyString)
          : [];
+      // Optional, same reasoning: not backfilled onto every record yet.
+      const domainAgeDays = isFiniteNumber(raw.domain_age_days) ? raw.domain_age_days : null;
 
       const isValid =
          isNonEmptyString(providerName) &&
@@ -103,6 +109,7 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
          sourceUrl,
          lastCheckedAt,
          paymentMethods,
+         domainAgeDays,
       });
    }
 
