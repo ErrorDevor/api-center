@@ -460,7 +460,9 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
             <div className={css.provider_wrapper}>
                <a
                   ref={providerRef}
-                  href={reviewsHref}
+                  href={model.providerUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={css.provider}
                   aria-describedby={
                      provider && isProviderTooltipOpen ? providerTooltipId : undefined
@@ -469,10 +471,6 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                   onMouseLeave={closeProviderTooltip}
                   onFocus={openProviderTooltip}
                   onBlur={closeProviderTooltip}
-                  onClick={(event) => {
-                     event.preventDefault();
-                     router.push(reviewsHref);
-                  }}
                >
                   <Image.Default src="/icons/info.svg" alt="" />
                   <span>{model.provider}</span>
@@ -497,13 +495,20 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
 
             <span className={css.mobile_dots} />
 
-            <div className={css.reviews}>
+            <a
+               href={reviewsHref}
+               className={css.reviews}
+               onClick={(event) => {
+                  event.preventDefault();
+                  router.push(reviewsHref);
+               }}
+            >
                <span>{model.reviews}</span>
 
                <div className={css.reports}>
                   <div className={css.reports_inner}>{model.reports}</div>
                </div>
-            </div>
+            </a>
          </div>
       </article>
    );
