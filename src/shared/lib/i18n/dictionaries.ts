@@ -70,6 +70,11 @@ export const en = {
       },
       actions: {
          tableView: "Sort",
+         sort: {
+            nameAsc: "Name (A-Z)",
+            priceAsc: "Cheapest first",
+            priceDesc: "Most expensive first",
+         },
       },
       table: {
          modelName: "Model Name",
@@ -673,6 +678,11 @@ export const ru: Dictionary = {
       },
       actions: {
          tableView: "Сортировка",
+         sort: {
+            nameAsc: "По названию (А-Я)",
+            priceAsc: "Сначала дешёвые",
+            priceDesc: "Сначала дорогие",
+         },
       },
       table: {
          modelName: "Название модели",

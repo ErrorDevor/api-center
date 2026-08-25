@@ -2,7 +2,14 @@
 
 import React from "react";
 
-import { tabs } from "./lib/content.data";
+import {
+   DEFAULT_SORT,
+   MODELS_SORT_PRESETS,
+   type ModelsSortValue,
+   type SortState,
+   sortStateToValue,
+   tabs,
+} from "./lib/content.data";
 import { toModelItems } from "./lib/providers-to-models";
 import { ModelsTable } from "./ui/ModelsTable";
 import clsx from "clsx";
@@ -17,6 +24,7 @@ import { ContentActions } from "shared/ui/components/ContentActions";
 import { ContentHeader } from "shared/ui/components/ContentHeader";
 import { ContentHeaderTab } from "shared/ui/components/ContentHeader";
 import { Button } from "shared/ui/ui-kit/Button";
+import type { SortDropdownOption } from "shared/ui/ui-kit/SortDropdown";
 
 import css from "./Content.module.scss";
 
@@ -36,10 +44,7 @@ export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedM
    const { entries: modelCatalog } = useModelCatalog();
    const { entries: vendorDescriptions } = useVendorDescriptions();
 
-   const models = React.useMemo(
-      () => toModelItems(records, modelCatalog),
-      [records, modelCatalog]
-   );
+   const models = React.useMemo(() => toModelItems(records, modelCatalog), [records, modelCatalog]);
 
    const filteredModels = React.useMemo(() => {
       if (selectedModelId) {
@@ -58,6 +63,22 @@ export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedM
    const descriptionRef = React.useRef<HTMLParagraphElement>(null);
    const [isDescriptionOverflowing, setIsDescriptionOverflowing] = React.useState(false);
    const [descriptionHeight, setDescriptionHeight] = React.useState(0);
+
+   // Drives both the "Сортировка" dropdown (ContentActions, below) and the
+   // table's own per-column sort icons (ModelsTable) — one state so picking
+   // an option in either place is reflected in the other.
+   const [sort, setSort] = React.useState<SortState>(DEFAULT_SORT);
+
+   const sortOptions: SortDropdownOption<ModelsSortValue>[] = [
+      { value: "name_asc", label: t.content.actions.sort.nameAsc },
+      { value: "price_asc", label: t.content.actions.sort.priceAsc },
+      { value: "price_desc", label: t.content.actions.sort.priceDesc },
+      { value: "popular", label: t.sortDropdown.popular },
+   ];
+
+   const handleSortValueChange = (value: ModelsSortValue) => {
+      setSort(MODELS_SORT_PRESETS[value]);
+   };
 
    const resultsCount = filteredModels.length;
    const catalogTitle = selectedVendorId
@@ -136,6 +157,9 @@ export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedM
             tabs={headerTabs}
             activeTab={activeTab}
             onTabChange={setActiveTab}
+            sortOptions={sortOptions}
+            sortValue={sortStateToValue(sort)}
+            onSortChange={handleSortValueChange}
          />
 
          <div className={css.content_scroll}>
@@ -189,10 +213,16 @@ export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedM
                </div>
             </div>
 
-            <ContentActions variant="api" className={css.content_actions} />
+            <ContentActions
+               variant="api"
+               className={css.content_actions}
+               sortOptions={sortOptions}
+               sortValue={sortStateToValue(sort)}
+               onSortChange={handleSortValueChange}
+            />
 
             <div className={css.content_list}>
-               <ModelsTable models={filteredModels} />
+               <ModelsTable models={filteredModels} sort={sort} onSortChange={setSort} />
             </div>
          </div>
       </div>

@@ -11,6 +11,7 @@ import { NextLink } from "shared/ui/base/NextLink";
 import { ContentActions } from "shared/ui/components/ContentActions";
 import { BurgerButton } from "shared/ui/ui-kit/BurgerButton";
 import { Button } from "shared/ui/ui-kit/Button";
+import type { SortDropdownOption, SortValue } from "shared/ui/ui-kit/SortDropdown";
 
 import css from "./ContentHeader.module.scss";
 
@@ -19,7 +20,7 @@ export interface ContentHeaderTab<T extends string> {
    label: string;
 }
 
-interface Props<T extends string> {
+interface Props<T extends string, TSort extends string = SortValue> {
    className?: string;
    variant?: "main" | "simple";
    title?: string;
@@ -29,9 +30,16 @@ interface Props<T extends string> {
    activeTab?: T;
    actionsVariant?: "group";
    onTabChange?: (tabId: T) => void;
+   // Forwarded to the desktop "Сортировка" dropdown rendered in here (see
+   // ContentActions' own sortOptions/sortValue/onSortChange) — this is the
+   // instance actually visible above screenMD; the mobile one lives directly
+   // on the page (e.g. Content's own <ContentActions>, hidden here).
+   sortOptions?: SortDropdownOption<TSort>[];
+   sortValue?: TSort;
+   onSortChange?: (value: TSort) => void;
 }
 
-export const ContentHeader = <T extends string>({
+export const ContentHeader = <T extends string, TSort extends string = SortValue>({
    className,
    variant = "main",
    title,
@@ -41,7 +49,10 @@ export const ContentHeader = <T extends string>({
    activeTab,
    actionsVariant,
    onTabChange,
-}: Props<T>) => {
+   sortOptions,
+   sortValue,
+   onSortChange,
+}: Props<T, TSort>) => {
    const [isMobileSidebarOpened, setIsMobileSidebarOpened] = React.useState(false);
 
    const handleOpenMobileSidebar = () => {
@@ -107,7 +118,13 @@ export const ContentHeader = <T extends string>({
                })}
             </div>
 
-            <ContentActions variant={actionsVariant} className={css.content_header_actions} />
+            <ContentActions
+               variant={actionsVariant}
+               className={css.content_header_actions}
+               sortOptions={sortOptions}
+               sortValue={sortValue}
+               onSortChange={onSortChange}
+            />
          </div>
 
          <MobileSidebar opened={isMobileSidebarOpened} onClose={handleCloseMobileSidebar} />

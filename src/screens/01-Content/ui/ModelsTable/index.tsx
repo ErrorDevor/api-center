@@ -3,7 +3,7 @@
 import React from "react";
 
 import clsx from "clsx";
-import type { ModelItem } from "screens/01-Content/lib/content.data";
+import type { ModelItem, SortKey, SortState } from "screens/01-Content/lib/content.data";
 import { diversifyAdjacentProviders } from "screens/01-Content/lib/diversifyProviders";
 
 import { useIsMobile } from "shared/lib/hooks/useIsMobile";
@@ -25,19 +25,16 @@ const MOBILE_VISIBLE_STEP = 3;
 // which keeps its own separate "show more" reveal below).
 const PAGE_SIZE = 20;
 
-type SortKey = "name" | "price" | "reviews";
-type SortDirection = "asc" | "desc";
-
-interface SortState {
-   key: SortKey;
-   direction: SortDirection;
-}
-
 interface Props {
    models: ModelItem[];
+   // Controlled by Content (see ContentActions' "Сортировка" dropdown above
+   // the table) so the dropdown and these per-column sort icons drive the
+   // same state instead of two disconnected sorts.
+   sort: SortState;
+   onSortChange: (sort: SortState) => void;
 }
 
-export const ModelsTable: React.FC<Props> = ({ models }) => {
+export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange }) => {
    const { t } = useTranslation();
 
    const tableRef = React.useRef<HTMLDivElement>(null);
@@ -45,10 +42,6 @@ export const ModelsTable: React.FC<Props> = ({ models }) => {
 
    const [columnWidths, setColumnWidths] = React.useState(INITIAL_COLUMN_WIDTHS);
    const [scrollbarWidth, setScrollbarWidth] = React.useState(0);
-   const [sort, setSort] = React.useState<SortState>({
-      key: "name",
-      direction: "asc",
-   });
    const [currentPage, setCurrentPage] = React.useState(1);
 
    React.useLayoutEffect(() => {
@@ -115,19 +108,12 @@ export const ModelsTable: React.FC<Props> = ({ models }) => {
    }, [models, sort]);
 
    const handleSort = (key: SortKey) => {
-      setSort((currentSort) => {
-         if (currentSort.key === key) {
-            return {
-               key,
-               direction: currentSort.direction === "asc" ? "desc" : "asc",
-            };
-         }
+      if (sort.key === key) {
+         onSortChange({ key, direction: sort.direction === "asc" ? "desc" : "asc" });
+         return;
+      }
 
-         return {
-            key,
-            direction: "asc",
-         };
-      });
+      onSortChange({ key, direction: "asc" });
    };
 
    const handleResizeStart = (
