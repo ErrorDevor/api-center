@@ -183,9 +183,12 @@ export const en = {
       reviews: "Reviews",
 
       items: {
-         openRouter: {
+         // {provider} is filled in with the real reseller name (see
+         // ProviderTooltip) — this is the fallback shown when
+         // provider_descriptions.json has no entry for that reseller yet.
+         generic: {
             description:
-               "OpenRouter is a unified API gateway for accessing AI models from different providers.",
+               "{provider} is a unified API gateway for accessing AI models from different providers.",
          },
       },
    },
@@ -783,9 +786,9 @@ export const ru: Dictionary = {
       reviews: "Отзывы",
 
       items: {
-         openRouter: {
+         generic: {
             description:
-               "OpenRouter — единый API-шлюз для доступа к AI-моделям от разных провайдеров.",
+               "{provider} — единый API-шлюз для доступа к AI-моделям от разных провайдеров.",
          },
       },
    },

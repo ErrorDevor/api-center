@@ -64,8 +64,8 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
    // Real reseller names from providers.json won't match a dictionary key,
    // so every provider falls back to the same placeholder tooltip content
    // (see provider.data.ts) instead of the tooltip silently never opening.
-   const provider = providerDetails[model.provider] ?? providerDetails.OpenRouter;
-   const prices = pricesDetails[model.provider] ?? pricesDetails.OpenRouter;
+   const provider = providerDetails[model.provider] ?? providerDetails.generic;
+   const prices = pricesDetails[model.provider] ?? pricesDetails.generic;
 
    // Real per-provider blurb from provider_descriptions.json (joined by
    // domain), same feed CommentCard uses on /reviews — falls back to

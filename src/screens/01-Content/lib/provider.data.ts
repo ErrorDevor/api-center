@@ -1,4 +1,4 @@
-export type ProviderTranslationKey = "openRouter";
+export type ProviderTranslationKey = "generic";
 
 export interface ProviderAge {
    years: number;
@@ -22,8 +22,8 @@ export type ProviderName = string;
 // Typed as Record<string, ...> (not just `satisfies`) so it stays indexable
 // by arbitrary real provider names in ModelRow, not just its own literal key.
 export const providerDetails: Record<string, ProviderDetails> = {
-   OpenRouter: {
-      translationKey: "openRouter",
+   generic: {
+      translationKey: "generic",
       age: {
          years: 8,
          months: 10,
@@ -64,7 +64,7 @@ export interface PricesDetails {
 }
 
 export const pricesDetails: Record<string, PricesDetails> = {
-   OpenRouter: {
+   generic: {
       groups: [
          {
             id: "quick-select",

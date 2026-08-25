@@ -58,15 +58,21 @@ export const ProviderTooltip: React.FC<Props> = ({
    const { locale, t } = useTranslation();
 
    const providerTranslation = t.providers.items[details.translationKey];
-   const resolvedDescription = description ?? providerTranslation.description;
+   const resolvedDescription =
+      description ?? providerTranslation.description.replace("{provider}", providerName);
 
    // The description already opens with the provider/product name (real
-   // feed entries: "OneHop – ...", stub fallback: "OpenRouter is a..."), so
+   // feed entries: "OneHop – ...", stub fallback: "AlLink is a..."), so
    // prepending providerName again read as the name twice in a row (see
-   // the header right above). Bold just that leading word instead of
-   // repeating it.
-   const [firstWord, ...restWords] = resolvedDescription.split(" ");
-   const restOfDescription = restWords.length > 0 ? ` ${restWords.join(" ")}` : "";
+   // the header right above). Bold that leading name instead of repeating
+   // it — the whole name, not just its first word (e.g. "AI/ML API"). Falls
+   // back to bolding just the first word when the description doesn't
+   // actually start with providerName (a feed entry can phrase it
+   // differently), so something still reads as highlighted.
+   const boldedName = resolvedDescription.startsWith(providerName)
+      ? providerName
+      : resolvedDescription.split(" ")[0];
+   const restOfDescription = resolvedDescription.slice(boldedName.length);
 
    React.useEffect(() => {
       setMounted(true);
@@ -100,7 +106,7 @@ export const ProviderTooltip: React.FC<Props> = ({
 
          <div className={css.provider_modal_body}>
             <p className={css.provider_modal_description}>
-               <strong>{firstWord}</strong>
+               <strong>{boldedName}</strong>
                {restOfDescription}
             </p>
 
