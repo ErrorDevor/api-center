@@ -27,6 +27,13 @@ const VISIBLE_PROVIDERS_COUNT = 8;
 
 interface Props {
    className?: string;
+   // When the caller passes onSelectVendor, the active provider/model is
+   // controlled by it (e.g. /home mirrors the selection into the URL, so
+   // that must stay the source of truth for what's highlighted here too).
+   // Callers that don't care about the selection (other pages, the mobile
+   // sidebar) get the old self-contained click-to-highlight behavior.
+   activeVendorId?: string;
+   activeModelId?: string;
    // Notified on every explicit user click so a page (e.g. /home) can filter
    // its model table accordingly. Not called by internal-only state changes.
    onSelectVendor?: (vendorId: string | undefined) => void;
@@ -35,6 +42,8 @@ interface Props {
 
 export const SidebarContent: React.FC<Props> = ({
    className,
+   activeVendorId,
+   activeModelId,
    onSelectVendor,
    onSelectModel,
 }) => {
@@ -43,10 +52,19 @@ export const SidebarContent: React.FC<Props> = ({
 
    const providers = React.useMemo(() => toSidebarProviders(records), [records]);
 
-   const [activeProviderId, setActiveProviderId] = React.useState<string | undefined>(undefined);
-   const [activeModelId, setActiveModelId] = React.useState<string | undefined>(undefined);
+   const isControlled = onSelectVendor !== undefined;
+
+   const [uncontrolledProviderId, setUncontrolledProviderId] = React.useState<string | undefined>(
+      undefined
+   );
+   const [uncontrolledModelId, setUncontrolledModelId] = React.useState<string | undefined>(
+      undefined
+   );
    const [activeModelType, setActiveModelType] = React.useState(modelType[0].id);
    const [showAll, setShowAll] = React.useState(false);
+
+   const activeProviderId = isControlled ? activeVendorId : uncontrolledProviderId;
+   const activeModel = isControlled ? activeModelId : uncontrolledModelId;
 
    const visibleProviders =
       showAll || providers.length <= VISIBLE_PROVIDERS_COUNT
@@ -56,21 +74,29 @@ export const SidebarContent: React.FC<Props> = ({
    // Clicking the already-active provider/model clears the selection (shows
    // everything again) instead of being a dead click.
    const handleProviderClick = (providerId: string) => {
-      const isDeselecting = activeProviderId === providerId && activeModelId === undefined;
+      const isDeselecting = activeProviderId === providerId && activeModel === undefined;
+      const nextProviderId = isDeselecting ? undefined : providerId;
 
-      setActiveProviderId(isDeselecting ? undefined : providerId);
-      setActiveModelId(undefined);
-      onSelectVendor?.(isDeselecting ? undefined : providerId);
+      if (!isControlled) {
+         setUncontrolledProviderId(nextProviderId);
+         setUncontrolledModelId(undefined);
+      }
+
+      onSelectVendor?.(nextProviderId);
       onSelectModel?.(undefined);
    };
 
    const handleModelClick = (provider: ProviderItemType, model: ProviderModel) => {
-      const isDeselecting = activeModelId === model.id;
+      const isDeselecting = activeModel === model.id;
+      const nextModelId = isDeselecting ? undefined : model.id;
 
-      setActiveProviderId(provider.id);
-      setActiveModelId(isDeselecting ? undefined : model.id);
+      if (!isControlled) {
+         setUncontrolledProviderId(provider.id);
+         setUncontrolledModelId(nextModelId);
+      }
+
       onSelectVendor?.(provider.id);
-      onSelectModel?.(isDeselecting ? undefined : model.id);
+      onSelectModel?.(nextModelId);
    };
 
    return (
@@ -92,7 +118,8 @@ export const SidebarContent: React.FC<Props> = ({
                            key={provider.id}
                            provider={provider}
                            activeProviderId={activeProviderId}
-                           activeModelId={activeModelId}
+                           activeModelId={activeModel}
+                           initialOpen={activeProviderId === provider.id}
                            onProviderClick={handleProviderClick}
                            onModelClick={handleModelClick}
                         />

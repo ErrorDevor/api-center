@@ -13,6 +13,8 @@ interface Props {
    collapsed: boolean;
    onToggleCollapsed: () => void;
    className?: string;
+   activeVendorId?: string;
+   activeModelId?: string;
    onSelectVendor?: (vendorId: string | undefined) => void;
    onSelectModel?: (canonicalModelId: string | undefined) => void;
 }
@@ -22,13 +24,20 @@ export const Sidebar: React.FC<Props> = ({
    mode,
    collapsed,
    onToggleCollapsed,
+   activeVendorId,
+   activeModelId,
    onSelectVendor,
    onSelectModel,
 }) => {
    return (
       <aside className={clsx(css.sidebar, collapsed && css.sidebar_collapsed, className)}>
          {!collapsed && (
-            <SidebarContent onSelectVendor={onSelectVendor} onSelectModel={onSelectModel} />
+            <SidebarContent
+               activeVendorId={activeVendorId}
+               activeModelId={activeModelId}
+               onSelectVendor={onSelectVendor}
+               onSelectModel={onSelectModel}
+            />
          )}
 
          {/* Пока скрываем переключатель сворачивания сайдбара */}

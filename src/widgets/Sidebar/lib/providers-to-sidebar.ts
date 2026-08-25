@@ -103,5 +103,12 @@ export const toSidebarProviders = (records: ProviderPriceRecord[]): ProviderItem
       .filter((vendorId) => !KNOWN_VENDOR_IDS.includes(vendorId))
       .sort((a, b) => vendorListingCount(b) - vendorListingCount(a));
 
-   return [...KNOWN_VENDOR_IDS, ...extraVendorIds].map(toProviderItem);
+   const providers = [...KNOWN_VENDOR_IDS, ...extraVendorIds].map(toProviderItem);
+
+   // Vendors with no listings yet sink to the bottom instead of cluttering
+   // their fixed slot among vendors that actually have models.
+   const withListings = providers.filter((provider) => provider.count > 0);
+   const withoutListings = providers.filter((provider) => provider.count === 0);
+
+   return [...withListings, ...withoutListings];
 };

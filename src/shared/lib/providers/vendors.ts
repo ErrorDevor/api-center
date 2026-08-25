@@ -32,6 +32,8 @@ export const VENDOR_DISPLAY_NAMES: Record<string, string> = {
    xai: "xAI",
    chatglm: "ChatGLM",
    grok: "Grok",
+   zhipu: "Zhipu",
+   moonshot: "Moonshot",
    alibaba: "Alibaba",
 };
 
