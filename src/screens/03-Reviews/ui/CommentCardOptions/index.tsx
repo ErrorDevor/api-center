@@ -277,35 +277,54 @@ export const CommentCardOptions: React.FC<Prop> = ({ data }) => {
                                     <span className={css.comment_card_options_mobile_dots} />
 
                                     <div className={css.comment_card_options_prices_values}>
-                                       <div className={css.comment_card_options_price}>
-                                          <span>{t.common.input}:</span>
+                                       {model.nativePriceUsd !== null ? (
+                                          <div className={css.comment_card_options_price}>
+                                             <span>{translation.price}:</span>
 
-                                          <Image.Default
-                                             src="/icons/energy.svg"
-                                             alt=""
-                                             aria-hidden="true"
-                                          />
+                                             <Image.Default
+                                                src="/icons/energy.svg"
+                                                alt=""
+                                                aria-hidden="true"
+                                             />
 
-                                          <strong>
-                                             ${model.inputPrice}
-                                             <small>/1M</small>
-                                          </strong>
-                                       </div>
+                                             <strong>
+                                                ${model.nativePriceUsd}
+                                                <small>/{model.nativePriceUnit}</small>
+                                             </strong>
+                                          </div>
+                                       ) : (
+                                          <>
+                                             <div className={css.comment_card_options_price}>
+                                                <span>{t.common.input}:</span>
 
-                                       <div className={css.comment_card_options_price}>
-                                          <span>{t.common.output}:</span>
+                                                <Image.Default
+                                                   src="/icons/energy.svg"
+                                                   alt=""
+                                                   aria-hidden="true"
+                                                />
 
-                                          <Image.Default
-                                             src="/icons/energy.svg"
-                                             alt=""
-                                             aria-hidden="true"
-                                          />
+                                                <strong>
+                                                   ${model.inputPrice}
+                                                   <small>/1M</small>
+                                                </strong>
+                                             </div>
 
-                                          <strong>
-                                             ${model.outputPrice}
-                                             <small>/1M</small>
-                                          </strong>
-                                       </div>
+                                             <div className={css.comment_card_options_price}>
+                                                <span>{t.common.output}:</span>
+
+                                                <Image.Default
+                                                   src="/icons/energy.svg"
+                                                   alt=""
+                                                   aria-hidden="true"
+                                                />
+
+                                                <strong>
+                                                   ${model.outputPrice}
+                                                   <small>/1M</small>
+                                                </strong>
+                                             </div>
+                                          </>
+                                       )}
                                     </div>
                                  </div>
                               </div>

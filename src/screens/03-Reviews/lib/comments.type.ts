@@ -300,8 +300,12 @@ export interface CommentProviderModel {
    id: string;
    name: string;
    icon: string | null;
-   inputPrice: number;
-   outputPrice: number;
+   // Per-token pricing, or nativePriceUsd/nativePriceUnit for models billed
+   // per-request/per-second instead — see ProviderPriceRecord.
+   inputPrice: number | null;
+   outputPrice: number | null;
+   nativePriceUsd: number | null;
+   nativePriceUnit: string | null;
 }
 
 export interface CommentProviderDetails {

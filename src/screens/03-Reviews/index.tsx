@@ -104,6 +104,8 @@ export const Comments: React.FC<Prop> = ({ className, providerDomain }) => {
             icon: getVendorIcon(getVendorId(record.canonicalModelId)) ?? null,
             inputPrice: record.inputPriceUsdPer1m,
             outputPrice: record.outputPriceUsdPer1m,
+            nativePriceUsd: record.nativePriceUsd,
+            nativePriceUnit: record.nativePriceUnit,
          });
       }
 

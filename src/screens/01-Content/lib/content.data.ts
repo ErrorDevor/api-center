@@ -16,8 +16,15 @@ export interface ModelItem {
    // be filtered by the Sidebar's vendor/model selection.
    canonicalModelId: string;
    description: ModelDescription;
-   inputPrice: number;
-   outputPrice: number;
+   // Per-token pricing. Null when this listing is priced natively instead
+   // (see nativePriceUsd) — a model has one pricing shape or the other.
+   inputPrice: number | null;
+   outputPrice: number | null;
+   // Flat native price (per-request/per-second/etc), e.g. video/image
+   // generation models like Kling. nativePriceUnit names the unit
+   // ("request", "second") for display, e.g. "$0.21/request".
+   nativePriceUsd: number | null;
+   nativePriceUnit: string | null;
    discountPercent: number;
    paymentMethods: string[];
    provider: ProviderName;

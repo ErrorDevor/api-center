@@ -18,6 +18,13 @@ import css from "./ModelsTable.module.scss";
 const INITIAL_COLUMN_WIDTHS = [27, 30, 20, 13, 10];
 const MIN_COLUMN_WIDTHS = [20, 22, 7, 9, 7];
 
+// Natively-priced models (per-request/per-second) have no inputPrice/
+// outputPrice — sort them by their flat native price instead so they don't
+// all collapse to the same spot in the ordering.
+const getSortPrice = (model: ModelItem): number => model.inputPrice ?? model.nativePriceUsd ?? 0;
+const getSecondarySortPrice = (model: ModelItem): number =>
+   model.outputPrice ?? model.nativePriceUsd ?? 0;
+
 const MOBILE_VISIBLE_COUNT = 3;
 const MOBILE_VISIBLE_STEP = 3;
 
@@ -78,10 +85,10 @@ export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange }) => 
                break;
 
             case "price":
-               result = firstModel.inputPrice - secondModel.inputPrice;
+               result = getSortPrice(firstModel) - getSortPrice(secondModel);
 
                if (result === 0) {
-                  result = firstModel.outputPrice - secondModel.outputPrice;
+                  result = getSecondarySortPrice(firstModel) - getSecondarySortPrice(secondModel);
                }
 
                break;

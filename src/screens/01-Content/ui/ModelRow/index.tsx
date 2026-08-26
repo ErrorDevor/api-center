@@ -375,41 +375,62 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
 
          <div className={css.table_cell}>
             <div className={css.prices}>
-               <div className={css.price}>
-                  <span className={css.mobile_label}>{t.common.input}:</span>
+               {model.nativePriceUsd !== null ? (
+                  <div className={css.price}>
+                     <span className={css.mobile_label}>{t.common.price}:</span>
 
-                  <span className={css.desktop_label}>{t.common.input}:</span>
+                     <span className={css.desktop_label}>{t.common.price}:</span>
 
-                  <span className={css.mobile_dots} />
+                     <span className={css.mobile_dots} />
 
-                  <div className={css.price_value}>
-                     <Image.Default src="/icons/energy.svg" alt="" />
+                     <div className={css.price_value}>
+                        <Image.Default src="/icons/energy.svg" alt="" />
 
-                     <strong>
-                        ${model.inputPrice}
-                        <small>/1M</small>
-                     </strong>
+                        <strong>
+                           ${model.nativePriceUsd}
+                           <small>/{model.nativePriceUnit}</small>
+                        </strong>
+                     </div>
                   </div>
-               </div>
+               ) : (
+                  <>
+                     <div className={css.price}>
+                        <span className={css.mobile_label}>{t.common.input}:</span>
 
-               <div className={css.price_divider} />
+                        <span className={css.desktop_label}>{t.common.input}:</span>
 
-               <div className={css.price}>
-                  <span className={css.mobile_label}>{t.common.output}:</span>
+                        <span className={css.mobile_dots} />
 
-                  <span className={css.desktop_label}>{t.common.output}:</span>
+                        <div className={css.price_value}>
+                           <Image.Default src="/icons/energy.svg" alt="" />
 
-                  <span className={css.mobile_dots} />
+                           <strong>
+                              ${model.inputPrice}
+                              <small>/1M</small>
+                           </strong>
+                        </div>
+                     </div>
 
-                  <div className={css.price_value}>
-                     <Image.Default src="/icons/energy.svg" alt="" />
+                     <div className={css.price_divider} />
 
-                     <strong>
-                        ${model.outputPrice}
-                        <small>/1M</small>
-                     </strong>
-                  </div>
-               </div>
+                     <div className={css.price}>
+                        <span className={css.mobile_label}>{t.common.output}:</span>
+
+                        <span className={css.desktop_label}>{t.common.output}:</span>
+
+                        <span className={css.mobile_dots} />
+
+                        <div className={css.price_value}>
+                           <Image.Default src="/icons/energy.svg" alt="" />
+
+                           <strong>
+                              ${model.outputPrice}
+                              <small>/1M</small>
+                           </strong>
+                        </div>
+                     </div>
+                  </>
+               )}
             </div>
 
             <span

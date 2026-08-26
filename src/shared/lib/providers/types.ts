@@ -6,12 +6,21 @@ export interface ProviderPriceRecord {
    providerUrl: string;
    modelName: string;
    canonicalModelId: string;
-   inputPriceUsdPer1m: number;
-   outputPriceUsdPer1m: number;
-   officialInputPriceUsdPer1m: number;
-   officialOutputPriceUsdPer1m: number;
-   inputDiscountPercent: number;
-   outputDiscountPercent: number;
+   // Per-token pricing. Null on records priced natively instead (see
+   // nativePriceUsd below) — e.g. per-request/per-second image/video models
+   // like Kling, which have no meaningful "per 1M tokens" rate.
+   inputPriceUsdPer1m: number | null;
+   outputPriceUsdPer1m: number | null;
+   officialInputPriceUsdPer1m: number | null;
+   officialOutputPriceUsdPer1m: number | null;
+   inputDiscountPercent: number | null;
+   outputDiscountPercent: number | null;
+   // Flat native price for models billed per-request/per-second/etc rather
+   // than per token (native_price_unit names the unit, e.g. "request",
+   // "second"). Mutually exclusive with the per-token fields above — a
+   // record has one pricing shape or the other, never both, never neither.
+   nativePriceUsd: number | null;
+   nativePriceUnit: string | null;
    trustStatus: TrustStatus;
    sourceUrl: string;
    lastCheckedAt: string;
@@ -54,12 +63,30 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
       const providerUrl = raw.provider_url;
       const modelName = raw.model_name;
       const canonicalModelId = raw.canonical_model_id;
-      const inputPriceUsdPer1m = raw.input_price_usd_per_1m;
-      const outputPriceUsdPer1m = raw.output_price_usd_per_1m;
-      const officialInputPriceUsdPer1m = raw.official_input_price_usd_per_1m;
-      const officialOutputPriceUsdPer1m = raw.official_output_price_usd_per_1m;
-      const inputDiscountPercent = raw.input_discount_percent;
-      const outputDiscountPercent = raw.output_discount_percent;
+      const inputPriceUsdPer1m = isFiniteNumber(raw.input_price_usd_per_1m)
+         ? raw.input_price_usd_per_1m
+         : null;
+      const outputPriceUsdPer1m = isFiniteNumber(raw.output_price_usd_per_1m)
+         ? raw.output_price_usd_per_1m
+         : null;
+      const officialInputPriceUsdPer1m = isFiniteNumber(raw.official_input_price_usd_per_1m)
+         ? raw.official_input_price_usd_per_1m
+         : null;
+      const officialOutputPriceUsdPer1m = isFiniteNumber(raw.official_output_price_usd_per_1m)
+         ? raw.official_output_price_usd_per_1m
+         : null;
+      const inputDiscountPercent = isFiniteNumber(raw.input_discount_percent)
+         ? raw.input_discount_percent
+         : null;
+      const outputDiscountPercent = isFiniteNumber(raw.output_discount_percent)
+         ? raw.output_discount_percent
+         : null;
+      // Optional: only present on natively-priced records (see
+      // ProviderPriceRecord.nativePriceUsd above).
+      const nativePriceUsd = isFiniteNumber(raw.native_price_usd) ? raw.native_price_usd : null;
+      const nativePriceUnit = isNonEmptyString(raw.native_price_unit)
+         ? raw.native_price_unit
+         : null;
       const trustStatus = raw.trust_status;
       const sourceUrl = raw.source_url;
       const lastCheckedAt = raw.last_checked_at;
@@ -72,18 +99,24 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
       // Optional, same reasoning: not backfilled onto every record yet.
       const domainAgeDays = isFiniteNumber(raw.domain_age_days) ? raw.domain_age_days : null;
 
+      // A record is priced either per-token or natively (flat per-request/
+      // per-second/etc) — never both, never neither.
+      const hasTokenPricing =
+         inputPriceUsdPer1m !== null &&
+         outputPriceUsdPer1m !== null &&
+         officialInputPriceUsdPer1m !== null &&
+         officialOutputPriceUsdPer1m !== null &&
+         inputDiscountPercent !== null &&
+         outputDiscountPercent !== null;
+      const hasNativePricing = nativePriceUsd !== null && nativePriceUnit !== null;
+
       const isValid =
          isNonEmptyString(providerName) &&
          isNonEmptyString(providerDomain) &&
          isNonEmptyString(providerUrl) &&
          isNonEmptyString(modelName) &&
          isNonEmptyString(canonicalModelId) &&
-         isFiniteNumber(inputPriceUsdPer1m) &&
-         isFiniteNumber(outputPriceUsdPer1m) &&
-         isFiniteNumber(officialInputPriceUsdPer1m) &&
-         isFiniteNumber(officialOutputPriceUsdPer1m) &&
-         isFiniteNumber(inputDiscountPercent) &&
-         isFiniteNumber(outputDiscountPercent) &&
+         (hasTokenPricing || hasNativePricing) &&
          isNonEmptyString(sourceUrl) &&
          isNonEmptyString(lastCheckedAt) &&
          typeof trustStatus === "string" &&
@@ -105,6 +138,8 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
          officialOutputPriceUsdPer1m,
          inputDiscountPercent,
          outputDiscountPercent,
+         nativePriceUsd,
+         nativePriceUnit,
          trustStatus: trustStatus as TrustStatus,
          sourceUrl,
          lastCheckedAt,

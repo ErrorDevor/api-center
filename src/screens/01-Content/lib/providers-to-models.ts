@@ -26,12 +26,25 @@ const discountFromPrice = (actualPrice: number, officialPrice: number): number |
    officialPrice > 0 ? ((officialPrice - actualPrice) / officialPrice) * 100 : null;
 
 const computeDiscountPercent = (record: ProviderPriceRecord): number => {
+   // Natively-priced records (per-request/per-second) carry no official
+   // price to discount against — there's nothing to compute.
+   if (
+      record.inputPriceUsdPer1m === null ||
+      record.outputPriceUsdPer1m === null ||
+      record.officialInputPriceUsdPer1m === null ||
+      record.officialOutputPriceUsdPer1m === null
+   ) {
+      return 0;
+   }
+
    const inputDiscount =
       discountFromPrice(record.inputPriceUsdPer1m, record.officialInputPriceUsdPer1m) ??
-      record.inputDiscountPercent;
+      record.inputDiscountPercent ??
+      0;
    const outputDiscount =
       discountFromPrice(record.outputPriceUsdPer1m, record.officialOutputPriceUsdPer1m) ??
-      record.outputDiscountPercent;
+      record.outputDiscountPercent ??
+      0;
 
    // The backend pipeline is only supposed to publish listings that are
    // actually cheaper than official, but clamp defensively so a stray bad
@@ -60,6 +73,8 @@ export const toModelItems = (
          description,
          inputPrice: record.inputPriceUsdPer1m,
          outputPrice: record.outputPriceUsdPer1m,
+         nativePriceUsd: record.nativePriceUsd,
+         nativePriceUnit: record.nativePriceUnit,
          discountPercent: computeDiscountPercent(record),
          paymentMethods: record.paymentMethods,
          provider: record.providerName,
