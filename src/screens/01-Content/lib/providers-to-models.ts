@@ -25,16 +25,20 @@ const MISSING_DESCRIPTION: ModelDescription = { ru: "", en: "" };
 const discountFromPrice = (actualPrice: number, officialPrice: number): number | null =>
    officialPrice > 0 ? ((officialPrice - actualPrice) / officialPrice) * 100 : null;
 
-const computeDiscountPercent = (record: ProviderPriceRecord): number => {
+const computeDiscountPercent = (record: ProviderPriceRecord): number | null => {
    if (record.nativePriceUsd !== null) {
-      // Not every natively-priced record has an official price to discount
-      // against yet — 0 (no discount shown) rather than NaN when it's absent.
+      // Not every natively-priced record has been backfilled with an official
+      // price or a precomputed percent yet — null (badge hidden) rather than
+      // a fake "0% cheaper" when there's simply no discount data at all. A
+      // genuinely computed 0% (actual price matches official) is still shown.
       const nativeDiscount =
          (record.officialNativePriceUsd !== null
             ? discountFromPrice(record.nativePriceUsd, record.officialNativePriceUsd)
-            : null) ??
-         record.nativeDiscountPercent ??
-         0;
+            : null) ?? record.nativeDiscountPercent;
+
+      if (nativeDiscount === null) {
+         return null;
+      }
 
       return Math.max(0, Math.round(nativeDiscount));
    }
@@ -47,17 +51,21 @@ const computeDiscountPercent = (record: ProviderPriceRecord): number => {
       record.officialInputPriceUsdPer1m === null ||
       record.officialOutputPriceUsdPer1m === null
    ) {
-      return 0;
+      return null;
    }
 
    const inputDiscount =
       discountFromPrice(record.inputPriceUsdPer1m, record.officialInputPriceUsdPer1m) ??
-      record.inputDiscountPercent ??
-      0;
+      record.inputDiscountPercent;
    const outputDiscount =
       discountFromPrice(record.outputPriceUsdPer1m, record.officialOutputPriceUsdPer1m) ??
-      record.outputDiscountPercent ??
-      0;
+      record.outputDiscountPercent;
+
+   // Same rule as above: no fabricated 0% when a side's discount couldn't be
+   // computed from prices and has no precomputed percent to fall back on.
+   if (inputDiscount === null || outputDiscount === null) {
+      return null;
+   }
 
    // The backend pipeline is only supposed to publish listings that are
    // actually cheaper than official, but clamp defensively so a stray bad

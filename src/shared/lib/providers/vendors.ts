@@ -32,14 +32,22 @@ export const VENDOR_DISPLAY_NAMES: Record<string, string> = {
    xai: "xAI",
    chatglm: "ChatGLM",
    grok: "Grok",
-   zhipu: "Zhipu",
-   moonshot: "Moonshot",
+   // Shown as the model brand rather than the parent company (Zhipu makes
+   // GLM, Moonshot makes Kimi, Kuaishou makes Kling, Bytedance makes
+   // Seedance) — that's the name users actually recognize in this list.
+   zhipu: "GLM",
+   moonshot: "Kimi",
    alibaba: "Alibaba",
+   kuaishou: "Kling",
+   bytedance: "Seedance",
 };
+
+// Vendor ids without a display name that also lack an icon file yet.
+const VENDORS_WITHOUT_ICONS = new Set(["alibaba"]);
 
 // Every id here must have a matching /public/icons/providers/<id>.svg file.
 const VENDORS_WITH_ICONS = new Set(
-   Object.keys(VENDOR_DISPLAY_NAMES).filter((id) => id !== "alibaba")
+   Object.keys(VENDOR_DISPLAY_NAMES).filter((id) => !VENDORS_WITHOUT_ICONS.has(id))
 );
 
 export const getVendorDisplayName = (vendorId: string): string =>

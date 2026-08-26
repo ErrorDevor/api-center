@@ -25,7 +25,10 @@ export interface ModelItem {
    // ("request", "second") for display, e.g. "$0.21/request".
    nativePriceUsd: number | null;
    nativePriceUnit: string | null;
-   discountPercent: number;
+   // null when the record has no discount data to compute from yet (see
+   // computeDiscountPercent) — the discount badge is hidden entirely rather
+   // than showing a misleading "0% cheaper".
+   discountPercent: number | null;
    paymentMethods: string[];
    provider: ProviderName;
    // Reseller's site — the Provider column links out here.

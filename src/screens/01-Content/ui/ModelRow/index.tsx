@@ -433,27 +433,31 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                )}
             </div>
 
-            <span
-               ref={discountRef}
-               className={css.discount}
-               tabIndex={0}
-               aria-describedby={isDiscountTooltipOpen ? discountTooltipId : undefined}
-               onMouseEnter={openDiscountTooltip}
-               onMouseLeave={closeDiscountTooltip}
-               onFocus={openDiscountTooltip}
-               onBlur={closeDiscountTooltip}
-            >
-               <span className={css.discount_text}>
-                  {t.models.discount.replace("{percent}", String(model.discountPercent))}
-               </span>
-            </span>
+            {model.discountPercent !== null && (
+               <>
+                  <span
+                     ref={discountRef}
+                     className={css.discount}
+                     tabIndex={0}
+                     aria-describedby={isDiscountTooltipOpen ? discountTooltipId : undefined}
+                     onMouseEnter={openDiscountTooltip}
+                     onMouseLeave={closeDiscountTooltip}
+                     onFocus={openDiscountTooltip}
+                     onBlur={closeDiscountTooltip}
+                  >
+                     <span className={css.discount_text}>
+                        {t.models.discount.replace("{percent}", String(model.discountPercent))}
+                     </span>
+                  </span>
 
-            {isDiscountTooltipOpen && (
-               <DiscountTooltip
-                  id={discountTooltipId}
-                  text={t.models.discountTooltip}
-                  position={discountTooltipPosition}
-               />
+                  {isDiscountTooltipOpen && (
+                     <DiscountTooltip
+                        id={discountTooltipId}
+                        text={t.models.discountTooltip}
+                        position={discountTooltipPosition}
+                     />
+                  )}
+               </>
             )}
          </div>
 
