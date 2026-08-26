@@ -21,6 +21,13 @@ export interface ProviderPriceRecord {
    // record has one pricing shape or the other, never both, never neither.
    nativePriceUsd: number | null;
    nativePriceUnit: string | null;
+   // Official (undiscounted) native price and the resulting discount, mirroring
+   // the per-token official/discount fields above — not backfilled onto every
+   // natively-priced record yet, so null rather than dropping the row. Despite
+   // its "_per_second" name (backend quirk), this key is sent as-is regardless
+   // of the record's own nativePriceUnit — see parseProviderPriceRecords.
+   officialNativePriceUsd: number | null;
+   nativeDiscountPercent: number | null;
    trustStatus: TrustStatus;
    sourceUrl: string;
    lastCheckedAt: string;
@@ -87,6 +94,16 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
       const nativePriceUnit = isNonEmptyString(raw.native_price_unit)
          ? raw.native_price_unit
          : null;
+      // Fixed key name regardless of this record's own native_price_unit —
+      // the backend sends "official_native_price_usd_per_second" even on
+      // "request"-unit rows (e.g. bytedance/seedance-1-0-pro), so it isn't
+      // actually unit-specific despite the name.
+      const officialNativePriceUsd = isFiniteNumber(raw.official_native_price_usd_per_second)
+         ? raw.official_native_price_usd_per_second
+         : null;
+      const nativeDiscountPercent = isFiniteNumber(raw.native_discount_percent)
+         ? raw.native_discount_percent
+         : null;
       const trustStatus = raw.trust_status;
       const sourceUrl = raw.source_url;
       const lastCheckedAt = raw.last_checked_at;
@@ -140,6 +157,8 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
          outputDiscountPercent,
          nativePriceUsd,
          nativePriceUnit,
+         officialNativePriceUsd,
+         nativeDiscountPercent,
          trustStatus: trustStatus as TrustStatus,
          sourceUrl,
          lastCheckedAt,

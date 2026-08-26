@@ -26,8 +26,21 @@ const discountFromPrice = (actualPrice: number, officialPrice: number): number |
    officialPrice > 0 ? ((officialPrice - actualPrice) / officialPrice) * 100 : null;
 
 const computeDiscountPercent = (record: ProviderPriceRecord): number => {
-   // Natively-priced records (per-request/per-second) carry no official
-   // price to discount against — there's nothing to compute.
+   if (record.nativePriceUsd !== null) {
+      // Not every natively-priced record has an official price to discount
+      // against yet — 0 (no discount shown) rather than NaN when it's absent.
+      const nativeDiscount =
+         (record.officialNativePriceUsd !== null
+            ? discountFromPrice(record.nativePriceUsd, record.officialNativePriceUsd)
+            : null) ??
+         record.nativeDiscountPercent ??
+         0;
+
+      return Math.max(0, Math.round(nativeDiscount));
+   }
+
+   // Natively-priced records are handled above; anything left without a full
+   // per-token pricing set has nothing to discount against either.
    if (
       record.inputPriceUsdPer1m === null ||
       record.outputPriceUsdPer1m === null ||
