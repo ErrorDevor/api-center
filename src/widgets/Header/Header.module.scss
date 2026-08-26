@@ -18,12 +18,18 @@
    }
 
    &_logo {
+      position: relative;
       display: flex;
       align-items: center;
       gap: 1rem;
-      @include fontInterTight(2.4rem, 1, -0.01em, 500, getColorBlack(1));
+      
       margin-right: 10rem;
       white-space: nowrap;
+
+      p {
+         margin-left: 6.2rem;
+@include fontInterTight(2.4rem, 1, -0.01em, 500, getColorBlack(1));
+      }
    }
 
    &_main_buttons,
@@ -90,6 +96,15 @@
 .logout_button {
    height: 3.6rem;
    color: getColorBlack(1);
+}
+
+.main_logo {
+   position: absolute;
+   left: 0;
+   top: -1.8rem;
+   width: 6.2rem;
+   height: 6.2rem;
+   flex-shrink: 0;
 }
 
 @include screenMD {
