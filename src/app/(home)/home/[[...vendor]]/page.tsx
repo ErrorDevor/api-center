@@ -26,6 +26,8 @@ export default function HomePage({ params }: Props) {
    const { vendor: segments } = React.use(params);
 
    const [collapsed, setCollapsed] = React.useState(false);
+   // Not deep-linked like vendor/model above — just an in-page filter.
+   const [selectedModelType, setSelectedModelType] = React.useState<string | undefined>(undefined);
 
    const selectedVendorId = segments?.[0];
    const selectedModelSlug = segments?.[1];
@@ -61,12 +63,18 @@ export default function HomePage({ params }: Props) {
                onToggleCollapsed={() => setCollapsed((current) => !current)}
                activeVendorId={selectedVendorId}
                activeModelId={selectedModelId}
+               activeModelTypeId={selectedModelType}
                onSelectVendor={handleSelectVendor}
                onSelectModel={handleSelectModel}
+               onSelectModelType={setSelectedModelType}
             />
          }
       >
-         <Content selectedVendorId={selectedVendorId} selectedModelId={selectedModelId} />
+         <Content
+            selectedVendorId={selectedVendorId}
+            selectedModelId={selectedModelId}
+            selectedModelType={selectedModelType}
+         />
       </AppLayout>
    );
 }

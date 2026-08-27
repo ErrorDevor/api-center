@@ -15,8 +15,10 @@ interface Props {
    className?: string;
    activeVendorId?: string;
    activeModelId?: string;
+   activeModelTypeId?: string;
    onSelectVendor?: (vendorId: string | undefined) => void;
    onSelectModel?: (canonicalModelId: string | undefined) => void;
+   onSelectModelType?: (modelTypeId: string | undefined) => void;
 }
 
 export const Sidebar: React.FC<Props> = ({
@@ -26,8 +28,10 @@ export const Sidebar: React.FC<Props> = ({
    onToggleCollapsed,
    activeVendorId,
    activeModelId,
+   activeModelTypeId,
    onSelectVendor,
    onSelectModel,
+   onSelectModelType,
 }) => {
    return (
       <aside className={clsx(css.sidebar, collapsed && css.sidebar_collapsed, className)}>
@@ -35,8 +39,10 @@ export const Sidebar: React.FC<Props> = ({
             <SidebarContent
                activeVendorId={activeVendorId}
                activeModelId={activeModelId}
+               activeModelTypeId={activeModelTypeId}
                onSelectVendor={onSelectVendor}
                onSelectModel={onSelectModel}
+               onSelectModelType={onSelectModelType}
             />
          )}
 

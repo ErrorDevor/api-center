@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { modelType } from "../lib/sidebar.data";
+import { ALL_MODEL_TYPES_ID, buildModelTypeList } from "../lib/sidebar.data";
 import { toSidebarProviders } from "../lib/providers-to-sidebar";
 import type {
    ProviderItem as ProviderItemType,
@@ -34,25 +34,33 @@ interface Props {
    // sidebar) get the old self-contained click-to-highlight behavior.
    activeVendorId?: string;
    activeModelId?: string;
+   // undefined means "All Types". Same controlled/uncontrolled split as
+   // activeVendorId/activeModelId above.
+   activeModelTypeId?: string;
    // Notified on every explicit user click so a page (e.g. /home) can filter
    // its model table accordingly. Not called by internal-only state changes.
    onSelectVendor?: (vendorId: string | undefined) => void;
    onSelectModel?: (canonicalModelId: string | undefined) => void;
+   onSelectModelType?: (modelTypeId: string | undefined) => void;
 }
 
 export const SidebarContent: React.FC<Props> = ({
    className,
    activeVendorId,
    activeModelId,
+   activeModelTypeId,
    onSelectVendor,
    onSelectModel,
+   onSelectModelType,
 }) => {
    const { t } = useTranslation();
    const { records } = useProviderRecords();
 
    const providers = React.useMemo(() => toSidebarProviders(records), [records]);
+   const modelTypeList = React.useMemo(() => buildModelTypeList(records), [records]);
 
    const isControlled = onSelectVendor !== undefined;
+   const isModelTypeControlled = onSelectModelType !== undefined;
 
    const [uncontrolledProviderId, setUncontrolledProviderId] = React.useState<string | undefined>(
       undefined
@@ -60,11 +68,16 @@ export const SidebarContent: React.FC<Props> = ({
    const [uncontrolledModelId, setUncontrolledModelId] = React.useState<string | undefined>(
       undefined
    );
-   const [activeModelType, setActiveModelType] = React.useState(modelType[0].id);
+   const [uncontrolledModelTypeId, setUncontrolledModelTypeId] = React.useState<string>(
+      ALL_MODEL_TYPES_ID
+   );
    const [showAll, setShowAll] = React.useState(false);
 
    const activeProviderId = isControlled ? activeVendorId : uncontrolledProviderId;
    const activeModel = isControlled ? activeModelId : uncontrolledModelId;
+   const activeModelType = isModelTypeControlled
+      ? activeModelTypeId ?? ALL_MODEL_TYPES_ID
+      : uncontrolledModelTypeId;
 
    const visibleProviders =
       showAll || providers.length <= VISIBLE_PROVIDERS_COUNT
@@ -97,6 +110,18 @@ export const SidebarContent: React.FC<Props> = ({
 
       onSelectVendor?.(provider.id);
       onSelectModel?.(nextModelId);
+   };
+
+   // Clicking the already-active type deselects back to "All Types" instead
+   // of being a dead click, same as the provider/model handlers above.
+   const handleModelTypeClick = (modelTypeId: string) => {
+      const nextModelTypeId = modelTypeId === activeModelType ? ALL_MODEL_TYPES_ID : modelTypeId;
+
+      if (!isModelTypeControlled) {
+         setUncontrolledModelTypeId(nextModelTypeId);
+      }
+
+      onSelectModelType?.(nextModelTypeId === ALL_MODEL_TYPES_ID ? undefined : nextModelTypeId);
    };
 
    return (
@@ -153,9 +178,9 @@ export const SidebarContent: React.FC<Props> = ({
 
             <SidebarList
                title={t.sidebar.modelTypeTitle}
-               list={modelType}
+               list={modelTypeList}
                activeId={activeModelType}
-               onChange={setActiveModelType}
+               onChange={handleModelTypeClick}
             />
 
             <div className={css.sidebar_forum}>

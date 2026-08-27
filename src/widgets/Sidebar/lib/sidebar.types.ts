@@ -1,3 +1,5 @@
+import type { ModelContentType } from "shared/lib/models/modelType";
+
 export type SidebarMode = "api" | "group-buys";
 
 export type ModelBadge = "new" | "top";
@@ -23,10 +25,4 @@ export interface ListData {
    count: number;
 }
 
-export type ModelTypeTranslationKey =
-   | "allTypes"
-   | "images"
-   | "search"
-   | "audioVideo"
-   | "text"
-   | "chat";
+export type ModelTypeTranslationKey = "allTypes" | ModelContentType;

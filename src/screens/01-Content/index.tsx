@@ -15,6 +15,7 @@ import { ModelsTable } from "./ui/ModelsTable";
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
+import { modelMatchesContentType, type ModelContentType } from "shared/lib/models/modelType";
 import { useModelCatalog } from "shared/lib/models/useModelCatalog";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
 import { getVendorDisplayName, getVendorId } from "shared/lib/providers/vendors";
@@ -36,9 +37,17 @@ interface Prop {
    // undefined means "show everything".
    selectedVendorId?: string;
    selectedModelId?: string;
+   // Set by the Sidebar's "Model Type" filter — ANDed with the vendor/model
+   // selection above rather than replacing it.
+   selectedModelType?: string;
 }
 
-export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedModelId }) => {
+export const Content: React.FC<Prop> = ({
+   className,
+   selectedVendorId,
+   selectedModelId,
+   selectedModelType,
+}) => {
    const { t, locale } = useTranslation();
    const { records } = useProviderRecords();
    const { entries: modelCatalog } = useModelCatalog();
@@ -47,16 +56,22 @@ export const Content: React.FC<Prop> = ({ className, selectedVendorId, selectedM
    const models = React.useMemo(() => toModelItems(records, modelCatalog), [records, modelCatalog]);
 
    const filteredModels = React.useMemo(() => {
+      let result = models;
+
       if (selectedModelId) {
-         return models.filter((model) => model.canonicalModelId === selectedModelId);
+         result = result.filter((model) => model.canonicalModelId === selectedModelId);
+      } else if (selectedVendorId) {
+         result = result.filter((model) => getVendorId(model.canonicalModelId) === selectedVendorId);
       }
 
-      if (selectedVendorId) {
-         return models.filter((model) => getVendorId(model.canonicalModelId) === selectedVendorId);
+      if (selectedModelType) {
+         result = result.filter((model) =>
+            modelMatchesContentType(model.canonicalModelId, selectedModelType as ModelContentType)
+         );
       }
 
-      return models;
-   }, [models, selectedVendorId, selectedModelId]);
+      return result;
+   }, [models, selectedVendorId, selectedModelId, selectedModelType]);
 
    const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
    const [isDescriptionExpanded, setIsDescriptionExpanded] = React.useState(false);
