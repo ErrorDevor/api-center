@@ -82,7 +82,26 @@ export const Content: React.FC<Prop> = ({
    // Drives both the "Сортировка" dropdown (ContentActions, below) and the
    // table's own per-column sort icons (ModelsTable) — one state so picking
    // an option in either place is reflected in the other.
-   const [sort, setSort] = React.useState<SortState>(DEFAULT_SORT);
+   // The unfiltered "all providers" listing (главная) defaults to
+   // alphabetical, same as always. Everywhere else — a specific vendor or
+   // model's offers — defaults to cheapest-first instead, since that's the
+   // comparison you're actually there to make.
+   const isMainListing = !selectedVendorId && !selectedModelId;
+   const defaultSort = isMainListing ? DEFAULT_SORT : MODELS_SORT_PRESETS.price_asc;
+
+   const [sort, setSort] = React.useState<SortState>(defaultSort);
+
+   // selectedVendorId/selectedModelId change via client-side navigation
+   // without remounting this component, so the lazy initial state above
+   // only covers the first render — re-apply the context's default sort
+   // whenever which listing we're on changes.
+   React.useEffect(() => {
+      setSort(defaultSort);
+      // Only the listing identity should trigger a reset, not every
+      // defaultSort object re-creation (a new object each render since it's
+      // not memoized) or this would fight the user's own dropdown clicks.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [selectedVendorId, selectedModelId]);
 
    const sortOptions: SortDropdownOption<ModelsSortValue>[] = [
       { value: "name_asc", label: t.content.actions.sort.nameAsc },

@@ -97,6 +97,11 @@ export const en = {
    },
 
    groupBuys: {
+      // Shown when no provider is selected in the Sidebar (see
+      // GroupBuysContent) — the vendor-specific title otherwise reuses the
+      // vendor's own display name, same as Content's catalogTitle.
+      catalogTitle: "Group Buys",
+
       tabs: {
          coding: "Coding",
          chat: "Chat",
@@ -158,6 +163,18 @@ export const en = {
                "Yunwu.ai - is an API gateway for developers that provides access to models from OpenAI, Claude, Gemini, and others through a single OpenAI-compatible endpoint. It works without a VPN, accepts payments via local methods (Alipay, WeChat), and offers prices lower than the official ones.",
             review:
                "Bought this, and I'm very satisfied! The price is 4 times lower than the original, and the seller is completely trustworthy.",
+         },
+
+         claudeSonnetSharing: {
+            title: "Anthropic API (Claude Sonnet 5)",
+            description:
+               "Shared seat on a Claude Sonnet 5 account — full-speed access at a fraction of the official per-seat cost.",
+         },
+
+         geminiProSharing: {
+            title: "Google API (Gemini 3.1 Pro)",
+            description:
+               "Shared seat on a Gemini 3.1 Pro account — same rate limits as a solo subscription, split between participants.",
          },
       },
 
@@ -706,6 +723,8 @@ export const ru: Dictionary = {
    },
 
    groupBuys: {
+      catalogTitle: "Складчины",
+
       tabs: {
          coding: "Coding",
          chat: "Чат",
@@ -767,6 +786,18 @@ export const ru: Dictionary = {
                "Yunwu.ai — API-шлюз для разработчиков, который даёт доступ к моделям OpenAI, Claude, Gemini и другим через единый OpenAI-совместимый эндпоинт. Работает без VPN, принимает оплату через локальные методы (Alipay, WeChat), цены ниже официальных.",
             review:
                "Купил доступ и остался очень доволен! Цена в 4 раза ниже официальной, а продавцу можно полностью доверять.",
+         },
+
+         claudeSonnetSharing: {
+            title: "Anthropic API (Claude Sonnet 5)",
+            description:
+               "Место в складчине на аккаунт Claude Sonnet 5 — полная скорость доступа за часть официальной цены за место.",
+         },
+
+         geminiProSharing: {
+            title: "Google API (Gemini 3.1 Pro)",
+            description:
+               "Место в складчине на аккаунт Gemini 3.1 Pro — те же лимиты запросов, что и в одиночной подписке, поделённые между участниками.",
          },
       },
 

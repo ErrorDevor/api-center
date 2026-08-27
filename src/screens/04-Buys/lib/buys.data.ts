@@ -32,6 +32,7 @@ export const card: GroupBuyItem = {
    userName: "@insightminer",
    userAvatar: "/images/avatar2.png",
    translationKey: "gptTerraSharing",
+   vendorIds: ["openai"],
    price: 8,
    totalPersons: 4,
    takenPersons: 1,

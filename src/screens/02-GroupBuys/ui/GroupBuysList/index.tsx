@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { groupBuys } from "../../lib/groupBuys.data";
+import type { GroupBuyItem } from "../../lib/groupBuys.data";
 import clsx from "clsx";
 
 import { useIsMobile } from "shared/lib/hooks/useIsMobile";
@@ -16,22 +16,26 @@ import css from "./GroupBuysList.module.scss";
 const MOBILE_VISIBLE_COUNT = 3;
 const MOBILE_VISIBLE_STEP = 4;
 
-export const GroupBuysList: React.FC = () => {
+interface Props {
+   items: GroupBuyItem[];
+}
+
+export const GroupBuysList: React.FC<Props> = ({ items }) => {
    const { t } = useTranslation();
    const isMobile = useIsMobile();
 
    const [visibleCount, setVisibleCount] = React.useState(MOBILE_VISIBLE_COUNT);
 
    React.useEffect(() => {
-      setVisibleCount(isMobile ? MOBILE_VISIBLE_COUNT : groupBuys.length);
-   }, [isMobile]);
+      setVisibleCount(isMobile ? MOBILE_VISIBLE_COUNT : items.length);
+   }, [isMobile, items.length]);
 
-   const visibleItems = isMobile ? groupBuys.slice(0, visibleCount) : groupBuys;
+   const visibleItems = isMobile ? items.slice(0, visibleCount) : items;
 
-   const hasMore = isMobile && visibleCount < groupBuys.length;
+   const hasMore = isMobile && visibleCount < items.length;
 
    const handleShowMore = () => {
-      setVisibleCount((current) => Math.min(current + MOBILE_VISIBLE_STEP, groupBuys.length));
+      setVisibleCount((current) => Math.min(current + MOBILE_VISIBLE_STEP, items.length));
    };
 
    return (

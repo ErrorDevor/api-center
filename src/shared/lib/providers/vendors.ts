@@ -13,11 +13,11 @@ export const getVendorId = (canonicalModelId: string): string => {
 // stable regardless of which vendors currently have records in
 // providers.json (a vendor with no data yet still shows up with count 0).
 export const KNOWN_VENDOR_IDS: string[] = [
-   "google",
+   "anthropic",
    "openai",
+   "google",
    "deepseek",
    "minimax",
-   "anthropic",
    "xai",
    "chatglm",
    "grok",
