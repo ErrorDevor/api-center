@@ -2,8 +2,11 @@
 
 import React from "react";
 
+import { useRouter } from "next/navigation";
+
 import clsx from "clsx";
 
+import type { SidebarMode } from "widgets/Sidebar/lib/sidebar.types";
 import { MobileSidebar } from "widgets/Sidebar/ui/MobileSidebar";
 
 import Image from "shared/ui/base/Image";
@@ -37,6 +40,13 @@ interface Props<T extends string, TSort extends string = SortValue> {
    sortOptions?: SortDropdownOption<TSort>[];
    sortValue?: TSort;
    onSortChange?: (value: TSort) => void;
+   selectedVendorId?: string;
+   selectedModelId?: string;
+   selectedModelType?: string;
+
+   onSelectVendor?: (vendorId: string | undefined) => void;
+   onSelectModel?: (modelId: string | undefined) => void;
+   onSelectModelType?: (modelTypeId: string | undefined) => void;
 }
 
 export const ContentHeader = <T extends string, TSort extends string = SortValue>({
@@ -52,6 +62,12 @@ export const ContentHeader = <T extends string, TSort extends string = SortValue
    sortOptions,
    sortValue,
    onSortChange,
+   selectedVendorId,
+   selectedModelId,
+   selectedModelType,
+   onSelectModelType,
+   onSelectVendor,
+   onSelectModel,
 }: Props<T, TSort>) => {
    const [isMobileSidebarOpened, setIsMobileSidebarOpened] = React.useState(false);
 
@@ -68,14 +84,23 @@ export const ContentHeader = <T extends string, TSort extends string = SortValue
          <>
             <div className={clsx(css.content_header, css.content_header_simple, className)}>
                <NextLink href="/" className={css.content_header_logo}>
-                  <Image.Default src="/images/Logo.svg" alt="" />
-                  Best Api Price
+                  <Image.Default src="/images/Logo.svg" alt="" className={css.main_logo} />
+                  Best Ai Price
                </NextLink>
 
                <BurgerButton onClick={handleOpenMobileSidebar} />
             </div>
 
-            <MobileSidebar opened={isMobileSidebarOpened} onClose={handleCloseMobileSidebar} />
+            <MobileSidebar
+               opened={isMobileSidebarOpened}
+               onClose={handleCloseMobileSidebar}
+               activeVendorId={selectedVendorId}
+               activeModelId={selectedModelId}
+               activeModelTypeId={selectedModelType}
+               onSelectVendor={onSelectVendor}
+               onSelectModel={onSelectModel}
+               onSelectModelType={onSelectModelType}
+            />
          </>
       );
    }
@@ -127,7 +152,16 @@ export const ContentHeader = <T extends string, TSort extends string = SortValue
             />
          </div>
 
-         <MobileSidebar opened={isMobileSidebarOpened} onClose={handleCloseMobileSidebar} />
+         <MobileSidebar
+            opened={isMobileSidebarOpened}
+            onClose={handleCloseMobileSidebar}
+            activeVendorId={selectedVendorId}
+            activeModelId={selectedModelId}
+            activeModelTypeId={selectedModelType}
+            onSelectVendor={onSelectVendor}
+            onSelectModel={onSelectModel}
+            onSelectModelType={onSelectModelType}
+         />
       </>
    );
 };

@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Comments } from "screens/03-Reviews";
 
@@ -14,20 +14,43 @@ import { AppLayout } from "shared/ui/templates/AppLayout";
 
 export const dynamic = "force-dynamic";
 
-// useSearchParams() opts the reading component out of static rendering
-// unless it's wrapped in Suspense (see
-// https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout) —
-// split out so only this tiny piece needs the boundary.
-const ReviewsContent: React.FC = () => {
+interface Props {
+   params: Promise<{ vendor?: string[] }>;
+}
+
+interface ReviewsContentProps {
+   selectedVendorId?: string;
+   onSelectVendor?: (vendorId: string | undefined) => void;
+}
+
+const ReviewsContent: React.FC<ReviewsContentProps> = ({
+   selectedVendorId,
+   onSelectVendor,
+}) => {
    const searchParams = useSearchParams();
    const providerDomain = searchParams.get("provider") ?? undefined;
 
-   return <Comments providerDomain={providerDomain} />;
+   return (
+      <Comments
+         providerDomain={providerDomain}
+         selectedVendorId={selectedVendorId}
+         onSelectVendor={onSelectVendor}
+      />
+   );
 };
 
-export default function ReviewsPage() {
+export default function ReviewsPage({ params }: Props) {
+   const router = useRouter();
+   const { vendor: segments } = React.use(params);
+
    const [collapsed, setCollapsed] = React.useState(false);
    const [mode, setMode] = React.useState<SidebarMode>("api");
+
+   const selectedVendorId = segments?.[0];
+
+   const handleSelectVendor = (vendorId: string | undefined) => {
+      router.push(vendorId ? `/reviews/${vendorId}` : "/reviews");
+   };
 
    return (
       <AppLayout
@@ -38,11 +61,16 @@ export default function ReviewsPage() {
                mode={mode}
                collapsed={collapsed}
                onToggleCollapsed={() => setCollapsed((prev) => !prev)}
+               activeVendorId={selectedVendorId}
+               onSelectVendor={handleSelectVendor}
             />
          }
       >
          <React.Suspense fallback={null}>
-            <ReviewsContent />
+            <ReviewsContent
+               selectedVendorId={selectedVendorId}
+               onSelectVendor={handleSelectVendor}
+            />
          </React.Suspense>
       </AppLayout>
    );

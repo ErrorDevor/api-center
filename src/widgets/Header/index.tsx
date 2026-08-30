@@ -52,7 +52,7 @@ export const Header: React.FC = () => {
          <div className={css.header_left_side}>
             <NextLink href="/" className={css.header_logo}>
                <Image.Default src="/images/Logo.svg" className={css.main_logo}/>
-               <p>Best Api Price</p>
+               <p>Best Ai Price</p>
                
             </NextLink>
 

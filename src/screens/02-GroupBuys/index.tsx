@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { groupBuys, type GroupBuysTabId, tabs } from "./lib/groupBuys.data";
+import { type GroupBuysTabId, groupBuys, tabs } from "./lib/groupBuys.data";
 import { GroupBuysList } from "./ui/GroupBuysList";
 import clsx from "clsx";
 
@@ -21,11 +21,16 @@ interface Props {
    // Set by the Sidebar's provider selection (see /group-buys page), same
    // as Content's selectedVendorId. undefined means "show every offer".
    selectedVendorId?: string;
+   onSelectVendor?: (vendorId: string | undefined) => void;
 }
 
 type TabId = (typeof tabs)[number]["id"];
 
-export const GroupBuysContent: React.FC<Props> = ({ className, selectedVendorId }) => {
+export const GroupBuysContent: React.FC<Props> = ({
+   className,
+   selectedVendorId,
+   onSelectVendor,
+}) => {
    const { t } = useTranslation();
 
    const [activeTab, setActiveTab] = React.useState<GroupBuysTabId>(tabs[0].id);
@@ -41,7 +46,9 @@ export const GroupBuysContent: React.FC<Props> = ({ className, selectedVendorId 
 
    const resultsCount = filteredGroupBuys.length;
    const totalPages = 10;
-   const title = selectedVendorId ? getVendorDisplayName(selectedVendorId) : t.groupBuys.catalogTitle;
+   const title = selectedVendorId
+      ? getVendorDisplayName(selectedVendorId)
+      : t.groupBuys.catalogTitle;
 
    const headerTabs: ContentHeaderTab<TabId>[] = tabs.map((tab) => ({
       id: tab.id,
@@ -58,6 +65,8 @@ export const GroupBuysContent: React.FC<Props> = ({ className, selectedVendorId 
             activeTab={activeTab}
             actionsVariant="group"
             onTabChange={setActiveTab}
+            selectedVendorId={selectedVendorId}
+            onSelectVendor={onSelectVendor}
          />
 
          <ContentActions variant="group" className={css.content_actions} />

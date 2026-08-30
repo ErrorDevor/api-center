@@ -46,7 +46,6 @@ export const Sidebar: React.FC<Props> = ({
             />
          )}
 
-         {/* Пока скрываем переключатель сворачивания сайдбара */}
          {/* <button
             type="button"
             className={clsx(

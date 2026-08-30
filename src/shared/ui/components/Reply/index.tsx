@@ -8,6 +8,7 @@ import { EmojiIcon } from "shared/ui/icons/Emoji.icon";
 import { ImageIcon } from "shared/ui/icons/Image.icon";
 
 import css from "./Reply.module.scss";
+import { Button } from "shared/ui/ui-kit/Button";
 
 interface Prop {
    className?: string;
@@ -98,17 +99,17 @@ export const Reply: React.FC<Prop> = ({
             </div>
          </div>
 
-         <button
+         <Button variant="black"
             type="button"
             disabled={isSubmitDisabled}
             className={css.reply_submit}
             onClick={handleSubmit}
          >
-            <span className={css.reply_submit_blur_left} />
-            <span className={css.reply_submit_blur_right} />
+            {/* <span className={css.reply_submit_blur_left} />
+            <span className={css.reply_submit_blur_right} /> */}
 
             <span className={css.reply_submit_text}>{buttonText}</span>
-         </button>
+         </Button>
       </div>
    );
 };

@@ -15,7 +15,7 @@ import { ModelsTable } from "./ui/ModelsTable";
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
-import { modelMatchesContentType, type ModelContentType } from "shared/lib/models/modelType";
+import { type ModelContentType, modelMatchesContentType } from "shared/lib/models/modelType";
 import { useModelCatalog } from "shared/lib/models/useModelCatalog";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
 import { getVendorDisplayName, getVendorId } from "shared/lib/providers/vendors";
@@ -40,6 +40,10 @@ interface Prop {
    // Set by the Sidebar's "Model Type" filter — ANDed with the vendor/model
    // selection above rather than replacing it.
    selectedModelType?: string;
+
+   onSelectVendor?: (vendorId: string | undefined) => void;
+   onSelectModel?: (modelId: string | undefined) => void;
+   onSelectModelType?: (modelTypeId: string | undefined) => void;
 }
 
 export const Content: React.FC<Prop> = ({
@@ -47,6 +51,9 @@ export const Content: React.FC<Prop> = ({
    selectedVendorId,
    selectedModelId,
    selectedModelType,
+   onSelectVendor,
+   onSelectModel,
+   onSelectModelType,
 }) => {
    const { t, locale } = useTranslation();
    const { records } = useProviderRecords();
@@ -61,7 +68,9 @@ export const Content: React.FC<Prop> = ({
       if (selectedModelId) {
          result = result.filter((model) => model.canonicalModelId === selectedModelId);
       } else if (selectedVendorId) {
-         result = result.filter((model) => getVendorId(model.canonicalModelId) === selectedVendorId);
+         result = result.filter(
+            (model) => getVendorId(model.canonicalModelId) === selectedVendorId
+         );
       }
 
       if (selectedModelType) {
@@ -194,6 +203,12 @@ export const Content: React.FC<Prop> = ({
             sortOptions={sortOptions}
             sortValue={sortStateToValue(sort)}
             onSortChange={handleSortValueChange}
+            selectedVendorId={selectedVendorId}
+            selectedModelId={selectedModelId}
+            selectedModelType={selectedModelType}
+            onSelectVendor={onSelectVendor}
+            onSelectModel={onSelectModel}
+            onSelectModelType={onSelectModelType}
          />
 
          <div className={css.content_scroll}>

@@ -755,7 +755,7 @@ export const ru: Dictionary = {
       leaveReview: {
          title: "Оставить отзыв",
          placeholder: "Поделитесь впечатлением об этом провайдере",
-         submit: "Опубликовать отзыв",
+         submit: "Оставить",
          positive: "Положительный",
          negative: "Отрицательный",
       },

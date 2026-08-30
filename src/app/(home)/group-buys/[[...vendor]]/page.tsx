@@ -49,7 +49,10 @@ export default function GroupBuysPage({ params }: Props) {
             />
          }
       >
-         <GroupBuysContent selectedVendorId={selectedVendorId} />
+         <GroupBuysContent
+            selectedVendorId={selectedVendorId}
+            onSelectVendor={handleSelectVendor}
+         />
       </AppLayout>
    );
 }

@@ -31,9 +31,10 @@ export default function HomePage({ params }: Props) {
 
    const selectedVendorId = segments?.[0];
    const selectedModelSlug = segments?.[1];
-   const selectedModelId = selectedVendorId && selectedModelSlug
-      ? `${selectedVendorId}/${selectedModelSlug}`
-      : undefined;
+   const selectedModelId =
+      selectedVendorId && selectedModelSlug
+         ? `${selectedVendorId}/${selectedModelSlug}`
+         : undefined;
 
    const mode: SidebarMode = "api";
 
@@ -74,6 +75,9 @@ export default function HomePage({ params }: Props) {
             selectedVendorId={selectedVendorId}
             selectedModelId={selectedModelId}
             selectedModelType={selectedModelType}
+            onSelectVendor={handleSelectVendor}
+            onSelectModel={handleSelectModel}
+            onSelectModelType={setSelectedModelType}
          />
       </AppLayout>
    );

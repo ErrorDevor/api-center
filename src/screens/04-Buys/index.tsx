@@ -9,12 +9,10 @@ import { mockReviews } from "screens/03-Reviews/lib/comments.data";
 import { CommentLayer } from "screens/03-Reviews/ui/CommentLayer";
 
 import { useTranslation } from "shared/lib/i18n";
-
 import { ContentHeader } from "shared/ui/components/ContentHeader";
 import { ContentHeaderTab } from "shared/ui/components/ContentHeader";
 import { Pagination } from "shared/ui/components/Pagination";
 import { Reply } from "shared/ui/components/Reply";
-
 
 import css from "./Buys.module.scss";
 
@@ -22,9 +20,11 @@ type TabId = (typeof tabs)[number]["id"];
 
 interface Prop {
    className?: string;
+   selectedVendorId?: string;
+   onSelectVendor?: (vendorId: string | undefined) => void;
 }
 
-export const Buys: React.FC<Prop> = ({ className }) => {
+export const Buys: React.FC<Prop> = ({ className, selectedVendorId, onSelectVendor }) => {
    const { t } = useTranslation();
    const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
    const [currentPage, setCurrentPage] = React.useState(1);
@@ -47,13 +47,15 @@ export const Buys: React.FC<Prop> = ({ className }) => {
             activeTab={activeTab}
             actionsVariant="group"
             onTabChange={setActiveTab}
+            selectedVendorId={selectedVendorId}
+            onSelectVendor={onSelectVendor}
          />
 
          <div className={css.buys_list}>
             <div className={css.buys_list_inner}>
                <GroupBuyCard item={card} withBackground={false} />
 
-               <Reply placeholder={t.common.replyPlaceholder} buttonText={t.common.buttonText}/>
+               <Reply placeholder={t.common.replyPlaceholder} buttonText={t.common.buttonText} />
 
                <div className={css.buys_data_list}>
                   <h6>{t.common.participants}</h6>

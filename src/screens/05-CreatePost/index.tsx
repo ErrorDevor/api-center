@@ -14,13 +14,15 @@ import css from "./CreatePost.module.scss";
 
 interface Prop {
    className?: string;
+   selectedVendorId?: string;
+   onSelectVendor?: (vendorId: string | undefined) => void;
 }
 
 type TabId = (typeof tabs)[number]["id"];
 
 const resultsCount = 158;
 
-export const CreatePost: React.FC<Prop> = ({ className }) => {
+export const CreatePost: React.FC<Prop> = ({ className, selectedVendorId, onSelectVendor }) => {
    const { t } = useTranslation();
    const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
 
@@ -39,6 +41,8 @@ export const CreatePost: React.FC<Prop> = ({ className }) => {
             activeTab={activeTab}
             actionsVariant="group"
             onTabChange={setActiveTab}
+            selectedVendorId={selectedVendorId}
+            onSelectVendor={onSelectVendor}
          />
 
          <div className={css.create_post_inner}>
