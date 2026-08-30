@@ -17,3 +17,12 @@
       height: 100%;
    }
 }
+
+@include screenMD {
+   .create_post {
+      &_inner {
+         padding: 1.6rem;
+         margin: 1.6rem;
+      }
+   }
+}

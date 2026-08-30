@@ -40,7 +40,7 @@ export const ProviderAccordion: React.FC<Props> = ({
                         active && css.provider_item_active,
                         activeProviderId === provider.id && css.provider_item_selected
                      )}
-                     onClick={() => onProviderClick(provider.id)}
+                     // onClick={() => onProviderClick(provider.id)}
                   >
                      <span className={css.provider_main}>
                         <Image.Default src={provider.icon} className={css.provider_icon} />

@@ -25,8 +25,8 @@ const getSortPrice = (model: ModelItem): number => model.inputPrice ?? model.nat
 const getSecondarySortPrice = (model: ModelItem): number =>
    model.outputPrice ?? model.nativePriceUsd ?? 0;
 
-const MOBILE_VISIBLE_COUNT = 3;
-const MOBILE_VISIBLE_STEP = 3;
+const MOBILE_VISIBLE_COUNT = 10;
+const MOBILE_VISIBLE_STEP = 10;
 
 // Desktop pagination (the Pagination control is CSS-hidden on mobile,
 // which keeps its own separate "show more" reveal below).
@@ -195,9 +195,31 @@ export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange }) => 
       "--scrollbar-width": `${scrollbarWidth}px`,
    } as React.CSSProperties;
 
+   // const isMobile = useIsMobile();
+
+   // const [visibleCount, setVisibleCount] = React.useState(MOBILE_VISIBLE_COUNT);
+
+   // React.useEffect(() => {
+   //    setVisibleCount(isMobile ? MOBILE_VISIBLE_COUNT : sortedModels.length);
+   // }, [isMobile, sortedModels.length]);
+
+   // const totalPages = Math.max(1, Math.ceil(sortedModels.length / PAGE_SIZE));
+
+   // const visibleModels = isMobile
+   //    ? sortedModels.slice(0, visibleCount)
+   //    : sortedModels.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+   // const hasMore = isMobile && visibleCount < sortedModels.length;
+
+   // const handleShowMore = () => {
+   //    setVisibleCount((current) => Math.min(current + MOBILE_VISIBLE_STEP, sortedModels.length));
+   // };
+
    const isMobile = useIsMobile();
 
    const [visibleCount, setVisibleCount] = React.useState(MOBILE_VISIBLE_COUNT);
+
+   const loadMoreRef = React.useRef<HTMLDivElement>(null);
 
    React.useEffect(() => {
       setVisibleCount(isMobile ? MOBILE_VISIBLE_COUNT : sortedModels.length);
@@ -211,9 +233,38 @@ export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange }) => 
 
    const hasMore = isMobile && visibleCount < sortedModels.length;
 
-   const handleShowMore = () => {
-      setVisibleCount((current) => Math.min(current + MOBILE_VISIBLE_STEP, sortedModels.length));
-   };
+   React.useEffect(() => {
+      const loadMoreElement = loadMoreRef.current;
+
+      if (!isMobile || !hasMore || !loadMoreElement) {
+         return;
+      }
+
+      const observer = new IntersectionObserver(
+         (entries) => {
+            const [entry] = entries;
+
+            if (!entry.isIntersecting) {
+               return;
+            }
+
+            setVisibleCount((current) =>
+               Math.min(current + MOBILE_VISIBLE_STEP, sortedModels.length)
+            );
+         },
+         {
+            root: null,
+            rootMargin: "200px 0px",
+            threshold: 0,
+         }
+      );
+
+      observer.observe(loadMoreElement);
+
+      return () => {
+         observer.disconnect();
+      };
+   }, [isMobile, hasMore, sortedModels.length]);
 
    return (
       <>
@@ -283,12 +334,14 @@ export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange }) => 
                      )}
                   </div>
 
-                  {hasMore && (
+                  {/* {hasMore && (
                      <button type="button" className={css.show_more} onClick={handleShowMore}>
                         <DropdownArrowIcon className={css.show_more_icon} />
                         {t.sidebar.showMore}
                      </button>
-                  )}
+                  )} */}
+
+                  {hasMore && <div ref={loadMoreRef} className={css.load_more_trigger} />}
                </div>
             </div>
          </div>

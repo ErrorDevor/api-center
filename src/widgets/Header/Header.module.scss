@@ -22,13 +22,13 @@
       display: flex;
       align-items: center;
       gap: 1rem;
-      
+
       margin-right: 10rem;
       white-space: nowrap;
 
       p {
          margin-left: 6.2rem;
-@include fontInterTight(2.4rem, 1, -0.01em, 500, getColorBlack(1));
+         @include fontInterTight(2.4rem, 1, -0.01em, 500, getColorBlack(1));
       }
    }
 
@@ -110,5 +110,12 @@
 @include screenMD {
    .header {
       display: none;
+   }
+
+   .main_logo {
+      left: 0;
+      top: -1.8rem;
+      width: 3.2rem;
+      height: 3.2rem;
    }
 }

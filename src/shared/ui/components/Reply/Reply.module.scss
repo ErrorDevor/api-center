@@ -107,65 +107,65 @@
    }
 
    &_submit {
-      position: relative;
-      isolation: isolate;
+      // position: relative;
+      // isolation: isolate;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      // display: flex;
+      // align-items: center;
+      // justify-content: center;
 
       width: 9.2rem;
       height: 3.2rem;
-      padding: 0 1.6rem;
-      flex-shrink: 0;
+      // padding: 0 1.6rem;
+      // flex-shrink: 0;
 
-      overflow: hidden;
+      // overflow: hidden;
 
-      border: 0.1rem solid rgba(255, 255, 255, 0.1);
-      border-radius: 0.8rem;
-      background: #4791ff;
+      // border: 0.1rem solid rgba(255, 255, 255, 0.1);
+      // border-radius: 0.8rem;
+      // background: #4791ff;
 
-      cursor: pointer;
+      // cursor: pointer;
 
-      transition:
-         background-color 0.2s ease,
-         opacity 0.2s ease,
-         transform 0.2s ease;
+      // transition:
+      //    background-color 0.2s ease,
+      //    opacity 0.2s ease,
+      //    transform 0.2s ease;
 
-      &:hover:not(:disabled) {
-         background: #347fef;
-      }
+      // &:hover:not(:disabled) {
+      //    background: #347fef;
+      // }
 
-      &:active:not(:disabled) {
-         transform: scale(0.97);
-      }
+      // &:active:not(:disabled) {
+      //    transform: scale(0.97);
+      // }
 
-      &:focus-visible {
-         outline: 0.2rem solid #4791ff;
-         outline-offset: 0.2rem;
-      }
+      // &:focus-visible {
+      //    outline: 0.2rem solid #4791ff;
+      //    outline-offset: 0.2rem;
+      // }
 
-      &:disabled {
-         background: rgba(0, 0, 0, 0.2);
-         cursor: default;
-      }
+      // &:disabled {
+      //    background: rgba(0, 0, 0, 0.2);
+      //    cursor: default;
+      // }
    }
 
-   &_submit_text {
-      position: relative;
-      z-index: 3;
+   // &_submit_text {
+   //    position: relative;
+   //    z-index: 3;
 
-      display: flex;
-      align-items: center;
+   //    display: flex;
+   //    align-items: center;
 
-      white-space: nowrap;
+   //    white-space: nowrap;
 
-      @include fontInterTight(1.4rem, 2.4rem, -0.01em, 500, #ffffff);
+   //    @include fontInterTight(1.4rem, 2.4rem, -0.01em, 500, #ffffff);
 
-      .reply_submit:disabled & {
-         color: #797a79;
-      }
-   }
+   //    .reply_submit:disabled & {
+   //       color: #797a79;
+   //    }
+   // }
 
    &_submit_blur_left,
    &_submit_blur_right {

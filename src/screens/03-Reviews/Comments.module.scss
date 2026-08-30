@@ -139,6 +139,17 @@
    }
 }
 
+.feedback_button_mobile {
+   display: none;
+   height: 3.6rem;
+   color: getColorWhite(1);
+
+   svg {
+      width: 1.6rem;
+      stroke: getColorWhite(1);
+   }
+}
+
 @include screenMD {
    .comments {
       &_list {
@@ -155,12 +166,21 @@
       box-shadow: unset;
 
       &_title {
-         padding: 0.8rem 0 0 0.8rem;
+         padding: 0.8rem 0 5rem 0.8rem;
+         position: relative;
       }
    }
 
    .feedback_button {
       display: none;
+   }
+
+   .feedback_button_mobile {
+      display: flex;
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
    }
 
    .comments_pag {

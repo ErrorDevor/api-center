@@ -2,26 +2,45 @@
 
 import React from "react";
 
+import { useRouter } from "next/navigation";
+
 import type { SidebarMode } from "../lib/sidebar.types";
 import clsx from "clsx";
-import { CurrencyDropdown } from "shared/ui/components/CurrencyDropdown";
-import { LanguageDropdown } from "shared/ui/components/LanguageDropdown";
+
 import { useTranslation } from "shared/lib/i18n";
 import Image from "shared/ui/base/Image";
 import { NextLink } from "shared/ui/base/NextLink";
+import { CurrencyDropdown } from "shared/ui/components/CurrencyDropdown";
+import { LanguageDropdown } from "shared/ui/components/LanguageDropdown";
+import { Search } from "shared/ui/components/Search";
 import { CloseIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
-import { Search } from "shared/ui/components/Search";
+
 import { SidebarContent } from "./SidebarContent";
-import { useRouter } from "next/navigation";
+
 import css from "../Sidebar.module.scss";
 
 interface Props {
    opened: boolean;
    onClose: () => void;
+   activeVendorId?: string;
+   activeModelId?: string;
+   activeModelTypeId?: string;
+   onSelectVendor?: (vendorId: string | undefined) => void;
+   onSelectModel?: (canonicalModelId: string | undefined) => void;
+   onSelectModelType?: (modelTypeId: string | undefined) => void;
 }
 
-export const MobileSidebar: React.FC<Props> = ({ opened, onClose }) => {
+export const MobileSidebar: React.FC<Props> = ({
+   opened,
+   onClose,
+   activeVendorId,
+   activeModelId,
+   activeModelTypeId,
+   onSelectVendor,
+   onSelectModel,
+   onSelectModelType,
+}) => {
    const { t } = useTranslation();
    const router = useRouter();
 
@@ -67,8 +86,8 @@ export const MobileSidebar: React.FC<Props> = ({ opened, onClose }) => {
          >
             <div className={css.mobile_sidebar_header}>
                <NextLink href="/" className={css.mobile_sidebar_logo_icon}>
-                  <Image.Default src="/images/Logo.svg" />
-                  Best Api Price
+                  <Image.Default src="/images/Logo.svg" className={css.main_logo} />
+                  Best Ai Price
                </NextLink>
 
                <button
@@ -88,7 +107,7 @@ export const MobileSidebar: React.FC<Props> = ({ opened, onClose }) => {
 
                      <CurrencyDropdown />
                   </div>
-                  
+
                   <Button variant="black" className={css.enter_button} onClick={handleLogin}>
                      {t.common.login}
                   </Button>
@@ -97,7 +116,14 @@ export const MobileSidebar: React.FC<Props> = ({ opened, onClose }) => {
 
             <Search />
 
-            <SidebarContent />
+            <SidebarContent
+               activeVendorId={activeVendorId}
+               activeModelId={activeModelId}
+               activeModelTypeId={activeModelTypeId}
+               onSelectVendor={onSelectVendor}
+               onSelectModel={onSelectModel}
+               onSelectModelType={onSelectModelType}
+            />
          </aside>
       </div>
    );

@@ -41,9 +41,16 @@ type SentimentTabId = "all" | "positive" | "negative";
 interface Prop {
    className?: string;
    providerDomain?: string;
+   selectedVendorId?: string;
+   onSelectVendor?: (vendorId: string | undefined) => void;
 }
 
-export const Comments: React.FC<Prop> = ({ className, providerDomain }) => {
+export const Comments: React.FC<Prop> = ({
+   className,
+   providerDomain,
+   selectedVendorId,
+   onSelectVendor,
+}) => {
    const { t, locale } = useTranslation();
    const router = useRouter();
    const { status } = useAuth();
@@ -280,9 +287,11 @@ export const Comments: React.FC<Prop> = ({ className, providerDomain }) => {
             activeTab={sentimentTab}
             actionsVariant="group"
             onTabChange={handleSentimentTabChange}
+            selectedVendorId={selectedVendorId}
+            onSelectVendor={onSelectVendor}
          />
 
-         <ContentActions variant="api" className={css.comments_actions} />
+         {/* <ContentActions variant="api" className={css.comments_actions} /> */}
 
          <div className={css.comments_list}>
             <CommentCard
@@ -312,6 +321,15 @@ export const Comments: React.FC<Prop> = ({ className, providerDomain }) => {
                         {t.common.feedback}
                      </Button>
                   </div>
+
+                  <Button
+                     variant="black"
+                     className={css.feedback_button_mobile}
+                     onClick={handleOpenReviewModal}
+                  >
+                     <PlusIcon />
+                     {t.common.feedback}
+                  </Button>
                </div>
 
                {error && <p className={css.comments_error}>{t.groupBuys.loadError}</p>}
