@@ -15,8 +15,11 @@ export const SidebarSwitcher: React.FC = () => {
    const { t } = useTranslation();
    const pathname = usePathname();
 
-   const isApiActive = pathname === "/home" || pathname.startsWith("/home/");
    const isGroupBuysActive = pathname === "/group-buys" || pathname.startsWith("/group-buys/");
+   // Every other page that renders the sidebar (/home, /reviews, /rating,
+   // /buys, ...) belongs to the API section, so the "API" tab stays lit
+   // there instead of leaving the switcher with nothing selected.
+   const isApiActive = !isGroupBuysActive;
 
    return (
       <div className={css.mode_switcher}>
