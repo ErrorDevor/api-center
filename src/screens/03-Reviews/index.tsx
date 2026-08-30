@@ -85,6 +85,21 @@ export const Comments: React.FC<Prop> = ({
 
    const providerName = providerRecord?.providerName ?? providerDomain ?? "";
 
+   // Reflect the current provider in the browser tab. This page is a client
+   // component (it reads `?provider=` from useSearchParams), so there's no
+   // server-side generateMetadata to set the title from.
+   React.useEffect(() => {
+      const baseTitle = "APIcenter";
+
+      document.title = providerName
+         ? `${providerName} - reviews, info, feedback`
+         : baseTitle;
+
+      return () => {
+         document.title = baseTitle;
+      };
+   }, [providerName]);
+
    const description = providerDescriptionEntry
       ? locale === "ru"
          ? providerDescriptionEntry.descriptionRu
