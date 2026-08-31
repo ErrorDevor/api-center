@@ -138,6 +138,21 @@ export const Content: React.FC<Prop> = ({
       ? getVendorDisplayName(selectedVendorId)
       : t.content.catalogTitle;
 
+   // Reflect the catalog in the browser tab. This screen is a client
+   // component (selection lives in the URL, read on the page), so there's
+   // no server generateMetadata to set the title from — same approach as
+   // the reviews screen.
+   React.useEffect(() => {
+      const baseTitle = "BEST AI PRICE – Compare AI API Prices Across 100+ Providers";
+
+      document.title =
+         selectedVendorId || selectedModelId ? `${catalogTitle} – ${baseTitle}` : baseTitle;
+
+      return () => {
+         document.title = "APIcenter";
+      };
+   }, [catalogTitle, selectedVendorId, selectedModelId]);
+
    // Below the fold, the description block used to always say "GPT-5.6
    // Terra" no matter what — now it's generic by default and names the
    // selected vendor, same as the header title above. Text is sourced from
