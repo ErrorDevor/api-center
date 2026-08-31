@@ -7,6 +7,7 @@ import { GroupBuysList } from "./ui/GroupBuysList";
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
+import { useProviderPopularity } from "shared/lib/providers/popularity/useProviderPopularity";
 import { getVendorDisplayName } from "shared/lib/providers/vendors";
 import { ContentActions } from "shared/ui/components/ContentActions";
 import { ContentHeader } from "shared/ui/components/ContentHeader";
@@ -28,6 +29,12 @@ interface Props {
 
 type TabId = (typeof tabs)[number]["id"];
 
+// GroupBuys only needs the two meaningful orderings — the sentiment
+// options SortDropdown defaults to don't apply to bundles. "newest" keeps
+// the feed's own order; "popular" ranks by the vendors each bundle
+// unlocks (see the popularity API).
+type GroupBuysSort = "newest" | "popular";
+
 export const GroupBuysContent: React.FC<Props> = ({
    className,
    selectedVendorId,
@@ -35,9 +42,11 @@ export const GroupBuysContent: React.FC<Props> = ({
    isProVersion = false,
 }) => {
    const { t } = useTranslation();
+   const { getClickCount, version: popularityVersion } = useProviderPopularity();
 
    const [activeTab, setActiveTab] = React.useState<GroupBuysTabId>(tabs[0].id);
    const [currentPage, setCurrentPage] = React.useState(1);
+   const [sort, setSort] = React.useState<GroupBuysSort>("newest");
 
    const filteredGroupBuys = React.useMemo(() => {
       if (!selectedVendorId) {
@@ -46,6 +55,32 @@ export const GroupBuysContent: React.FC<Props> = ({
 
       return groupBuys.filter((item) => item.vendorIds.includes(selectedVendorId));
    }, [selectedVendorId]);
+
+   const orderedGroupBuys = React.useMemo(() => {
+      if (sort !== "popular") {
+         return filteredGroupBuys;
+      }
+
+      // A bundle's popularity is the total click-through across every vendor
+      // it grants — a multi-vendor gateway offer outranks a single-vendor
+      // one when those vendors are the ones being clicked.
+      const popularityOf = (vendorIds: string[]) =>
+         vendorIds.reduce((sum, vendorId) => sum + getClickCount(vendorId), 0);
+
+      return [...filteredGroupBuys].sort(
+         (first, second) => popularityOf(second.vendorIds) - popularityOf(first.vendorIds)
+      );
+   }, [filteredGroupBuys, sort, popularityVersion, getClickCount]);
+
+   const sortOptions = [
+      { value: "newest" as GroupBuysSort, label: t.sortDropdown.newest },
+      { value: "popular" as GroupBuysSort, label: t.sortDropdown.popular },
+   ];
+
+   const handleSortChange = (value: GroupBuysSort) => {
+      setSort(value);
+      setCurrentPage(1);
+   };
 
    const resultsCount = filteredGroupBuys.length;
    const totalPages = 10;
@@ -68,15 +103,24 @@ export const GroupBuysContent: React.FC<Props> = ({
             activeTab={activeTab}
             actionsVariant="group"
             onTabChange={setActiveTab}
+            sortOptions={sortOptions}
+            sortValue={sort}
+            onSortChange={handleSortChange}
             selectedVendorId={selectedVendorId}
             onSelectVendor={onSelectVendor}
          />
 
-         <ContentActions variant="group" className={css.content_actions} />
+         <ContentActions
+            variant="group"
+            className={css.content_actions}
+            sortOptions={sortOptions}
+            sortValue={sort}
+            onSortChange={handleSortChange}
+         />
 
          <div className={css.content_scroll}>
             <div className={css.content_list}>
-               <GroupBuysList items={filteredGroupBuys} />
+               <GroupBuysList items={orderedGroupBuys} />
 
                <Pagination
                   currentPage={currentPage}

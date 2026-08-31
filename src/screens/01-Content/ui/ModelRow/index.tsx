@@ -11,6 +11,7 @@ import { useTranslation } from "shared/lib/i18n";
 import { daysToProviderAge } from "shared/lib/i18n/formatters";
 import { useProviderCommentSummary } from "shared/lib/providerComments/useProviderCommentSummary";
 import { useProviderDescriptions } from "shared/lib/providerDescriptions/useProviderDescriptions";
+import { useProviderPopularity } from "shared/lib/providers/popularity/useProviderPopularity";
 import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 import Image from "shared/ui/base/Image";
 import {
@@ -56,7 +57,15 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
    const { t, locale } = useTranslation();
    const router = useRouter();
    const { entries: providerDescriptions } = useProviderDescriptions();
+   const { trackClick } = useProviderPopularity();
    const reviewsHref = `/reviews?provider=${encodeURIComponent(model.providerDomain)}`;
+
+   // Both the provider's own site and its reviews page count toward the
+   // same popularity tally (see the "popular" sort) — keyed by the reseller
+   // domain, the key the popularity API aggregates on for /home rows.
+   const trackProviderClick = () => {
+      void trackClick(model.providerDomain);
+   };
 
    const providerTooltipId = React.useId();
    const pricesTooltipId = React.useId();
@@ -512,6 +521,8 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                   aria-describedby={
                      provider && isProviderTooltipOpen ? providerTooltipId : undefined
                   }
+                  onClick={trackProviderClick}
+                  onAuxClick={trackProviderClick}
                   onMouseEnter={openProviderTooltip}
                   onMouseLeave={closeProviderTooltip}
                   onFocus={openProviderTooltip}
@@ -548,6 +559,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                className={css.reviews}
                onClick={(event) => {
                   event.preventDefault();
+                  trackProviderClick();
                   router.push(reviewsHref);
                }}
             >

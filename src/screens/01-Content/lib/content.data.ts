@@ -46,7 +46,7 @@ export interface ModelItem {
    domainAgeDays: number | null;
 }
 
-export type SortKey = "name" | "price" | "reviews";
+export type SortKey = "name" | "price" | "reviews" | "popularity";
 export type SortDirection = "asc" | "desc";
 
 export interface SortState {
@@ -70,7 +70,10 @@ export const MODELS_SORT_PRESETS: Record<ModelsSortValue, SortState> = {
    name_asc: { key: "name", direction: "asc" },
    price_asc: { key: "price", direction: "asc" },
    price_desc: { key: "price", direction: "desc" },
-   popular: { key: "reviews", direction: "desc" },
+   // "Popular" ranks by real click-through counts (provider site + reviews
+   // page, aggregated by the popularity API), not the review count that
+   // shares the "reviews" sort key with the Отзывы column.
+   popular: { key: "popularity", direction: "desc" },
 };
 
 export const sortStateToValue = (sort: SortState): ModelsSortValue | undefined =>

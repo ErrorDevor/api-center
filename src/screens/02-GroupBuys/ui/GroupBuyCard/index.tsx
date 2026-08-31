@@ -9,6 +9,7 @@ import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
 import { formatRelativeDate } from "shared/lib/i18n/formatters";
+import { useProviderPopularity } from "shared/lib/providers/popularity/useProviderPopularity";
 import { UserInfo } from "shared/ui/components/UserInfo";
 import { ClockIcon, MessageTextIcon } from "shared/ui/icons";
 
@@ -25,7 +26,16 @@ const SEATS_SEGMENTS_COUNT_MOBILE = 4;
 export const GroupBuyCard: React.FC<Props> = ({ item, withBackground = true }) => {
    const { locale, t } = useTranslation();
    const router = useRouter();
+   const { trackClick } = useProviderPopularity();
    const translation = t.groupBuys.items[item.translationKey];
+
+   // Opening a bundle or its reviews counts as a click for every vendor the
+   // bundle unlocks — that's what the /group-buys "popular" sort ranks on.
+   const trackBundleClick = () => {
+      item.vendorIds.forEach((vendorId) => {
+         void trackClick(vendorId);
+      });
+   };
    const peopleLabel = t.groupBuys.forPeople.replace("{count}", String(item.totalPersons));
 
    const seatsTakenLabel = t.groupBuys.seatsTaken
@@ -54,7 +64,13 @@ export const GroupBuyCard: React.FC<Props> = ({ item, withBackground = true }) =
 
          <div className={css.card_content}>
             <div className={css.card_main}>
-               <h3 className={css.card_title} onClick={() => router.push("/buys")}>
+               <h3
+                  className={css.card_title}
+                  onClick={() => {
+                     trackBundleClick();
+                     router.push("/buys");
+                  }}
+               >
                   {translation.title}
                </h3>
 
@@ -123,7 +139,10 @@ export const GroupBuyCard: React.FC<Props> = ({ item, withBackground = true }) =
                      <button
                         className={css.card_meta}
                         type="button"
-                        onClick={() => router.push("/reviews")}
+                        onClick={() => {
+                           trackBundleClick();
+                           router.push("/reviews");
+                        }}
                      >
                         <MessageTextIcon />
 

@@ -8,6 +8,7 @@ import { diversifyAdjacentProviders } from "screens/01-Content/lib/diversifyProv
 
 import { useIsMobile } from "shared/lib/hooks/useIsMobile";
 import { useTranslation } from "shared/lib/i18n";
+import { useProviderPopularity } from "shared/lib/providers/popularity/useProviderPopularity";
 import { Pagination } from "shared/ui/components/Pagination";
 import { DropdownArrowIcon, SortIcon } from "shared/ui/icons";
 
@@ -43,6 +44,7 @@ interface Props {
 
 export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange }) => {
    const { t } = useTranslation();
+   const { getClickCount, version: popularityVersion } = useProviderPopularity();
 
    const tableRef = React.useRef<HTMLDivElement>(null);
    const bodyScrollRef = React.useRef<HTMLDivElement>(null);
@@ -96,6 +98,12 @@ export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange }) => 
             case "reviews":
                result = firstModel.reviews - secondModel.reviews;
                break;
+
+            case "popularity":
+               result =
+                  getClickCount(firstModel.providerDomain) -
+                  getClickCount(secondModel.providerDomain);
+               break;
          }
 
          return sort.direction === "asc" ? result : -result;
@@ -106,7 +114,9 @@ export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange }) => 
       // page doesn't read as a single provider's listing. Applied after
       // sorting, before pagination, so page boundaries don't reshuffle it.
       return diversifyAdjacentProviders(sorted);
-   }, [models, sort]);
+      // popularityVersion: re-sort when a tracked click changes the counts
+      // the "popularity" sort key reads.
+   }, [models, sort, popularityVersion, getClickCount]);
 
    // A new/re-sorted/re-filtered list makes the previous page number
    // meaningless (or out of range) — jump back to page 1.
