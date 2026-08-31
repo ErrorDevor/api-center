@@ -11,6 +11,7 @@ import { getVendorDisplayName } from "shared/lib/providers/vendors";
 import { ContentActions } from "shared/ui/components/ContentActions";
 import { ContentHeader } from "shared/ui/components/ContentHeader";
 import { ContentHeaderTab } from "shared/ui/components/ContentHeader";
+import { FeatureTestingModal } from "shared/ui/components/FeatureTestingModal";
 import { Pagination } from "shared/ui/components/Pagination";
 import { Button } from "shared/ui/ui-kit/Button";
 
@@ -22,6 +23,7 @@ interface Props {
    // as Content's selectedVendorId. undefined means "show every offer".
    selectedVendorId?: string;
    onSelectVendor?: (vendorId: string | undefined) => void;
+   isProVersion?: boolean;
 }
 
 type TabId = (typeof tabs)[number]["id"];
@@ -30,6 +32,7 @@ export const GroupBuysContent: React.FC<Props> = ({
    className,
    selectedVendorId,
    onSelectVendor,
+   isProVersion = false,
 }) => {
    const { t } = useTranslation();
 
@@ -82,6 +85,14 @@ export const GroupBuysContent: React.FC<Props> = ({
                />
             </div>
          </div>
+
+         {isProVersion && (
+            <>
+               <div className={css.content_lock} />
+
+               <FeatureTestingModal />
+            </>
+         )}
       </div>
    );
 };

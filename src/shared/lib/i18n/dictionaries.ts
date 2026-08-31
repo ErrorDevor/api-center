@@ -24,6 +24,7 @@ export const en = {
       addProvider: "Add provider",
       replyPlaceholder: "Post your reply",
       buttonText: "Reply",
+      buttonBack: "Back"
    },
 
    models: {
@@ -612,6 +613,10 @@ export const en = {
          },
       },
    },
+   featureTestingModal: {
+      title: "Feature in Testing",
+      text: "This functionality is currently available only to PRO users. We are actively testing the system and will soon open access to it for all participants."
+   }
 } as const;
 
 type DeepStringValues<T> = {
@@ -648,8 +653,9 @@ export const ru: Dictionary = {
       signup: "Зарегистрироваться",
       logout: "Выйти",
       addProvider: "Добавить провайдер",
-      replyPlaceholder: "Post your reply",
+      replyPlaceholder: "Добавить отзыв",
       buttonText: "Ответить",
+      buttonBack: "Назад"
    },
 
    models: {
@@ -1235,6 +1241,10 @@ export const ru: Dictionary = {
          },
       },
    },
+   featureTestingModal: {
+      title: "Раздел находится в режиме тестирования",
+      text: "В данный момент этот функционал доступен только PRO-пользователям. Мы активно тестируем систему и в скором времени откроем к ней доступ для всех участников."
+   }
 };
 
 export const dictionaries = {

@@ -1,4 +1,5 @@
 .content {
+   position: relative;
    display: flex;
    flex-direction: column;
    width: 100%;
@@ -47,6 +48,13 @@
 
 .content_actions {
    display: none;
+}
+
+.content_lock {
+   position: absolute;
+   inset: 0;
+   z-index: 10;
+   cursor: default;
 }
 
 @include screenMD {

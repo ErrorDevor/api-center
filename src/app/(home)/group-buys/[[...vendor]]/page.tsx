@@ -50,6 +50,7 @@ export default function GroupBuysPage({ params }: Props) {
          }
       >
          <GroupBuysContent
+            isProVersion={true}
             selectedVendorId={selectedVendorId}
             onSelectVendor={handleSelectVendor}
          />
