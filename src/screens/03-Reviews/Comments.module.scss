@@ -131,23 +131,27 @@
 
 .feedback_button {
    height: 3.6rem;
-   color: getColorWhite(1);
+   color: #212121;
 
    svg {
       width: 1.6rem;
-      stroke: getColorWhite(1);
+      stroke: #1c274c;
    }
 }
 
 .feedback_button_mobile {
    display: none;
    height: 3.6rem;
-   color: getColorWhite(1);
+   color: #212121;
 
    svg {
       width: 1.6rem;
-      stroke: getColorWhite(1);
+      stroke: #1c274c;
    }
+}
+
+.feedback_button_text {
+   color: #212121;
 }
 
 @include screenMD {

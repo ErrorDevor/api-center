@@ -330,8 +330,9 @@ export const Comments: React.FC<Prop> = ({
                      />
 
                      <Button
-                        variant="black"
+                        variant="grey"
                         className={css.feedback_button}
+                        classNameContent={css.feedback_button_text}
                         onClick={handleOpenReviewModal}
                      >
                         <PlusIcon />
@@ -340,8 +341,9 @@ export const Comments: React.FC<Prop> = ({
                   </div>
 
                   <Button
-                     variant="black"
+                     variant="grey"
                      className={css.feedback_button_mobile}
+                     classNameContent={css.feedback_button_text}
                      onClick={handleOpenReviewModal}
                   >
                      <PlusIcon />
