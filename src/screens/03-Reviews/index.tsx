@@ -84,6 +84,8 @@ export const Comments: React.FC<Prop> = ({
    );
 
    const providerName = providerRecord?.providerName ?? providerDomain ?? "";
+   const providerUrl =
+      providerRecord?.providerUrl ?? (providerDomain ? `https://${providerDomain}` : "");
 
    // Reflect the current provider in the browser tab. This page is a client
    // component (it reads `?provider=` from useSearchParams), so there's no
@@ -92,13 +94,13 @@ export const Comments: React.FC<Prop> = ({
       const baseTitle = "APIcenter";
 
       document.title = providerName
-         ? `${providerName} - reviews, info, feedback`
+         ? `${providerName} - reviews, info, feedback${providerDomain ? ` (${providerDomain})` : ""}`
          : baseTitle;
 
       return () => {
          document.title = baseTitle;
       };
-   }, [providerName]);
+   }, [providerName, providerDomain]);
 
    const description = providerDescriptionEntry
       ? locale === "ru"
@@ -140,7 +142,7 @@ export const Comments: React.FC<Prop> = ({
    );
 
    const providerDetails: CommentProviderDetails = {
-      url: providerRecord?.providerUrl ?? (providerDomain ? `https://${providerDomain}` : ""),
+      url: providerUrl,
       // Real domain age from providers.json's domain_age_days — not
       // backfilled for every record yet, so the "Возраст" row (see
       // CommentCardOptions) just stays hidden when it's missing.
