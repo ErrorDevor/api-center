@@ -1,0 +1,59 @@
+.feature_testing_modal {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   padding: 3.2rem;
+   gap: 2.4rem;
+   width: 100%;
+   max-width: 51rem;
+   height: fit-content;
+   background: getColorWhite(1);
+   border: 0.1rem solid rgba(0, 0, 0, 0.07);
+   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.04);
+   border-radius: 1.9rem;
+   z-index: 11;
+
+   &_image {
+      height: 13.1rem;
+   }
+
+   &_text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+
+      h5 {
+         text-align: center;
+         @include fontInterTight(1.6rem, 1, -0.01em, 600, #212121);
+      }
+
+      p {
+         text-align: center;
+         @include fontInterTight(1.4rem, 1.2, -0.01em, 500, #797a79);
+      }
+   }
+}
+
+.button_back {
+   height: 3.6rem;
+
+   svg {
+      width: 1.8rem;
+      stroke: getColorBlack(1);
+   }
+}
+
+.pro {
+   color: #212121;
+}
+
+@include screenMD {
+   .feature_testing_modal {
+      width: 96%;
+   }
+}
