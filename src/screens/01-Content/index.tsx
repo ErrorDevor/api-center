@@ -10,6 +10,7 @@ import {
    sortStateToValue,
    tabs,
 } from "./lib/content.data";
+import { collapseToCheapest } from "./lib/collapseToCheapest";
 import { toModelItems } from "./lib/providers-to-models";
 import { ModelsTable } from "./ui/ModelsTable";
 import clsx from "clsx";
@@ -62,6 +63,12 @@ export const Content: React.FC<Prop> = ({
 
    const models = React.useMemo(() => toModelItems(records, modelCatalog), [records, modelCatalog]);
 
+   // The unfiltered "all providers" listing (главная) collapses to one row
+   // per model (cheapest per-token offer); a specific vendor/model still
+   // shows every reseller's row. A Model-Type filter alone doesn't count as
+   // drilling in — same rule as defaultSort below.
+   const isMainListing = !selectedVendorId && !selectedModelId;
+
    const filteredModels = React.useMemo(() => {
       let result = models;
 
@@ -79,8 +86,12 @@ export const Content: React.FC<Prop> = ({
          );
       }
 
+      if (isMainListing) {
+         result = collapseToCheapest(result);
+      }
+
       return result;
-   }, [models, selectedVendorId, selectedModelId, selectedModelType]);
+   }, [models, isMainListing, selectedVendorId, selectedModelId, selectedModelType]);
 
    const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
    const [isDescriptionExpanded, setIsDescriptionExpanded] = React.useState(false);
@@ -95,7 +106,6 @@ export const Content: React.FC<Prop> = ({
    // alphabetical, same as always. Everywhere else — a specific vendor or
    // model's offers — defaults to cheapest-first instead, since that's the
    // comparison you're actually there to make.
-   const isMainListing = !selectedVendorId && !selectedModelId;
    const defaultSort = isMainListing ? DEFAULT_SORT : MODELS_SORT_PRESETS.price_asc;
 
    const [sort, setSort] = React.useState<SortState>(defaultSort);

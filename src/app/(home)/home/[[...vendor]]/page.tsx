@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Content } from "screens/01-Content";
 
@@ -10,24 +10,33 @@ import { Header } from "widgets/Header";
 import { Sidebar } from "widgets/Sidebar";
 import type { SidebarMode } from "widgets/Sidebar/lib/sidebar.types";
 
+import { isModelContentType } from "shared/lib/models/modelType";
 import { AppLayout } from "shared/ui/templates/AppLayout";
 
 export const dynamic = "force-dynamic";
 
 // /home -> nothing selected, /home/[vendor] -> that API's models,
-// /home/[vendor]/[model] -> one model. Keeps the selection in the URL (so
-// it's shareable/back-buttonable) instead of only in React state.
+// /home/[vendor]/[model] -> one model. The Sidebar's "Model Type" filter
+// rides along as `?type=<category>` (images/search/audioVideo/text/chat) so
+// each category is its own shareable link too. All selection state lives in
+// the URL rather than only in React state.
 interface Props {
    params: Promise<{ vendor?: string[] }>;
 }
 
-export default function HomePage({ params }: Props) {
+const buildHomeHref = (path: string, modelType: string | undefined): string =>
+   modelType ? `${path}?type=${modelType}` : path;
+
+// useSearchParams() opts the reading component out of static rendering
+// unless it's wrapped in Suspense (see
+// https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout) —
+// keep the whole interactive tree in here behind the page's boundary.
+const HomeView: React.FC<Props> = ({ params }) => {
    const router = useRouter();
+   const searchParams = useSearchParams();
    const { vendor: segments } = React.use(params);
 
    const [collapsed, setCollapsed] = React.useState(false);
-   // Not deep-linked like vendor/model above — just an in-page filter.
-   const [selectedModelType, setSelectedModelType] = React.useState<string | undefined>(undefined);
 
    const selectedVendorId = segments?.[0];
    const selectedModelSlug = segments?.[1];
@@ -36,21 +45,41 @@ export default function HomePage({ params }: Props) {
          ? `${selectedVendorId}/${selectedModelSlug}`
          : undefined;
 
+   // Unknown/typo'd `?type=` values are ignored rather than filtering the
+   // table down to nothing.
+   const typeParam = searchParams.get("type");
+   const selectedModelType = isModelContentType(typeParam) ? typeParam : undefined;
+
    const mode: SidebarMode = "api";
 
+   // The current path minus its query string — vendor/model navigation and
+   // the type filter each rebuild the href from here so neither drops the
+   // other.
+   const currentPath = selectedModelId
+      ? `/home/${selectedModelId}`
+      : selectedVendorId
+        ? `/home/${selectedVendorId}`
+        : "/home";
+
    const handleSelectVendor = (vendorId: string | undefined) => {
-      router.push(vendorId ? `/home/${vendorId}` : "/home");
+      router.push(buildHomeHref(vendorId ? `/home/${vendorId}` : "/home", selectedModelType));
    };
 
    const handleSelectModel = (canonicalModelId: string | undefined) => {
       if (canonicalModelId) {
          // Already "vendor/model-slug" — exactly the two path segments
          // this route expects.
-         router.push(`/home/${canonicalModelId}`);
+         router.push(buildHomeHref(`/home/${canonicalModelId}`, selectedModelType));
          return;
       }
 
-      router.push(selectedVendorId ? `/home/${selectedVendorId}` : "/home");
+      router.push(
+         buildHomeHref(selectedVendorId ? `/home/${selectedVendorId}` : "/home", selectedModelType)
+      );
+   };
+
+   const handleSelectModelType = (modelTypeId: string | undefined) => {
+      router.push(buildHomeHref(currentPath, modelTypeId));
    };
 
    return (
@@ -67,7 +96,7 @@ export default function HomePage({ params }: Props) {
                activeModelTypeId={selectedModelType}
                onSelectVendor={handleSelectVendor}
                onSelectModel={handleSelectModel}
-               onSelectModelType={setSelectedModelType}
+               onSelectModelType={handleSelectModelType}
             />
          }
       >
@@ -77,8 +106,16 @@ export default function HomePage({ params }: Props) {
             selectedModelType={selectedModelType}
             onSelectVendor={handleSelectVendor}
             onSelectModel={handleSelectModel}
-            onSelectModelType={setSelectedModelType}
+            onSelectModelType={handleSelectModelType}
          />
       </AppLayout>
+   );
+};
+
+export default function HomePage({ params }: Props) {
+   return (
+      <React.Suspense fallback={null}>
+         <HomeView params={params} />
+      </React.Suspense>
    );
 }

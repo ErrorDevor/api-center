@@ -7,6 +7,20 @@
 // here.
 export type ModelContentType = "images" | "search" | "audioVideo" | "text" | "chat";
 
+// Every ModelContentType as a runtime list — lets callers that get an
+// untrusted string (e.g. the /home `?type=` query param) check it's a real
+// bucket before using it.
+export const MODEL_CONTENT_TYPES: readonly ModelContentType[] = [
+   "images",
+   "search",
+   "audioVideo",
+   "text",
+   "chat",
+];
+
+export const isModelContentType = (value: string | null | undefined): value is ModelContentType =>
+   value != null && (MODEL_CONTENT_TYPES as readonly string[]).includes(value);
+
 // A model can match more than one bucket — a general-purpose LLM (Claude,
 // GPT, Gemini, Kimi, ...) is a Chat model that also reads images and takes
 // a Text/Search request, so it tags all four "general" buckets rather than
