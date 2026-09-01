@@ -4,6 +4,13 @@ export interface ProviderPriceRecord {
    providerName: string;
    providerDomain: string;
    providerUrl: string;
+   // Locale-specific storefront for this reseller (e.g. zivv.pro's own
+   // "/en/" path) — not every reseller has one, so null rather than
+   // dropping the record; see shared/lib/providers/getLocalizedProviderUrl,
+   // which falls back to providerUrl above when the current locale's is
+   // missing.
+   providerUrlRu: string | null;
+   providerUrlEn: string | null;
    modelName: string;
    canonicalModelId: string;
    // Per-token pricing. Null on records priced natively instead (see
@@ -68,6 +75,11 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
       const providerName = raw.provider_name;
       const providerDomain = raw.provider_domain;
       const providerUrl = raw.provider_url;
+      // Optional, same reasoning as domainAgeDays below: not every reseller
+      // has a locale-specific storefront, so an absent/malformed value
+      // defaults to null rather than dropping the record.
+      const providerUrlRu = isNonEmptyString(raw.provider_url_ru) ? raw.provider_url_ru : null;
+      const providerUrlEn = isNonEmptyString(raw.provider_url_en) ? raw.provider_url_en : null;
       const modelName = raw.model_name;
       const canonicalModelId = raw.canonical_model_id;
       const inputPriceUsdPer1m = isFiniteNumber(raw.input_price_usd_per_1m)
@@ -147,6 +159,8 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
          providerName,
          providerDomain,
          providerUrl,
+         providerUrlRu,
+         providerUrlEn,
          modelName,
          canonicalModelId,
          inputPriceUsdPer1m,

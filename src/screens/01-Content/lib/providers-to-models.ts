@@ -100,6 +100,8 @@ export const toModelItems = (
          paymentMethods: record.paymentMethods,
          provider: record.providerName,
          providerUrl: record.providerUrl,
+         providerUrlRu: record.providerUrlRu,
+         providerUrlEn: record.providerUrlEn,
          providerDomain: record.providerDomain,
          reviews: PLACEHOLDER_REVIEWS,
          reports: PLACEHOLDER_REPORTS,

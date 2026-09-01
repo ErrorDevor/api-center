@@ -31,8 +31,13 @@ export interface ModelItem {
    discountPercent: number | null;
    paymentMethods: string[];
    provider: ProviderName;
-   // Reseller's site — the Provider column links out here.
+   // Reseller's site — the Provider column links out here. Use
+   // getLocalizedProviderUrl(model, locale) rather than this field directly,
+   // so a reseller's ru/en storefront (providerUrlRu/providerUrlEn) is
+   // preferred when it has one.
    providerUrl: string;
+   providerUrlRu: string | null;
+   providerUrlEn: string | null;
    // Bare domain (e.g. "xiaojingai.com") straight from providers.json —
    // providerUrl can carry a subdomain ("https://open.xiaojingai.com"), so
    // this is the reliable join key against provider_descriptions.json's

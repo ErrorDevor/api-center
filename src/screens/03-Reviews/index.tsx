@@ -24,6 +24,7 @@ import { useAuth } from "shared/lib/auth";
 import { useTranslation } from "shared/lib/i18n";
 import { daysToProviderAge } from "shared/lib/i18n/formatters";
 import { useProviderDescriptions } from "shared/lib/providerDescriptions/useProviderDescriptions";
+import { getLocalizedProviderUrl } from "shared/lib/providers/getLocalizedProviderUrl";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
 import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 import { ContentActions } from "shared/ui/components/ContentActions";
@@ -84,8 +85,9 @@ export const Comments: React.FC<Prop> = ({
    );
 
    const providerName = providerRecord?.providerName ?? providerDomain ?? "";
-   const providerUrl =
-      providerRecord?.providerUrl ?? (providerDomain ? `https://${providerDomain}` : "");
+   const providerUrl = providerRecord
+      ? getLocalizedProviderUrl(providerRecord, locale)
+      : (providerDomain ? `https://${providerDomain}` : "");
 
    // Reflect the current provider in the browser tab. This page is a client
    // component (it reads `?provider=` from useSearchParams), so there's no
