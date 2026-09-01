@@ -8,9 +8,9 @@ import { useAuth } from "shared/lib/auth";
 import { useTranslation } from "shared/lib/i18n";
 import Image from "shared/ui/base/Image";
 import { NextLink } from "shared/ui/base/NextLink";
+import { CatalogSearch } from "shared/ui/components/CatalogSearch";
 import { CurrencyDropdown } from "shared/ui/components/CurrencyDropdown";
 import { LanguageDropdown } from "shared/ui/components/LanguageDropdown";
-import { Search } from "shared/ui/components/Search";
 import { UserInfo } from "shared/ui/components/UserInfo";
 import { PlusIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
@@ -56,7 +56,7 @@ export const Header: React.FC = () => {
                
             </NextLink>
 
-            <Search />
+            <CatalogSearch />
          </div>
 
          <div className={css.header_right_side}>

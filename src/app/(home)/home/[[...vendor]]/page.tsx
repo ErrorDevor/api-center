@@ -24,8 +24,21 @@ interface Props {
    params: Promise<{ vendor?: string[] }>;
 }
 
-const buildHomeHref = (path: string, modelType: string | undefined): string =>
-   modelType ? `${path}?type=${modelType}` : path;
+const buildHomeHref = (path: string, opts: { type?: string; q?: string }): string => {
+   const params = new URLSearchParams();
+
+   if (opts.type) {
+      params.set("type", opts.type);
+   }
+
+   if (opts.q) {
+      params.set("q", opts.q);
+   }
+
+   const queryString = params.toString();
+
+   return queryString ? `${path}?${queryString}` : path;
+};
 
 // useSearchParams() opts the reading component out of static rendering
 // unless it's wrapped in Suspense (see
@@ -50,6 +63,10 @@ const HomeView: React.FC<Props> = ({ params }) => {
    const typeParam = searchParams.get("type");
    const selectedModelType = isModelContentType(typeParam) ? typeParam : undefined;
 
+   // Free-text search from the header box. A blank/whitespace `?q=` is treated
+   // as no search at all.
+   const searchQuery = searchParams.get("q")?.trim() || undefined;
+
    const mode: SidebarMode = "api";
 
    // The current path minus its query string — vendor/model navigation and
@@ -61,25 +78,31 @@ const HomeView: React.FC<Props> = ({ params }) => {
         ? `/home/${selectedVendorId}`
         : "/home";
 
+   // Drilling into a vendor/model ends a search — only the type filter rides
+   // along.
    const handleSelectVendor = (vendorId: string | undefined) => {
-      router.push(buildHomeHref(vendorId ? `/home/${vendorId}` : "/home", selectedModelType));
+      router.push(
+         buildHomeHref(vendorId ? `/home/${vendorId}` : "/home", { type: selectedModelType })
+      );
    };
 
    const handleSelectModel = (canonicalModelId: string | undefined) => {
       if (canonicalModelId) {
          // Already "vendor/model-slug" — exactly the two path segments
          // this route expects.
-         router.push(buildHomeHref(`/home/${canonicalModelId}`, selectedModelType));
+         router.push(buildHomeHref(`/home/${canonicalModelId}`, { type: selectedModelType }));
          return;
       }
 
       router.push(
-         buildHomeHref(selectedVendorId ? `/home/${selectedVendorId}` : "/home", selectedModelType)
+         buildHomeHref(selectedVendorId ? `/home/${selectedVendorId}` : "/home", {
+            type: selectedModelType,
+         })
       );
    };
 
    const handleSelectModelType = (modelTypeId: string | undefined) => {
-      router.push(buildHomeHref(currentPath, modelTypeId));
+      router.push(buildHomeHref(currentPath, { type: modelTypeId, q: searchQuery }));
    };
 
    return (
@@ -104,6 +127,7 @@ const HomeView: React.FC<Props> = ({ params }) => {
             selectedVendorId={selectedVendorId}
             selectedModelId={selectedModelId}
             selectedModelType={selectedModelType}
+            selectedSearchQuery={searchQuery}
             onSelectVendor={handleSelectVendor}
             onSelectModel={handleSelectModel}
             onSelectModelType={handleSelectModelType}

@@ -11,6 +11,7 @@ import {
    tabs,
 } from "./lib/content.data";
 import { collapseToCheapest } from "./lib/collapseToCheapest";
+import { filterModelsByQuery } from "./lib/matchModelQuery";
 import { toModelItems } from "./lib/providers-to-models";
 import { ModelsTable } from "./ui/ModelsTable";
 import clsx from "clsx";
@@ -41,6 +42,10 @@ interface Prop {
    // Set by the Sidebar's "Model Type" filter — ANDed with the vendor/model
    // selection above rather than replacing it.
    selectedModelType?: string;
+   // Free-text query from the header search box (the `?q=` param — see
+   // shared/ui/components/CatalogSearch). ANDed with the type filter above;
+   // arriving here it has already cleared any vendor/model path drill-in.
+   selectedSearchQuery?: string;
 
    onSelectVendor?: (vendorId: string | undefined) => void;
    onSelectModel?: (modelId: string | undefined) => void;
@@ -52,6 +57,7 @@ export const Content: React.FC<Prop> = ({
    selectedVendorId,
    selectedModelId,
    selectedModelType,
+   selectedSearchQuery,
    onSelectVendor,
    onSelectModel,
    onSelectModelType,
@@ -63,11 +69,16 @@ export const Content: React.FC<Prop> = ({
 
    const models = React.useMemo(() => toModelItems(records, modelCatalog), [records, modelCatalog]);
 
+   // A search behaves like drilling in: results stay per-reseller (not
+   // collapsed) and default to cheapest-first, so a "sonnet" query is a
+   // price comparison across every provider carrying it.
+   const isSearching = Boolean(selectedSearchQuery?.trim());
+
    // The unfiltered "all providers" listing (главная) collapses to one row
-   // per model (cheapest per-token offer); a specific vendor/model still
-   // shows every reseller's row. A Model-Type filter alone doesn't count as
-   // drilling in — same rule as defaultSort below.
-   const isMainListing = !selectedVendorId && !selectedModelId;
+   // per model (cheapest per-token offer); a specific vendor/model — or an
+   // active search — still shows every reseller's row. A Model-Type filter
+   // alone doesn't count as drilling in — same rule as defaultSort below.
+   const isMainListing = !selectedVendorId && !selectedModelId && !isSearching;
 
    const filteredModels = React.useMemo(() => {
       let result = models;
@@ -86,12 +97,23 @@ export const Content: React.FC<Prop> = ({
          );
       }
 
+      if (selectedSearchQuery) {
+         result = filterModelsByQuery(result, selectedSearchQuery);
+      }
+
       if (isMainListing) {
          result = collapseToCheapest(result);
       }
 
       return result;
-   }, [models, isMainListing, selectedVendorId, selectedModelId, selectedModelType]);
+   }, [
+      models,
+      isMainListing,
+      selectedVendorId,
+      selectedModelId,
+      selectedModelType,
+      selectedSearchQuery,
+   ]);
 
    const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
    const [isDescriptionExpanded, setIsDescriptionExpanded] = React.useState(false);
@@ -119,8 +141,10 @@ export const Content: React.FC<Prop> = ({
       // Only the listing identity should trigger a reset, not every
       // defaultSort object re-creation (a new object each render since it's
       // not memoized) or this would fight the user's own dropdown clicks.
+      // isSearching is a boolean that only flips on the empty↔non-empty edge,
+      // so it resets when a search starts/ends but not on every keystroke.
       // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [selectedVendorId, selectedModelId]);
+   }, [selectedVendorId, selectedModelId, isSearching]);
 
    const sortOptions: SortDropdownOption<ModelsSortValue>[] = [
       { value: "name_asc", label: t.content.actions.sort.nameAsc },

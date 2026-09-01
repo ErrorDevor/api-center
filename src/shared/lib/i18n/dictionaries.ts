@@ -33,7 +33,7 @@ export const en = {
    },
 
    header: {
-      searchPlaceholder: "Search models...",
+      searchPlaceholder: "Search models & providers...",
       language: "Language",
    },
 
@@ -664,7 +664,7 @@ export const ru: Dictionary = {
    },
 
    header: {
-      searchPlaceholder: "Поиск моделей...",
+      searchPlaceholder: "Поиск моделей и провайдеров...",
       language: "Язык",
    },
 
