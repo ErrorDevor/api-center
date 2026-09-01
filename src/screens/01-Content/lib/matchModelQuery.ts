@@ -1,4 +1,5 @@
 import type { ModelItem } from "./content.data";
+import { expandQueryToken } from "./transliterateQuery";
 
 import { getVendorDisplayName, getVendorId } from "shared/lib/providers/vendors";
 
@@ -24,7 +25,10 @@ const haystack = (model: ModelItem): string => {
 };
 
 // Case-insensitive AND across whitespace-separated tokens: "claude sonnet"
-// only matches a row whose text contains both words.
+// only matches a row whose text contains both words. Each token is expanded
+// to its possible Latin spellings first (see expandQueryToken), so a Russian
+// query like "клод соннет" matches too — the token passes if ANY of its
+// variants is found in the row.
 export const modelMatchesQuery = (model: ModelItem, query: string): boolean => {
    const tokens = query.toLowerCase().split(/\s+/).filter(Boolean);
 
@@ -34,7 +38,9 @@ export const modelMatchesQuery = (model: ModelItem, query: string): boolean => {
 
    const text = haystack(model);
 
-   return tokens.every((token) => text.includes(token));
+   return tokens.every((token) =>
+      expandQueryToken(token).some((variant) => text.includes(variant))
+   );
 };
 
 export const filterModelsByQuery = (models: ModelItem[], query: string): ModelItem[] =>
