@@ -31,7 +31,7 @@ interface Props<T extends string, TSort extends string = SortValue> {
    resultsLabel?: string;
    tabs?: readonly ContentHeaderTab<T>[];
    activeTab?: T;
-   actionsVariant?: "group";
+   actionsVariant?: "group" | "api" | "forum";
    onTabChange?: (tabId: T) => void;
    // Forwarded to the desktop "Сортировка" dropdown rendered in here (see
    // ContentActions' own sortOptions/sortValue/onSortChange) — this is the
@@ -43,7 +43,7 @@ interface Props<T extends string, TSort extends string = SortValue> {
    selectedVendorId?: string;
    selectedModelId?: string;
    selectedModelType?: string;
-
+   withTabs?: boolean;
    onSelectVendor?: (vendorId: string | undefined) => void;
    onSelectModel?: (modelId: string | undefined) => void;
    onSelectModelType?: (modelTypeId: string | undefined) => void;
@@ -68,6 +68,7 @@ export const ContentHeader = <T extends string, TSort extends string = SortValue
    onSelectModelType,
    onSelectVendor,
    onSelectModel,
+   withTabs = true,
 }: Props<T, TSort>) => {
    const [isMobileSidebarOpened, setIsMobileSidebarOpened] = React.useState(false);
 
@@ -122,26 +123,28 @@ export const ContentHeader = <T extends string, TSort extends string = SortValue
 
             <div className={css.content_header_divider} />
 
-            <div className={css.content_header_navigation}>
-               {tabs?.map((tab) => {
-                  const isActive = activeTab === tab.id;
+            {withTabs && (
+               <div className={css.content_header_navigation}>
+                  {tabs?.map((tab) => {
+                     const isActive = activeTab === tab.id;
 
-                  return (
-                     <Button
-                        key={tab.id}
-                        variant="grey"
-                        className={clsx(
-                           css.content_header_button,
-                           isActive && css.content_header_button_active
-                        )}
-                        active={isActive}
-                        onClick={() => onTabChange?.(tab.id)}
-                     >
-                        {tab.label}
-                     </Button>
-                  );
-               })}
-            </div>
+                     return (
+                        <Button
+                           key={tab.id}
+                           variant="grey"
+                           className={clsx(
+                              css.content_header_button,
+                              isActive && css.content_header_button_active
+                           )}
+                           active={isActive}
+                           onClick={() => onTabChange?.(tab.id)}
+                        >
+                           {tab.label}
+                        </Button>
+                     );
+                  })}
+               </div>
+            )}
 
             <ContentActions
                variant={actionsVariant}

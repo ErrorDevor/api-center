@@ -6,7 +6,7 @@ import { card, tabs } from "./lib/buys.data";
 import clsx from "clsx";
 import { GroupBuyCard } from "screens/02-GroupBuys/ui/GroupBuyCard";
 import { mockReviews } from "screens/03-Reviews/lib/comments.data";
-import { CommentLayer } from "screens/03-Reviews/ui/CommentLayer";
+import { CommentLayer } from "shared/ui/components/CommentLayer";
 
 import { useTranslation } from "shared/lib/i18n";
 import { ContentHeader } from "shared/ui/components/ContentHeader";

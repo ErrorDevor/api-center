@@ -2,8 +2,10 @@
 
 import React from "react";
 
-import { ALL_MODEL_TYPES_ID, buildModelTypeList } from "../lib/sidebar.data";
+import { useRouter } from "next/navigation";
+
 import { toSidebarProviders } from "../lib/providers-to-sidebar";
+import { ALL_MODEL_TYPES_ID, buildModelTypeList } from "../lib/sidebar.data";
 import type {
    ProviderItem as ProviderItemType,
    ProviderModel,
@@ -68,15 +70,14 @@ export const SidebarContent: React.FC<Props> = ({
    const [uncontrolledModelId, setUncontrolledModelId] = React.useState<string | undefined>(
       undefined
    );
-   const [uncontrolledModelTypeId, setUncontrolledModelTypeId] = React.useState<string>(
-      ALL_MODEL_TYPES_ID
-   );
+   const [uncontrolledModelTypeId, setUncontrolledModelTypeId] =
+      React.useState<string>(ALL_MODEL_TYPES_ID);
    const [showAll, setShowAll] = React.useState(false);
 
    const activeProviderId = isControlled ? activeVendorId : uncontrolledProviderId;
    const activeModel = isControlled ? activeModelId : uncontrolledModelId;
    const activeModelType = isModelTypeControlled
-      ? activeModelTypeId ?? ALL_MODEL_TYPES_ID
+      ? (activeModelTypeId ?? ALL_MODEL_TYPES_ID)
       : uncontrolledModelTypeId;
 
    const visibleProviders =
@@ -123,6 +124,8 @@ export const SidebarContent: React.FC<Props> = ({
 
       onSelectModelType?.(nextModelTypeId === ALL_MODEL_TYPES_ID ? undefined : nextModelTypeId);
    };
+
+   const route = useRouter();
 
    return (
       <div className={clsx(css.sidebar_inner, className)}>
@@ -186,7 +189,13 @@ export const SidebarContent: React.FC<Props> = ({
             <div className={css.sidebar_forum}>
                <h6>{t.sidebar.forum}</h6>
 
-               <Button variant="grey" className={css.sidebar_forum_button}>
+               <Button
+                  variant="grey"
+                  className={css.sidebar_forum_button}
+                  onClick={() => {
+                     route.push("/forum");
+                  }}
+               >
                   {t.sidebar.discussions}
                </Button>
             </div>

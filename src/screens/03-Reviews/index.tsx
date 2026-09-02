@@ -15,8 +15,8 @@ import {
 } from "./lib/useProviderComments";
 import type { CommentsSort } from "./lib/useProviderComments";
 import { CommentCard } from "./ui/CommentCard";
-import { CommentLayer } from "./ui/CommentLayer";
-import type { CommentLayerActions } from "./ui/CommentLayer";
+import { CommentLayer } from "../../shared/ui/components/CommentLayer";
+import type { CommentLayerActions } from "../../shared/ui/components/CommentLayer";
 import { LeaveReviewModal } from "./ui/LeaveReviewModal";
 import clsx from "clsx";
 
