@@ -26,6 +26,15 @@
       flex-shrink: 0;
       background: rgba(0, 0, 0, 0.07);
    }
+
+   &_message {
+      width: 100%;
+      margin: 0;
+      padding: 1.6rem 0;
+      text-align: center;
+
+      @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #797a79);
+   }
 }
 
 @include screenMD {

@@ -2,6 +2,7 @@ import React from "react";
 
 import type { CommentLayerType } from "../../lib/types";
 
+import type { CommentLayerActions } from "shared/ui/components/CommentLayer";
 import { Reply } from "shared/ui/components/Reply";
 
 import { ForumComments } from "../ForumComments";
@@ -18,6 +19,11 @@ interface Prop {
    description: string;
    replyPlaceholder: string;
    replyButtonText: string;
+   actions?: CommentLayerActions;
+   isLoading?: boolean;
+   error?: boolean;
+   isPosting?: boolean;
+   onCreatePost?: (content: string) => void;
 }
 
 export const ForumThread: React.FC<Prop> = ({
@@ -29,6 +35,11 @@ export const ForumThread: React.FC<Prop> = ({
    description,
    replyPlaceholder,
    replyButtonText,
+   actions,
+   isLoading,
+   error,
+   isPosting,
+   onCreatePost,
 }) => {
    return (
       <div className={css.forum_thread}>
@@ -40,9 +51,19 @@ export const ForumThread: React.FC<Prop> = ({
             description={description}
          />
 
-         <Reply placeholder={replyPlaceholder} buttonText={replyButtonText} />
+         <Reply
+            placeholder={replyPlaceholder}
+            buttonText={replyButtonText}
+            disabled={isPosting}
+            onSubmit={onCreatePost}
+         />
 
-         <ForumComments comments={comments} />
+         <ForumComments
+            comments={comments}
+            actions={actions}
+            isLoading={isLoading}
+            error={error}
+         />
       </div>
    );
 };

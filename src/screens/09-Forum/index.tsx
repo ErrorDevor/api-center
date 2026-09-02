@@ -2,11 +2,23 @@
 
 import React from "react";
 
-import { forumComments, forumTopic, tabs } from "./lib/data";
+import { useRouter } from "next/navigation";
+
+import { forumTopic, tabs } from "./lib/data";
+import { forumPostToCommentLayer } from "./lib/forum.type";
+import {
+   createForumPost,
+   fetchForumReplies,
+   replyToForumPost,
+   useForumPosts,
+   voteOnForumPost,
+} from "./lib/useForumPosts";
 import { ForumThread } from "./ui/ForumThread";
 import clsx from "clsx";
 
+import { useAuth } from "shared/lib/auth";
 import { useTranslation } from "shared/lib/i18n";
+import type { CommentLayerActions } from "shared/ui/components/CommentLayer";
 import { ContentHeader, ContentHeaderTab } from "shared/ui/components/ContentHeader";
 import { Pagination } from "shared/ui/components/Pagination";
 
@@ -22,12 +34,97 @@ interface Prop {
 
 export const ForumScreen: React.FC<Prop> = ({ className, selectedVendorId, onSelectVendor }) => {
    const { t } = useTranslation();
+   const router = useRouter();
+   const { status } = useAuth();
 
    const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
    const [currentPage, setCurrentPage] = React.useState(1);
+   const [isPosting, setIsPosting] = React.useState(false);
 
-   const totalPages = 10;
-   const resultsCount = 158;
+   const { result, isLoading, error, refetch } = useForumPosts(currentPage, "latest");
+
+   const comments = React.useMemo(
+      () => (result?.posts ?? []).map(forumPostToCommentLayer),
+      [result]
+   );
+
+   const totalPages = Math.max(1, result?.pagination.pages ?? 1);
+   const resultsCount = result?.pagination.total ?? 0;
+
+   const requireAuth = React.useCallback(() => {
+      router.push("/login");
+   }, [router]);
+
+   const commentActions: CommentLayerActions = React.useMemo(
+      () => ({
+         isAuthenticated: status === "authenticated",
+         onRequireAuth: requireAuth,
+
+         onVote: async (postId, voteType) => {
+            const voteResult = await voteOnForumPost(postId, voteType);
+
+            if (!voteResult.ok) {
+               if (voteResult.status === 401) {
+                  requireAuth();
+               }
+
+               throw new Error("Vote failed");
+            }
+         },
+
+         onLoadReplies: async (postId) => {
+            const repliesResult = await fetchForumReplies(postId);
+
+            if (!repliesResult.ok) {
+               return [];
+            }
+
+            return repliesResult.data.replies.map(forumPostToCommentLayer);
+         },
+
+         onReply: async (postId, content) => {
+            const replyResult = await replyToForumPost(postId, content);
+
+            if (!replyResult.ok) {
+               if (replyResult.status === 401) {
+                  requireAuth();
+               }
+
+               return false;
+            }
+
+            return true;
+         },
+      }),
+      [status, requireAuth]
+   );
+
+   const handleCreatePost = async (content: string) => {
+      if (status !== "authenticated") {
+         requireAuth();
+         return;
+      }
+
+      setIsPosting(true);
+
+      const createResult = await createForumPost(content);
+
+      setIsPosting(false);
+
+      if (!createResult.ok) {
+         if (createResult.status === 401) {
+            requireAuth();
+         }
+
+         return;
+      }
+
+      if (currentPage === 1) {
+         refetch();
+      } else {
+         setCurrentPage(1);
+      }
+   };
 
    const headerTabs: ContentHeaderTab<TabId>[] = tabs.map((tab) => ({
       id: tab.id,
@@ -51,7 +148,7 @@ export const ForumScreen: React.FC<Prop> = ({ className, selectedVendorId, onSel
          <div className={css.forum_list}>
             <div className={css.forum_list_inner}>
                <ForumThread
-                  comments={forumComments}
+                  comments={comments}
                   userName={forumTopic.userName}
                   userAvatar={forumTopic.userAvatar}
                   providers={forumTopic.providers}
@@ -59,6 +156,11 @@ export const ForumScreen: React.FC<Prop> = ({ className, selectedVendorId, onSel
                   description={forumTopic.description}
                   replyPlaceholder={t.common.replyPlaceholder}
                   replyButtonText={t.common.buttonText}
+                  actions={commentActions}
+                  isLoading={isLoading}
+                  error={Boolean(error)}
+                  isPosting={isPosting}
+                  onCreatePost={handleCreatePost}
                />
 
                <Pagination
