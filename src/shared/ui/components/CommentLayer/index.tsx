@@ -93,7 +93,9 @@ const CommentItem: React.FC<CommentItemProp> = ({
 
       // Optimistic update — rolled back below if the request fails.
       setUserVote(nextVote === "none" ? "" : nextVote);
-      setLikeCount((count) => count + (nextVote === "like" ? 1 : 0) - (userVote === "like" ? 1 : 0));
+      setLikeCount(
+         (count) => count + (nextVote === "like" ? 1 : 0) - (userVote === "like" ? 1 : 0)
+      );
       setDislikeCount(
          (count) => count + (nextVote === "dislike" ? 1 : 0) - (userVote === "dislike" ? 1 : 0)
       );
@@ -146,7 +148,7 @@ const CommentItem: React.FC<CommentItemProp> = ({
    return (
       <div className={css.comment_layer_item}>
          <div className={css.comment_layer_header}>
-            {isReply && data.userAvatar ? (
+            {data.userAvatar ? (
                <UserInfo userName={data.userName} userAvatar={data.userAvatar} withName />
             ) : (
                <span className={css.comment_layer_user_name}>{data.userName}</span>
@@ -265,12 +267,19 @@ const ReactionIcon: React.FC<ReactionIconProp> = ({ variant, active }) => (
    />
 );
 
-export const CommentLayer: React.FC<Prop> = ({ className, data, withBackground = true, actions }) => {
+export const CommentLayer: React.FC<Prop> = ({
+   className,
+   data,
+   withBackground = true,
+   actions,
+}) => {
    const tone = withBackground ? getCommentTone(data.id) : undefined;
    const replyCount = data.replyCount ?? data.replies?.length ?? 0;
 
    const [replies, setReplies] = React.useState<CommentLayerType[] | null>(data.replies ?? null);
-   const [areRepliesExpanded, setAreRepliesExpanded] = React.useState(Boolean(data.replies?.length));
+   const [areRepliesExpanded, setAreRepliesExpanded] = React.useState(
+      Boolean(data.replies?.length)
+   );
    const [isLoadingReplies, setIsLoadingReplies] = React.useState(false);
 
    const loadReplies = async () => {

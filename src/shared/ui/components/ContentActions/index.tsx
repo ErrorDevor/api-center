@@ -16,7 +16,7 @@ import css from "./ContentActions.module.scss";
 
 interface Prop<T extends string = SortValue> {
    className?: string;
-   variant?: "api" | "group";
+   variant?: "api" | "group" | "forum";
    // Omit all three to get SortDropdown's own uncontrolled default options
    // (today's behavior everywhere except Content — see ContentActions'
    // GroupBuys/Reviews callers). Pass all three to drive a real sort from
@@ -46,10 +46,17 @@ export const ContentActions = <T extends string = SortValue>({
             onChange={onSortChange}
          />
 
-         {variant !== "api" && (
+         {variant === "group" && (
             <Button variant="grey" className={clsx(css.content_action_button, css.create_button)}>
                <PlusIcon />
                {t.common.newPost}
+            </Button>
+         )}
+
+         {variant === "forum" && (
+            <Button variant="black" className={clsx(css.content_action_button, css.new_button)}>
+               <PlusIcon />
+               {t.common.create}
             </Button>
          )}
       </div>

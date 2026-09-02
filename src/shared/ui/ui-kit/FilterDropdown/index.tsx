@@ -73,7 +73,7 @@ const aiType: FilterTypeData = [
 interface Prop {
    className?: string;
    name: string;
-   variant?: "api" | "group";
+   variant?: "api" | "group" | "forum";
 }
 
 export const FilterDropdown: React.FC<Prop> = ({ className, name, variant = "api" }) => {
