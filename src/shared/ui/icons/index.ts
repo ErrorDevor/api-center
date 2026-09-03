@@ -1,11 +1,13 @@
 import { default as ArrowIcon } from "./Arrow.icon";
 import { default as ClockIcon } from "./Clock.icon";
 import { default as CloseIcon } from "./Close.icon";
+import { default as DiscussionsIcon } from "./Discussions.icon";
 import { default as DislikeIcon } from "./Dislike.icon";
 import { default as DropdownArrowIcon } from "./DropdownArrow.icon";
 import { default as ExistingIcon } from "./Existing.icon";
 import { default as FilterIcon } from "./Filter.icon";
 import { default as GroupBuyIcon } from "./GroupBuy.icon";
+import { default as LeaderboardIcon } from "./Leaderboard.icon";
 import { default as LikeIcon } from "./Like.icon";
 import { default as MacKeyIcon } from "./MacKey.icon";
 import { default as MainIcon } from "./Main.icon";
@@ -44,4 +46,6 @@ export {
    ExistingIcon,
    PasswordEyeIcon,
    CloseIcon,
+   DiscussionsIcon,
+   LeaderboardIcon,
 };

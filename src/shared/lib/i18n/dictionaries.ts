@@ -42,11 +42,11 @@ export const en = {
       groupBuys: "Group Buys",
       showMore: "Show more",
       showLess: "Show less",
-
+      rating: "Rating",
       modelTypeTitle: "Model Type",
       forum: "Forum",
       discussions: "Discussions",
-
+      liderTable: "Leaderboard",
       modelTypes: {
          allTypes: "All Types",
          images: "Images",
@@ -681,11 +681,11 @@ export const ru: Dictionary = {
       groupBuys: "Складчины",
       showMore: "Показать ещё",
       showLess: "Скрыть",
-
+      liderTable: "Таблица лидеров",
       modelTypeTitle: "Тип модели",
       forum: "Форум",
       discussions: "Обсуждения",
-
+      rating: "Рейтинг",
       modelTypes: {
          allTypes: "Все типы",
          images: "Изображения",
