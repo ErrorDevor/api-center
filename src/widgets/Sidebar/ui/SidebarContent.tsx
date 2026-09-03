@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { toSidebarProviders } from "../lib/providers-to-sidebar";
 import { ALL_MODEL_TYPES_ID, buildModelTypeList } from "../lib/sidebar.data";
@@ -15,7 +15,7 @@ import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
-import { DropdownArrowIcon } from "shared/ui/icons";
+import { DiscussionsIcon, DropdownArrowIcon, LeaderboardIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
 
 import { ProviderAccordion } from "./ProviderAccordion";
@@ -126,7 +126,12 @@ export const SidebarContent: React.FC<Props> = ({
    };
 
    const route = useRouter();
+   const pathname = usePathname();
+   const isLeaderboardActive = pathname === "/leaderboard" || pathname.startsWith("/leaderboard/");
+   const isDiscussionsActive = pathname === "/discussions" || pathname.startsWith("/discussions/");
+   const [isDiscussionsHovered, setIsDiscussionsHovered] = React.useState(false);
 
+   const isDiscussionsHighlighted = isDiscussionsActive || isDiscussionsHovered;
    return (
       <div className={clsx(css.sidebar_inner, className)}>
          <div className={css.sidebar_top}>
@@ -179,26 +184,56 @@ export const SidebarContent: React.FC<Props> = ({
                )}
             </div>
 
-            <SidebarList
-               title={t.sidebar.modelTypeTitle}
-               list={modelTypeList}
-               activeId={activeModelType}
-               onChange={handleModelTypeClick}
-            />
+            <div className={css.sidebar_lider_table}>
+               <h6>{t.sidebar.rating}</h6>
+
+               <Button
+                  variant="grey"
+                  className={clsx(
+                     css.sidebar_forum_button,
+                     isLeaderboardActive && css.sidebar_forum_button_active
+                  )}
+                  aria-current={isLeaderboardActive ? "page" : undefined}
+                  onClick={() => {
+                     route.push("/leaderboard");
+                  }}
+               >
+                  <LeaderboardIcon />
+                  {t.sidebar.liderTable}
+               </Button>
+            </div>
 
             <div className={css.sidebar_forum}>
                <h6>{t.sidebar.forum}</h6>
 
                <Button
                   variant="grey"
-                  className={css.sidebar_forum_button}
+                  className={clsx(
+                     css.sidebar_discussion_button,
+                     isDiscussionsActive && css.sidebar_discussion_button_active
+                  )}
+                  aria-current={isDiscussionsActive ? "page" : undefined}
+                  onMouseEnter={() => setIsDiscussionsHovered(true)}
+                  onMouseLeave={() => setIsDiscussionsHovered(false)}
                   onClick={() => {
-                     route.push("/forum");
+                     route.push("/discussions");
                   }}
                >
+                  <DiscussionsIcon
+                     stroke={isDiscussionsHighlighted ? "#212121" : "#797A79"}
+                     fill={isDiscussionsHighlighted ? "#212121" : "#797A79"}
+                  />
+
                   {t.sidebar.discussions}
                </Button>
             </div>
+
+            <SidebarList
+               title={t.sidebar.modelTypeTitle}
+               list={modelTypeList}
+               activeId={activeModelType}
+               onChange={handleModelTypeClick}
+            />
          </div>
       </div>
    );
