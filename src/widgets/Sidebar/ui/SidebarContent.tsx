@@ -13,6 +13,7 @@ import type {
 } from "../lib/sidebar.types";
 import clsx from "clsx";
 
+import { gaTrackFilterApply } from "shared/lib/analytics/ga";
 import { useTranslation } from "shared/lib/i18n";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
 import { DiscussionsIcon, DropdownArrowIcon, LeaderboardIcon } from "shared/ui/icons";
@@ -96,6 +97,12 @@ export const SidebarContent: React.FC<Props> = ({
          setUncontrolledModelId(undefined);
       }
 
+      if (nextProviderId) {
+         const provider = providers.find((item) => item.id === nextProviderId);
+
+         gaTrackFilterApply("provider", provider?.name ?? nextProviderId);
+      }
+
       onSelectVendor?.(nextProviderId);
       onSelectModel?.(undefined);
    };
@@ -120,6 +127,10 @@ export const SidebarContent: React.FC<Props> = ({
 
       if (!isModelTypeControlled) {
          setUncontrolledModelTypeId(nextModelTypeId);
+      }
+
+      if (nextModelTypeId !== ALL_MODEL_TYPES_ID) {
+         gaTrackFilterApply("modelType", nextModelTypeId);
       }
 
       onSelectModelType?.(nextModelTypeId === ALL_MODEL_TYPES_ID ? undefined : nextModelTypeId);

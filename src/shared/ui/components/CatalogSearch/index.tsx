@@ -4,6 +4,7 @@ import React from "react";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+import { gaTrackSearch } from "shared/lib/analytics/ga";
 import { Search } from "shared/ui/components/Search";
 
 // How long typing settles before the `?q=` param (and the table) updates.
@@ -44,6 +45,7 @@ const CatalogSearchInner: React.FC = () => {
 
          if (trimmed) {
             params.set("q", trimmed);
+            gaTrackSearch(trimmed);
          }
 
          const queryString = params.toString();

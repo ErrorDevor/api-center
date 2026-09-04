@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import type { ModelItem } from "screens/01-Content/lib/content.data";
 import { pricesDetails, providerDetails } from "screens/01-Content/lib/provider.data";
 
+import { gaTrackProviderClick } from "shared/lib/analytics/ga";
 import { useTranslation } from "shared/lib/i18n";
 import { daysToProviderAge } from "shared/lib/i18n/formatters";
 import { useProviderCommentSummary } from "shared/lib/providerComments/useProviderCommentSummary";
@@ -66,6 +67,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
    // domain, the key the popularity API aggregates on for /home rows.
    const trackProviderClick = () => {
       void trackClick(model.providerDomain);
+      gaTrackProviderClick(model.provider, model.name);
    };
 
    const providerTooltipId = React.useId();

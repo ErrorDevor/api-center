@@ -3,7 +3,11 @@ import "shared/styles/index.scss";
 import { Metadata } from "next";
 import { Inter_Tight } from "next/font/google";
 
+import { GoogleAnalytics } from "@next/third-parties/google";
+
 import { Providers } from "./providers";
+
+const GA_MEASUREMENT_ID = "G-DS3V7S0NC9";
 
 const interTight = Inter_Tight({
    subsets: ["cyrillic", "latin"],
@@ -31,6 +35,7 @@ export default function RootLayout({
          <body>
             <Providers>{children}</Providers>
          </body>
+         <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
       </html>
    );
 }

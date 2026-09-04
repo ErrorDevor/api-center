@@ -4,6 +4,7 @@ import React from "react";
 
 import { usePathname, useRouter } from "next/navigation";
 
+import { gaTrackAddProviderClick, gaTrackLoginClick, gaTrackSignupClick } from "shared/lib/analytics/ga";
 import { useAuth } from "shared/lib/auth";
 import { useTranslation } from "shared/lib/i18n";
 import Image from "shared/ui/base/Image";
@@ -27,6 +28,7 @@ export const Header: React.FC = () => {
    const isGroupBuysPage = pathname === "/group-buys";
 
    const handleAddProvider = () => {
+      gaTrackAddProviderClick();
       router.push("/create");
    };
 
@@ -35,10 +37,12 @@ export const Header: React.FC = () => {
    };
 
    const handleLogin = () => {
+      gaTrackLoginClick();
       router.replace("/login");
    };
 
    const handleSignup = () => {
+      gaTrackSignupClick();
       router.replace("/signup");
    };
 

@@ -4,6 +4,7 @@ import React from "react";
 
 import clsx from "clsx";
 
+import { gaTrackCurrencyChange } from "shared/lib/analytics/ga";
 import { DropdownArrowIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
 import { useClickOutside } from "shared/utils/hooks/useClickOutside";
@@ -83,6 +84,7 @@ export const CurrencyDropdown: React.FC<Props> = ({ className }) => {
                         onClick={() => {
                            setCurrency(option.value);
                            setIsOpen(false);
+                           gaTrackCurrencyChange(option.value);
                         }}
                      >
                         <span>{option.symbol}</span>

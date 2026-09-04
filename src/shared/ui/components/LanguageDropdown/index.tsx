@@ -4,6 +4,7 @@ import React from "react";
 
 import clsx from "clsx";
 
+import { gaTrackLanguageChange } from "shared/lib/analytics/ga";
 import { localeOptions, useTranslation } from "shared/lib/i18n";
 import { DropdownArrowIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
@@ -60,6 +61,7 @@ export const LanguageDropdown: React.FC<Props> = ({ className }) => {
                         onClick={() => {
                            setLocale(option.value);
                            setIsOpen(false);
+                           gaTrackLanguageChange(option.value);
                         }}
                      >
                         <span>{option.shortLabel}</span>
