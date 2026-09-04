@@ -1,13 +1,6 @@
 .rating_row {
    display: grid;
-   grid-template-columns:
-      var(--column-1)
-      var(--column-2)
-      var(--column-3)
-      var(--column-4)
-      var(--column-5)
-      var(--column-6)
-      var(--column-7);
+   grid-template-columns: var(--grid-columns);
    width: 100%;
    min-width: 0;
    height: 6.8rem;

@@ -15,34 +15,9 @@ export interface RatingCategory {
    translationKey: RatingCategoryTranslationKey;
 }
 
-export type RatingTabId = "text" | "coding" | "video" | "audio" | "image";
-
-export type RatingTabTranslationKey =
-   | "text"
-   | "coding"
-   | "video"
-   | "audio"
-   | "image";
-
-export interface RatingTab {
-   id: RatingTabId;
-   translationKey: RatingTabTranslationKey;
-   count: number;
-   icon: string;
-}
-
-export interface RatingModel {
-   id: number;
-   rank: number;
-   icon: string;
-   name: string;
-   description: string;
-   tts: number;
-   speed: number;
-   latency: number;
-   price: number;
-   isLicensed: boolean;
-}
+// The /rating table now renders straight from shared/lib/rankings — see
+// RANKING_CATEGORIES (tab set + per-category columns) and RankingEntry (row
+// shape). Nothing category-specific lives in this screen's types anymore.
 
 export type RatingExploreGroupId =
    | "capabilities"

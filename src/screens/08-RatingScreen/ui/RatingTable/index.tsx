@@ -2,13 +2,14 @@
 
 import React from "react";
 
-import { ratingModels, ratingTabs } from "../../lib/rating.data";
-import type { RatingModel, RatingTabId } from "../../lib/rating.type";
 import clsx from "clsx";
 
 import { useIsMobile } from "shared/lib/hooks/useIsMobile";
 import { useTranslation } from "shared/lib/i18n";
-import Image from "shared/ui/base/Image";
+import { RANKING_CATEGORIES } from "shared/lib/rankings/categories";
+import type { RankingCategory } from "shared/lib/rankings/categories";
+import type { RankingEntry } from "shared/lib/rankings/types";
+import { useRankings } from "shared/lib/rankings/useRankings";
 import { Pagination } from "shared/ui/components/Pagination";
 import { DropdownArrowIcon, SortIcon } from "shared/ui/icons";
 
@@ -16,15 +17,39 @@ import { RatingRow } from "../RatingRow";
 
 import css from "./RatingTable.module.scss";
 
-const INITIAL_COLUMN_WIDTHS = [7, 28, 13, 13, 13, 13, 13];
-const MIN_COLUMN_WIDTHS = [5, 20, 8, 8, 8, 8, 8];
+// Column widths are percentages of the table width. Rank / model / license
+// are fixed; the category's metric columns split what's left evenly. The
+// resulting llm layout ([8, 20, 9×7, 9]) matches the original hand-tuned
+// one.
+const RANK_WIDTH = 8;
+const MODEL_WIDTH = 20;
+const LICENSE_WIDTH = 9;
+
+const buildColumnWidths = (metricCount: number): number[] => {
+   const remaining = 100 - RANK_WIDTH - MODEL_WIDTH - LICENSE_WIDTH;
+   const metricWidth = remaining / Math.max(metricCount, 1);
+
+   return [
+      RANK_WIDTH,
+      MODEL_WIDTH,
+      ...Array<number>(metricCount).fill(metricWidth),
+      LICENSE_WIDTH,
+   ];
+};
+
+const buildMinColumnWidths = (metricCount: number): number[] => [
+   6,
+   14,
+   ...Array<number>(metricCount).fill(6),
+   6,
+];
 
 const MOBILE_VISIBLE_COUNT = 3;
 const MOBILE_VISIBLE_STEP = 3;
 
 const PAGE_SIZE = 10;
 
-type SortKey = "tts";
+type SortKey = "rank";
 type SortDirection = "asc" | "desc";
 
 interface SortState {
@@ -38,15 +63,40 @@ interface Prop {
 
 export const RatingTable: React.FC<Prop> = ({ className }) => {
    const { t } = useTranslation();
+
+   const [activeCategoryId, setActiveCategoryId] = React.useState(
+      RANKING_CATEGORIES[0].id
+   );
+
+   const category: RankingCategory =
+      RANKING_CATEGORIES.find((item) => item.id === activeCategoryId) ??
+      RANKING_CATEGORIES[0];
+
+   const { columns } = category;
+   const metricCount = columns.length;
+   // rank + model + metrics + license
+   const columnCount = metricCount + 3;
+
+   const { entries, isLoading } = useRankings(category);
+
    const tableRef = React.useRef<HTMLDivElement>(null);
    const bodyScrollRef = React.useRef<HTMLDivElement>(null);
 
-   const [activeTab, setActiveTab] = React.useState<RatingTabId>(ratingTabs[0].id);
-   const [columnWidths, setColumnWidths] = React.useState(INITIAL_COLUMN_WIDTHS);
+   const rankedEntries = React.useMemo(
+      () =>
+         entries.filter(
+            (entry): entry is RankingEntry & { rank: number } => entry.rank !== null
+         ),
+      [entries]
+   );
+
+   const [columnWidths, setColumnWidths] = React.useState(() =>
+      buildColumnWidths(metricCount)
+   );
    const [scrollbarWidth, setScrollbarWidth] = React.useState(0);
 
    const [sort, setSort] = React.useState<SortState>({
-      key: "tts",
+      key: "rank",
       direction: "asc",
    });
 
@@ -80,24 +130,29 @@ export const RatingTable: React.FC<Prop> = ({ className }) => {
       };
    }, []);
 
-   const sortedModels = React.useMemo(() => {
-      return [...ratingModels].sort((firstModel, secondModel) => {
-         const result = firstModel.tts - secondModel.tts;
+   // Reset the hand-resizable widths whenever the column set changes.
+   React.useEffect(() => {
+      setColumnWidths(buildColumnWidths(metricCount));
+   }, [metricCount]);
+
+   const sortedEntries = React.useMemo(() => {
+      return [...rankedEntries].sort((firstEntry, secondEntry) => {
+         const result = firstEntry.rank - secondEntry.rank;
 
          return sort.direction === "asc" ? result : -result;
       });
-   }, [sort]);
+   }, [rankedEntries, sort]);
 
    React.useEffect(() => {
       setCurrentPage(1);
-   }, [activeTab, sort]);
+   }, [activeCategoryId, sort]);
 
    React.useEffect(() => {
-      setVisibleCount(isMobile ? MOBILE_VISIBLE_COUNT : sortedModels.length);
-   }, [isMobile, activeTab, sortedModels.length]);
+      setVisibleCount(isMobile ? MOBILE_VISIBLE_COUNT : sortedEntries.length);
+   }, [isMobile, activeCategoryId, sortedEntries.length]);
 
-   const handleTabChange = (tabId: RatingTabId) => {
-      setActiveTab(tabId);
+   const handleCategoryChange = (categoryId: RankingCategory["id"]) => {
+      setActiveCategoryId(categoryId);
       setCurrentPage(1);
    };
 
@@ -130,6 +185,8 @@ export const RatingTable: React.FC<Prop> = ({ className }) => {
          return;
       }
 
+      const minWidths = buildMinColumnWidths(metricCount);
+
       const startX = event.clientX;
       const startCurrentWidth = columnWidths[columnIndex];
       const startNextWidth = columnWidths[columnIndex + 1];
@@ -142,8 +199,8 @@ export const RatingTable: React.FC<Prop> = ({ className }) => {
          let currentWidth = startCurrentWidth + deltaPercent;
          let nextWidth = startNextWidth - deltaPercent;
 
-         const currentMinWidth = MIN_COLUMN_WIDTHS[columnIndex];
-         const nextMinWidth = MIN_COLUMN_WIDTHS[columnIndex + 1];
+         const currentMinWidth = minWidths[columnIndex];
+         const nextMinWidth = minWidths[columnIndex + 1];
 
          if (currentWidth < currentMinWidth) {
             currentWidth = currentMinWidth;
@@ -180,27 +237,26 @@ export const RatingTable: React.FC<Prop> = ({ className }) => {
       window.addEventListener("pointerup", handlePointerUp);
    };
 
+   const tableMinWidthRem = Math.min(120, Math.max(72, columnCount * 12));
+
    const tableStyle = {
-      "--column-1": `${columnWidths[0]}%`,
-      "--column-2": `${columnWidths[1]}%`,
-      "--column-3": `${columnWidths[2]}%`,
-      "--column-4": `${columnWidths[3]}%`,
-      "--column-5": `${columnWidths[4]}%`,
-      "--column-6": `${columnWidths[5]}%`,
-      "--column-7": `${columnWidths[6]}%`,
+      "--grid-columns": columnWidths.map((width) => `${width}%`).join(" "),
+      "--table-min-width": `${tableMinWidthRem}rem`,
       "--scrollbar-width": `${scrollbarWidth}px`,
    } as React.CSSProperties;
 
-   const totalPages = Math.max(1, Math.ceil(sortedModels.length / PAGE_SIZE));
+   const totalPages = Math.max(1, Math.ceil(sortedEntries.length / PAGE_SIZE));
 
-   const visibleModels = isMobile
-      ? sortedModels.slice(0, visibleCount)
-      : sortedModels.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+   const visibleEntries = isMobile
+      ? sortedEntries.slice(0, visibleCount)
+      : sortedEntries.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-   const hasMore = isMobile && visibleCount < sortedModels.length;
+   const hasMore = isMobile && visibleCount < sortedEntries.length;
 
    const handleShowMore = () => {
-      setVisibleCount((current) => Math.min(current + MOBILE_VISIBLE_STEP, sortedModels.length));
+      setVisibleCount((current) =>
+         Math.min(current + MOBILE_VISIBLE_STEP, sortedEntries.length)
+      );
    };
 
    return (
@@ -208,27 +264,24 @@ export const RatingTable: React.FC<Prop> = ({ className }) => {
          <h3 className={css.rating_table_title}>{t.rating.title}</h3>
 
          <div className={css.rating_table_tabs}>
-            {ratingTabs.map((tab) => {
-               const isActive = activeTab === tab.id;
+            {RANKING_CATEGORIES.map((rankingCategory) => {
+               const isActive = activeCategoryId === rankingCategory.id;
 
                return (
                   <button
-                     key={tab.id}
+                     key={rankingCategory.id}
                      type="button"
                      className={clsx(css.rating_table_tab, isActive && css.rating_table_tab_active)}
-                     onClick={() => handleTabChange(tab.id)}
+                     onClick={() => handleCategoryChange(rankingCategory.id)}
                   >
-                     <Image.Default
-                        className={clsx(
-                           css.rating_table_tab_icon,
-                           isActive && css.rating_table_tab_icon_active
-                        )}
-                        src={tab.icon}
+                     <span
+                        className={css.rating_table_tab_icon}
+                        style={
+                           { "--tab-icon": `url(${rankingCategory.icon})` } as React.CSSProperties
+                        }
                      />
 
-                     <span>
-                        {t.rating.tabs[tab.translationKey]} ({tab.count})
-                     </span>
+                     <span>{t.rating.categoryTabs[rankingCategory.labelKey]}</span>
                   </button>
                );
             })}
@@ -240,7 +293,11 @@ export const RatingTable: React.FC<Prop> = ({ className }) => {
                   <div className={css.table_header}>
                      <HeaderCell
                         columnIndex={0}
+                        sortKey="rank"
+                        sort={sort}
+                        sortLabel={t.rating.table.sortRating}
                         resizeLabel={t.rating.table.resizeColumn}
+                        onSort={handleSort}
                         onResizeStart={handleResizeStart}
                      >
                         {t.rating.table.rating}
@@ -254,50 +311,16 @@ export const RatingTable: React.FC<Prop> = ({ className }) => {
                         {t.rating.table.modelName}
                      </HeaderCell>
 
-                     <HeaderCell
-                        columnIndex={2}
-                        sortKey="tts"
-                        sort={sort}
-                        sortLabel={t.rating.table.sortTts}
-                        resizeLabel={t.rating.table.resizeColumn}
-                        onSort={handleSort}
-                        onResizeStart={handleResizeStart}
-                     >
-                        {t.rating.table.tts}{" "}
-                        <button type="button" className={css.use_info}>
-                           <Image.Default src="/icons/rating/use-info.svg" />
-                        </button>
-                     </HeaderCell>
-
-                     <HeaderCell
-                        columnIndex={3}
-                        resizeLabel={t.rating.table.resizeColumn}
-                        onResizeStart={handleResizeStart}
-                     >
-                        {t.rating.table.speed}{" "}
-                        <button type="button" className={css.use_info}>
-                           <Image.Default src="/icons/rating/use-info.svg" />
-                        </button>
-                     </HeaderCell>
-
-                     <HeaderCell
-                        columnIndex={4}
-                        resizeLabel={t.rating.table.resizeColumn}
-                        onResizeStart={handleResizeStart}
-                     >
-                        {t.rating.table.latency}{" "}
-                        <button type="button" className={css.use_info}>
-                           <Image.Default src="/icons/rating/use-info.svg" />
-                        </button>
-                     </HeaderCell>
-
-                     <HeaderCell
-                        columnIndex={5}
-                        resizeLabel={t.rating.table.resizeColumn}
-                        onResizeStart={handleResizeStart}
-                     >
-                        {t.rating.table.pricePerMillion}
-                     </HeaderCell>
+                     {columns.map((column, index) => (
+                        <HeaderCell
+                           key={column.key}
+                           columnIndex={index + 2}
+                           resizeLabel={t.rating.table.resizeColumn}
+                           onResizeStart={handleResizeStart}
+                        >
+                           {t.rating.table[column.labelKey]}
+                        </HeaderCell>
+                     ))}
 
                      <HeaderCell>{t.rating.table.license}</HeaderCell>
                   </div>
@@ -305,9 +328,15 @@ export const RatingTable: React.FC<Prop> = ({ className }) => {
 
                <div ref={bodyScrollRef} className={css.table_body_scroll}>
                   <div className={css.table_body}>
-                     {visibleModels.map((model: RatingModel) => (
-                        <RatingRow key={model.id} model={model} />
-                     ))}
+                     {isLoading && sortedEntries.length === 0 ? (
+                        <div className={css.table_status}>{t.rating.table.loading}</div>
+                     ) : sortedEntries.length === 0 ? (
+                        <div className={css.table_status}>{t.rating.table.emptyState}</div>
+                     ) : (
+                        visibleEntries.map((entry) => (
+                           <RatingRow key={entry.rank} entry={entry} columns={columns} />
+                        ))
+                     )}
                   </div>
 
                   {hasMore && (

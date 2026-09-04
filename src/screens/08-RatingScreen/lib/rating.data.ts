@@ -1,4 +1,4 @@
-import type { RatingCategory, RatingExploreGroup, RatingModel, RatingTab } from "./rating.type";
+import type { RatingCategory, RatingExploreGroup } from "./rating.type";
 
 export const ratingCategories: RatingCategory[] = [
    {
@@ -26,53 +26,6 @@ export const ratingCategories: RatingCategory[] = [
       translationKey: "images",
    },
 ];
-
-export const ratingTabs: RatingTab[] = [
-   {
-      id: "text",
-      translationKey: "text",
-      count: 50,
-      icon: "/icons/rating/nav-text.svg",
-   },
-   {
-      id: "coding",
-      translationKey: "coding",
-      count: 45,
-      icon: "/icons/rating/nav-coding.svg",
-   },
-   {
-      id: "video",
-      translationKey: "video",
-      count: 20,
-      icon: "/icons/rating/nav-video.svg",
-   },
-   {
-      id: "audio",
-      translationKey: "audio",
-      count: 25,
-      icon: "/icons/rating/nav-audio.svg",
-   },
-   {
-      id: "image",
-      translationKey: "image",
-      count: 30,
-      icon: "/icons/rating/nav-image.svg",
-   },
-];
-
-export const ratingModels: RatingModel[] = Array.from({ length: 10 }, (_, index) => ({
-   id: index + 1,
-   rank: index + 1,
-   name: "GPT-5.6 Terra",
-   icon: "/icons/providers/openai.svg",
-   description:
-      "GPT-5.6 Sol — флагманская базовая модель серии GPT-5.6, соответствующая оригинальной базовой версии GPT-5 без суффикса.",
-   tts: 1950,
-   speed: 165,
-   latency: 190,
-   price: 15,
-   isLicensed: true,
-}));
 
 export const ratingExploreGroups: RatingExploreGroup[] = [
    {

@@ -55,13 +55,13 @@
 
    &_tab_icon {
       @include box(1.6rem);
+      display: block;
       flex-shrink: 0;
-      opacity: 0.5;
-      @include transition((opacity));
-
-      &_active {
-         opacity: 1;
-      }
+      // Tint the icon to the tab's text colour (inactive grey → active dark).
+      background-color: currentColor;
+      -webkit-mask: var(--tab-icon) no-repeat center / contain;
+      mask: var(--tab-icon) no-repeat center / contain;
+      @include transition((background-color));
    }
 
    &_pagination {
@@ -82,7 +82,7 @@
    display: flex;
    flex-direction: column;
    width: 100%;
-   min-width: 80rem;
+   min-width: var(--table-min-width, 120rem);
    flex: 1;
    overflow: hidden;
    border-radius: 1.2rem;
@@ -99,14 +99,7 @@
 
    &_header {
       display: grid;
-      grid-template-columns:
-         var(--column-1)
-         var(--column-2)
-         var(--column-3)
-         var(--column-4)
-         var(--column-5)
-         var(--column-6)
-         var(--column-7);
+      grid-template-columns: var(--grid-columns);
       width: 100%;
       height: 4.8rem;
    }
@@ -252,6 +245,17 @@
 
 .show_more {
    display: none;
+}
+
+.table_status {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   width: 100%;
+   padding: 4rem 1.6rem;
+   background: #ffffff;
+
+   @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #797a79);
 }
 
 .use_info {
