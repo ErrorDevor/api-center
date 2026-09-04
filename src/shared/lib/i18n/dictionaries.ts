@@ -81,7 +81,7 @@ export const en = {
       table: {
          modelName: "Model Name",
          price: "Price (Input & Output & Off official price)",
-         tags: "Tags",
+         tags: "Payment methods",
          provider: "Provider",
          reviews: "Reviews",
          resizeColumn: "Resize column",
@@ -737,7 +737,7 @@ export const ru: Dictionary = {
       table: {
          modelName: "Название модели",
          price: "Цена (Вход, Выход и Дешевле от официальной)",
-         tags: "Теги",
+         tags: "Способы оплаты",
          provider: "Поставщик",
          reviews: "Отзывы",
          resizeColumn: "Изменить ширину столбца",
