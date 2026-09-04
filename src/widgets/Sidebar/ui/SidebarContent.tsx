@@ -103,8 +103,14 @@ export const SidebarContent: React.FC<Props> = ({
          gaTrackFilterApply("provider", provider?.name ?? nextProviderId);
       }
 
+      // Not also calling onSelectModel(undefined) here on purpose: the /home
+      // page's onSelectVendor already navigates to a vendor-only URL (no
+      // model segment), which clears any selected model on its own. Calling
+      // both in the same tick raced two router.push()es against each other —
+      // the second read the pre-click (stale) vendor from its closure and
+      // overwrote the first, so picking a provider from the sidebar never
+      // actually filtered the table.
       onSelectVendor?.(nextProviderId);
-      onSelectModel?.(undefined);
    };
 
    const handleModelClick = (provider: ProviderItemType, model: ProviderModel) => {
