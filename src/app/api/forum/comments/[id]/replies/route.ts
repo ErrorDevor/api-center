@@ -3,9 +3,10 @@ import type { NextRequest } from "next/server";
 import { getAccessToken } from "shared/lib/auth/session-cookies";
 import { callSub2Api } from "shared/lib/auth/sub2api";
 
-// GET /api/forum/posts/[id]/replies — proxies GET /forum/posts/:id/replies
-// (FORUM_API_GUIDE.md §3). Auth optional, same reasoning as the root-posts
-// GET route.
+// GET /api/forum/comments/[id]/replies — proxies GET
+// /forum/comments/:id/replies (FORUM_API_GUIDE.md §7). Distinct from
+// /api/comments/[id]/replies, which serves the per-provider review threads
+// on a different backend path (/comments/:id/replies).
 export async function GET(
    request: NextRequest,
    { params }: { params: Promise<{ id: string }> }
@@ -26,7 +27,7 @@ export async function GET(
    const query = forwardedParams.toString();
 
    const result = await callSub2Api<Record<string, unknown>>(
-      `/forum/posts/${encodeURIComponent(id)}/replies${query ? `?${query}` : ""}`,
+      `/forum/comments/${encodeURIComponent(id)}/replies${query ? `?${query}` : ""}`,
       { accessToken }
    );
 

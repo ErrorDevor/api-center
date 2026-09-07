@@ -40,6 +40,8 @@ interface Props<T extends string, TSort extends string = SortValue> {
    sortOptions?: SortDropdownOption<TSort>[];
    sortValue?: TSort;
    onSortChange?: (value: TSort) => void;
+   // Forwarded to ContentActions' create button — see its own `onCreate`.
+   onCreate?: () => void;
    selectedVendorId?: string;
    selectedModelId?: string;
    selectedModelType?: string;
@@ -62,6 +64,7 @@ export const ContentHeader = <T extends string, TSort extends string = SortValue
    sortOptions,
    sortValue,
    onSortChange,
+   onCreate,
    selectedVendorId,
    selectedModelId,
    selectedModelType,
@@ -152,6 +155,7 @@ export const ContentHeader = <T extends string, TSort extends string = SortValue
                sortOptions={sortOptions}
                sortValue={sortValue}
                onSortChange={onSortChange}
+               onCreate={onCreate}
             />
          </div>
 

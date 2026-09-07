@@ -103,6 +103,24 @@ export const en = {
          image: "API",
          video: "Video",
       },
+
+      // /discussions (the topic list) and /topic/[id] (one thread), both
+      // backed by FORUM_API_GUIDE.md's forum endpoints.
+      discussionsTitle: "Discussions",
+      loadError: "Couldn't load discussions. Please try again later.",
+      empty: "No discussions yet — be the first to start one.",
+      notFound: "This discussion doesn't exist anymore.",
+      backToDiscussions: "All discussions",
+      commentsTitle: "Comments",
+      noComments: "No comments yet — be the first to reply.",
+
+      newTopic: {
+         title: "New topic",
+         titlePlaceholder: "Topic title",
+         contentPlaceholder: "Describe what you'd like to discuss",
+         submit: "Publish",
+         error: "Couldn't publish the topic. Please try again later.",
+      },
    },
 
    groupBuys: {
@@ -251,6 +269,7 @@ export const en = {
       positive: "Positive first",
       negative: "Negative first",
       mostReplies: "Most replies",
+      mostComments: "Most comments",
    },
 
    filterDropdown: {
@@ -759,6 +778,22 @@ export const ru: Dictionary = {
          image: "API",
          video: "Видео",
       },
+
+      discussionsTitle: "Обсуждения",
+      loadError: "Не удалось загрузить обсуждения. Попробуйте позже.",
+      empty: "Обсуждений пока нет — создайте первое.",
+      notFound: "Такого обсуждения больше не существует.",
+      backToDiscussions: "Все обсуждения",
+      commentsTitle: "Комментарии",
+      noComments: "Комментариев пока нет — ответьте первым.",
+
+      newTopic: {
+         title: "Новая тема",
+         titlePlaceholder: "Заголовок темы",
+         contentPlaceholder: "Опишите, что хотите обсудить",
+         submit: "Опубликовать",
+         error: "Не удалось опубликовать тему. Попробуйте позже.",
+      },
    },
 
    groupBuys: {
@@ -901,6 +936,7 @@ export const ru: Dictionary = {
       positive: "Сначала положительные",
       negative: "Сначала отрицательные",
       mostReplies: "Больше всего ответов",
+      mostComments: "Больше всего комментариев",
    },
 
    filterDropdown: {

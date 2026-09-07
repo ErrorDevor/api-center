@@ -15,15 +15,18 @@ import { AppLayout } from "shared/ui/templates/AppLayout";
 export const dynamic = "force-dynamic";
 
 interface Props {
-   params: Promise<{ vendor?: string[] }>;
+   params: Promise<{ id: string }>;
 }
 
-export default function ForumPage({ params }: Props) {
+// One discussion thread: the topic itself plus its comments, both read
+// through /api/forum/topics/[id]* (FORUM_API_GUIDE.md). Linked to from the
+// topic cards on /discussions.
+export default function TopicPage({ params }: Props) {
    const router = useRouter();
-   const { vendor: segments } = React.use(params);
+   const { id } = React.use(params);
    const [collapsed, setCollapsed] = React.useState(false);
-   const [mode, setMode] = React.useState<SidebarMode>("api");
-   const selectedVendorId = segments?.[0];
+   const [mode] = React.useState<SidebarMode>("api");
+
    const handleSelectVendor = (vendorId: string | undefined) => {
       router.push(vendorId ? `/group-buys/${vendorId}` : "/group-buys");
    };
@@ -40,7 +43,7 @@ export default function ForumPage({ params }: Props) {
             />
          }
       >
-         <ForumScreen selectedVendorId={selectedVendorId} onSelectVendor={handleSelectVendor} />
+         <ForumScreen topicId={id} onSelectVendor={handleSelectVendor} />
       </AppLayout>
    );
 }

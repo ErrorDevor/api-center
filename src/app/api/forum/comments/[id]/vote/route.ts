@@ -1,9 +1,10 @@
 import { getAccessToken } from "shared/lib/auth/session-cookies";
 import { callSub2ApiWithAuth } from "shared/lib/auth/sub2api";
 
-// POST /api/forum/posts/[id]/vote — proxies POST /forum/posts/:id/vote
-// (FORUM_API_GUIDE.md §5). Requires a signed-in user; vote_type is
-// "like" | "dislike" | "none" (the last one clears the caller's vote).
+// POST /api/forum/comments/[id]/vote — proxies POST
+// /forum/comments/:id/vote (FORUM_API_GUIDE.md §8). Requires a signed-in
+// user; vote_type is "like" | "dislike" | "none" (the last one clears the
+// caller's vote — the only kind of deletion the forum backend allows).
 export async function POST(
    request: Request,
    { params }: { params: Promise<{ id: string }> }
@@ -30,7 +31,7 @@ export async function POST(
    }
 
    const result = await callSub2ApiWithAuth<Record<string, unknown>>(
-      `/forum/posts/${encodeURIComponent(id)}/vote`,
+      `/forum/comments/${encodeURIComponent(id)}/vote`,
       accessToken,
       { method: "POST", body: JSON.stringify({ vote_type: voteType }) }
    );

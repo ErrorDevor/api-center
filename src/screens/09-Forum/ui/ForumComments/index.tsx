@@ -19,13 +19,13 @@ export const ForumComments: React.FC<Prop> = ({ comments, actions, isLoading, er
 
    return (
       <div className={css.forum_comments}>
-         <h3 className={css.forum_comments_title}>{t.common.participants}</h3>
+         <h3 className={css.forum_comments_title}>{t.forum.commentsTitle}</h3>
 
          <div className={css.forum_comments_list}>
-            {error && <p className={css.forum_comments_message}>{t.groupBuys.loadError}</p>}
+            {error && <p className={css.forum_comments_message}>{t.forum.loadError}</p>}
 
             {!isLoading && !error && comments.length === 0 && (
-               <p className={css.forum_comments_message}>{t.groupBuys.noReviewsYet}</p>
+               <p className={css.forum_comments_message}>{t.forum.noComments}</p>
             )}
 
             {comments.map((comment, index) => (
