@@ -7,6 +7,7 @@ import type { CommentProviderDetails } from "screens/03-Reviews/lib/comments.typ
 import { useIsMobile } from "shared/lib/hooks/useIsMobile";
 import { useTranslation } from "shared/lib/i18n";
 import { formatProviderAge } from "shared/lib/i18n/formatters";
+import { formatPaymentMethod } from "shared/lib/providers/formatPaymentMethod";
 import Image from "shared/ui/base/Image";
 import { StarIcon } from "shared/ui/icons";
 
@@ -177,7 +178,9 @@ export const CommentCardOptions: React.FC<Prop> = ({ data }) => {
                   </span>
 
                   <span className={css.comment_card_options_value}>
-                     {data.paymentMethods.join(", ")}
+                     {data.paymentMethods
+                        .map((method) => formatPaymentMethod(method, t.common.trialAvailable))
+                        .join(", ")}
                   </span>
                </div>
                <button type="button" className={css.comment_card_options_more}>

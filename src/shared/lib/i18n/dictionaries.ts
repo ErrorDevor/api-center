@@ -25,6 +25,11 @@ export const en = {
       replyPlaceholder: "Post your reply",
       buttonText: "Reply",
       buttonBack: "Back",
+      // providers.json packs trial-offer info into payment_methods as a
+      // literal "Trial: Yes" entry (see shared/lib/providers/types.ts) —
+      // this is what ModelRow / CommentCardOptions show instead of that
+      // internal marker.
+      trialAvailable: "Free access",
    },
 
    models: {
@@ -700,6 +705,7 @@ export const ru: Dictionary = {
       replyPlaceholder: "Добавить отзыв",
       buttonText: "Ответить",
       buttonBack: "Назад",
+      trialAvailable: "Бесплатный доступ",
    },
 
    models: {
