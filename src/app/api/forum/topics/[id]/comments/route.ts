@@ -3,10 +3,15 @@ import type { NextRequest } from "next/server";
 import { getAccessToken } from "shared/lib/auth/session-cookies";
 import { callSub2Api, callSub2ApiWithAuth } from "shared/lib/auth/sub2api";
 
-// GET /api/forum/posts — proxies GET /forum/posts (FORUM_API_GUIDE.md §1).
-// Auth is optional: a token only fills in each post's `user_vote`, so an
-// absent/expired one just means an anonymous read (no 401-retry dance).
-export async function GET(request: NextRequest): Promise<Response> {
+const CONTENT_MAX_LENGTH = 5000;
+
+// GET /api/forum/topics/[id]/comments — proxies GET
+// /forum/topics/:id/comments (FORUM_API_GUIDE.md §5). Auth optional.
+export async function GET(
+   request: NextRequest,
+   { params }: { params: Promise<{ id: string }> }
+): Promise<Response> {
+   const { id } = await params;
    const accessToken = await getAccessToken();
 
    const forwardedParams = new URLSearchParams();
@@ -22,7 +27,7 @@ export async function GET(request: NextRequest): Promise<Response> {
    const query = forwardedParams.toString();
 
    const result = await callSub2Api<Record<string, unknown>>(
-      `/forum/posts${query ? `?${query}` : ""}`,
+      `/forum/topics/${encodeURIComponent(id)}/comments${query ? `?${query}` : ""}`,
       { accessToken }
    );
 
@@ -33,9 +38,14 @@ export async function GET(request: NextRequest): Promise<Response> {
    return Response.json({ data: result.data });
 }
 
-// POST /api/forum/posts — proxies POST /forum/posts (FORUM_API_GUIDE.md §2).
-// Publishing a root post requires a signed-in user.
-export async function POST(request: Request): Promise<Response> {
+// POST /api/forum/topics/[id]/comments — proxies POST
+// /forum/topics/:id/comments (FORUM_API_GUIDE.md §6). Requires a signed-in
+// user; the topic's comment_count is bumped by the backend.
+export async function POST(
+   request: Request,
+   { params }: { params: Promise<{ id: string }> }
+): Promise<Response> {
+   const { id } = await params;
    const accessToken = await getAccessToken();
 
    if (!accessToken) {
@@ -53,13 +63,20 @@ export async function POST(request: Request): Promise<Response> {
    const { content } = (body ?? {}) as { content?: unknown };
 
    if (typeof content !== "string" || !content.trim()) {
-      return Response.json({ message: "Post content is required" }, { status: 400 });
+      return Response.json({ message: "Comment content is required" }, { status: 400 });
+   }
+
+   if (content.trim().length > CONTENT_MAX_LENGTH) {
+      return Response.json(
+         { message: `Comment must be at most ${CONTENT_MAX_LENGTH} characters` },
+         { status: 400 }
+      );
    }
 
    const result = await callSub2ApiWithAuth<Record<string, unknown>>(
-      "/forum/posts",
+      `/forum/topics/${encodeURIComponent(id)}/comments`,
       accessToken,
-      { method: "POST", body: JSON.stringify({ content }) }
+      { method: "POST", body: JSON.stringify({ content: content.trim() }) }
    );
 
    if (!result.ok) {

@@ -1,9 +1,11 @@
 import { getAccessToken } from "shared/lib/auth/session-cookies";
 import { callSub2ApiWithAuth } from "shared/lib/auth/sub2api";
 
-// POST /api/forum/posts/[id]/reply — proxies POST /forum/posts/:id/reply
-// (FORUM_API_GUIDE.md §4). Requires a signed-in user. The parent post's
-// reply_count is bumped by the backend.
+const CONTENT_MAX_LENGTH = 5000;
+
+// POST /api/forum/comments/[id]/reply — proxies POST
+// /forum/comments/:id/reply (FORUM_API_GUIDE.md §7). Requires a signed-in
+// user; the parent comment's reply_count is bumped by the backend.
 export async function POST(
    request: Request,
    { params }: { params: Promise<{ id: string }> }
@@ -29,10 +31,17 @@ export async function POST(
       return Response.json({ message: "Reply content is required" }, { status: 400 });
    }
 
+   if (content.trim().length > CONTENT_MAX_LENGTH) {
+      return Response.json(
+         { message: `Reply must be at most ${CONTENT_MAX_LENGTH} characters` },
+         { status: 400 }
+      );
+   }
+
    const result = await callSub2ApiWithAuth<Record<string, unknown>>(
-      `/forum/posts/${encodeURIComponent(id)}/reply`,
+      `/forum/comments/${encodeURIComponent(id)}/reply`,
       accessToken,
-      { method: "POST", body: JSON.stringify({ content }) }
+      { method: "POST", body: JSON.stringify({ content: content.trim() }) }
    );
 
    if (!result.ok) {

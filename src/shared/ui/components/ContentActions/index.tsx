@@ -24,6 +24,10 @@ interface Prop<T extends string = SortValue> {
    sortOptions?: SortDropdownOption<T>[];
    sortValue?: T;
    onSortChange?: (value: T) => void;
+   // Wires up the variant's own create button ("New topic" for "group",
+   // "Create" for "forum"). Left undefined everywhere it isn't backed by a
+   // real action yet, in which case the button stays inert as before.
+   onCreate?: () => void;
 }
 
 export const ContentActions = <T extends string = SortValue>({
@@ -32,6 +36,7 @@ export const ContentActions = <T extends string = SortValue>({
    sortOptions,
    sortValue,
    onSortChange,
+   onCreate,
 }: Prop<T>) => {
    const { t } = useTranslation();
 
@@ -47,14 +52,22 @@ export const ContentActions = <T extends string = SortValue>({
          />
 
          {variant === "group" && (
-            <Button variant="grey" className={clsx(css.content_action_button, css.create_button)}>
+            <Button
+               variant="grey"
+               className={clsx(css.content_action_button, css.create_button)}
+               onClick={onCreate}
+            >
                <PlusIcon />
                {t.common.newPost}
             </Button>
          )}
 
          {variant === "forum" && (
-            <Button variant="black" className={clsx(css.content_action_button, css.new_button)}>
+            <Button
+               variant="black"
+               className={clsx(css.content_action_button, css.new_button)}
+               onClick={onCreate}
+            >
                <PlusIcon />
                {t.common.create}
             </Button>
