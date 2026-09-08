@@ -80,6 +80,8 @@ export const Content: React.FC<Prop> = ({
    // alone doesn't count as drilling in — same rule as defaultSort below.
    const isMainListing = !selectedVendorId && !selectedModelId && !isSearching;
 
+   const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
+
    const filteredModels = React.useMemo(() => {
       let result = models;
 
@@ -101,6 +103,16 @@ export const Content: React.FC<Prop> = ({
          result = filterModelsByQuery(result, selectedSearchQuery);
       }
 
+      // "Free test" narrows to listings the backend has confirmed offer a
+      // trial — providers.json packs that as a literal "Trial: Yes" entry
+      // in payment_methods (see parseProviderPriceRecords, which already
+      // drops the noisy "Trial: Unconfirmed" variant so it never matches
+      // here). "Crypto"/"Payment to account" don't filter anything yet —
+      // no equivalent per-model signal exists for those two tabs today.
+      if (activeTab === "freetest") {
+         result = result.filter((model) => model.paymentMethods.includes("Trial: Yes"));
+      }
+
       if (isMainListing) {
          result = collapseToCheapest(result);
       }
@@ -113,9 +125,8 @@ export const Content: React.FC<Prop> = ({
       selectedModelId,
       selectedModelType,
       selectedSearchQuery,
+      activeTab,
    ]);
-
-   const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
    const [isDescriptionExpanded, setIsDescriptionExpanded] = React.useState(false);
    const descriptionRef = React.useRef<HTMLParagraphElement>(null);
    const [isDescriptionOverflowing, setIsDescriptionOverflowing] = React.useState(false);

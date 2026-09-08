@@ -12,6 +12,7 @@ import { useTranslation } from "shared/lib/i18n";
 import { daysToProviderAge } from "shared/lib/i18n/formatters";
 import { useProviderCommentSummary } from "shared/lib/providerComments/useProviderCommentSummary";
 import { useProviderDescriptions } from "shared/lib/providerDescriptions/useProviderDescriptions";
+import { formatPaymentMethod } from "shared/lib/providers/formatPaymentMethod";
 import { getLocalizedProviderUrl } from "shared/lib/providers/getLocalizedProviderUrl";
 import { useProviderPopularity } from "shared/lib/providers/popularity/useProviderPopularity";
 import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
@@ -363,7 +364,11 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
 
    const vendorIcon = getVendorIcon(getVendorId(model.canonicalModelId));
    const paymentMethodsText =
-      model.paymentMethods.length > 0 ? model.paymentMethods.join(", ") : "-";
+      model.paymentMethods.length > 0
+         ? model.paymentMethods
+              .map((method) => formatPaymentMethod(method, t.common.trialAvailable))
+              .join(", ")
+         : "-";
    const description = model.description[locale] || t.content.table.descriptionUnavailable;
 
    return (
