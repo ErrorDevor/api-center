@@ -349,6 +349,10 @@
       border: 0.1rem solid rgba(0, 0, 0, 0.07);
       border-radius: 1.2rem;
       background: #f7f7f7;
+
+      // Whole card is a tap target here (see ModelRow's handleRowClick) —
+      // links/buttons inside keep the pointer cursor they already had.
+      cursor: pointer;
    }
 
    .table_cell {

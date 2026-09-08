@@ -104,11 +104,15 @@ export const Comments: React.FC<Prop> = ({
       };
    }, [providerName, providerDomain]);
 
+   // Falls back to the same generic stub ProviderTooltip uses (see its
+   // `resolvedDescription`) when provider_descriptions.json has no entry for
+   // this reseller yet — otherwise the card's description block just never
+   // rendered (CommentCard hides it on an empty string).
    const description = providerDescriptionEntry
       ? locale === "ru"
          ? providerDescriptionEntry.descriptionRu
          : providerDescriptionEntry.descriptionEn
-      : "";
+      : t.providers.items.generic.description.replace("{provider}", providerName);
 
    // Real per-provider "top models & prices" table, built from the same
    // providers.json feed the /home models table uses — replaces the old

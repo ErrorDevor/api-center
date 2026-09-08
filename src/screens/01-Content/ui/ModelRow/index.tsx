@@ -8,6 +8,7 @@ import type { ModelItem } from "screens/01-Content/lib/content.data";
 import { pricesDetails, providerDetails } from "screens/01-Content/lib/provider.data";
 
 import { gaTrackProviderClick } from "shared/lib/analytics/ga";
+import { useIsMobile } from "shared/lib/hooks/useIsMobile";
 import { useTranslation } from "shared/lib/i18n";
 import { daysToProviderAge } from "shared/lib/i18n/formatters";
 import { useProviderCommentSummary } from "shared/lib/providerComments/useProviderCommentSummary";
@@ -59,6 +60,7 @@ interface TooltipPosition {
 export const ModelRow: React.FC<Prop> = ({ model }) => {
    const { t, locale } = useTranslation();
    const router = useRouter();
+   const isMobile = useIsMobile();
    const { entries: providerDescriptions } = useProviderDescriptions();
    const { trackClick } = useProviderPopularity();
    const reviewsHref = `/reviews?provider=${encodeURIComponent(model.providerDomain)}`;
@@ -69,6 +71,25 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
    const trackProviderClick = () => {
       void trackClick(model.providerDomain);
       gaTrackProviderClick(model.provider, model.name);
+   };
+
+   // Mobile card: rows have no room for hover states, so the tap target
+   // becomes the whole card instead of the small "Поставщик"/"Отзывы"
+   // links — opens the provider's own page in-app (same destination as the
+   // reviews link below). Ignores taps on anything already interactive
+   // inside the card (the external provider link, payment methods
+   // dropdown) so those keep their own behavior instead of double-firing.
+   const handleRowClick = (event: React.MouseEvent<HTMLElement>) => {
+      if (!isMobile) {
+         return;
+      }
+
+      if ((event.target as HTMLElement).closest("a, button")) {
+         return;
+      }
+
+      trackProviderClick();
+      router.push(reviewsHref);
    };
 
    const providerTooltipId = React.useId();
@@ -372,7 +393,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
    const description = model.description[locale] || t.content.table.descriptionUnavailable;
 
    return (
-      <article className={css.table_row}>
+      <article className={css.table_row} onClick={handleRowClick}>
          <div className={css.table_cell}>
             <div className={css.model}>
                <div className={css.model_icon}>
