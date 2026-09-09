@@ -102,3 +102,22 @@ export const tabs = [
       translationKey: "freeTest",
    },
 ] as const;
+
+export type ContentTabId = (typeof tabs)[number]["id"];
+
+// Each header tab narrows the list to listings whose providers.json
+// payment_methods array carries one of these markers (matched
+// case-sensitively, exactly as the feed writes them). A tab absent from
+// this map doesn't filter.
+//
+//  - "Crypto" currently sits on every record in the feed, so that tab is a
+//    no-op today — wiring it anyway means it starts filtering the moment
+//    the backend stops over-tagging it, with no code change here.
+//  - "Trial: Yes" is providers.json's confirmed-trial marker; the noisy
+//    "Trial: Unconfirmed" variant is already dropped in
+//    parseProviderPriceRecords, so it never reaches this check.
+export const TAB_PAYMENT_METHOD_MARKERS: Partial<Record<ContentTabId, readonly string[]>> = {
+   crypto: ["Crypto"],
+   paytoacc: ["ACH", "USD", "Payment from $1"],
+   freetest: ["Trial: Yes"],
+};

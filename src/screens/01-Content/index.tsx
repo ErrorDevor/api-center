@@ -7,6 +7,7 @@ import {
    MODELS_SORT_PRESETS,
    type ModelsSortValue,
    type SortState,
+   TAB_PAYMENT_METHOD_MARKERS,
    sortStateToValue,
    tabs,
 } from "./lib/content.data";
@@ -103,14 +104,17 @@ export const Content: React.FC<Prop> = ({
          result = filterModelsByQuery(result, selectedSearchQuery);
       }
 
-      // "Free test" narrows to listings the backend has confirmed offer a
-      // trial — providers.json packs that as a literal "Trial: Yes" entry
-      // in payment_methods (see parseProviderPriceRecords, which already
-      // drops the noisy "Trial: Unconfirmed" variant so it never matches
-      // here). "Crypto"/"Payment to account" don't filter anything yet —
-      // no equivalent per-model signal exists for those two tabs today.
-      if (activeTab === "freetest") {
-         result = result.filter((model) => model.paymentMethods.includes("Trial: Yes"));
+      // Each header tab ("Crypto" / "Payment to account" / "Free test")
+      // narrows to listings whose payment_methods carry one of the tab's
+      // markers — see TAB_PAYMENT_METHOD_MARKERS for the mapping and its
+      // caveats (notably "Crypto" being a no-op until the feed stops
+      // tagging every record with it).
+      const tabMarkers = TAB_PAYMENT_METHOD_MARKERS[activeTab];
+
+      if (tabMarkers) {
+         result = result.filter((model) =>
+            model.paymentMethods.some((method) => tabMarkers.includes(method))
+         );
       }
 
       if (isMainListing) {
