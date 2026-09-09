@@ -14,7 +14,6 @@ import { daysToProviderAge } from "shared/lib/i18n/formatters";
 import { useProviderCommentSummary } from "shared/lib/providerComments/useProviderCommentSummary";
 import { useProviderDescriptions } from "shared/lib/providerDescriptions/useProviderDescriptions";
 import { formatPaymentMethod } from "shared/lib/providers/formatPaymentMethod";
-import { getLocalizedProviderUrl } from "shared/lib/providers/getLocalizedProviderUrl";
 import { useProviderPopularity } from "shared/lib/providers/popularity/useProviderPopularity";
 import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 import Image from "shared/ui/base/Image";
@@ -65,9 +64,10 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
    const { trackClick } = useProviderPopularity();
    const reviewsHref = `/reviews?provider=${encodeURIComponent(model.providerDomain)}`;
 
-   // Both the provider's own site and its reviews page count toward the
-   // same popularity tally (see the "popular" sort) — keyed by the reseller
-   // domain, the key the popularity API aggregates on for /home rows.
+   // Every provider click on the row — the name cell and the reviews count,
+   // both of which now open /reviews — counts toward the same popularity
+   // tally (see the "popular" sort), keyed by the reseller domain, the key
+   // the popularity API aggregates on for /home rows.
    const trackProviderClick = () => {
       void trackClick(model.providerDomain);
       gaTrackProviderClick(model.provider, model.name);
@@ -75,10 +75,11 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
 
    // Mobile card: rows have no room for hover states, so the tap target
    // becomes the whole card instead of the small "Поставщик"/"Отзывы"
-   // links — opens the provider's own page in-app (same destination as the
-   // reviews link below). Ignores taps on anything already interactive
-   // inside the card (the external provider link, payment methods
-   // dropdown) so those keep their own behavior instead of double-firing.
+   // links — opens the provider's /reviews page (the same destination both
+   // of those links now point at). Ignores taps on anything already
+   // interactive inside the card (the provider/reviews links, payment
+   // methods dropdown) so those keep their own behavior instead of
+   // double-firing.
    const handleRowClick = (event: React.MouseEvent<HTMLElement>) => {
       if (!isMobile) {
          return;
@@ -541,17 +542,23 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
             <span className={css.mobile_dots} />
 
             <div className={css.provider_wrapper}>
+               {/* Links to our own /reviews page, not the reseller's site,
+                   so visitors (and link equity) stay on-site — the outbound
+                   link to the reseller lives on that page instead (see
+                   CommentCardOptions' "Ссылка" row). Same destination as the
+                   Отзывы cell below. */}
                <a
                   ref={providerRef}
-                  href={getLocalizedProviderUrl(model, locale)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={reviewsHref}
                   className={css.provider}
                   aria-describedby={
                      provider && isProviderTooltipOpen ? providerTooltipId : undefined
                   }
-                  onClick={trackProviderClick}
-                  onAuxClick={trackProviderClick}
+                  onClick={(event) => {
+                     event.preventDefault();
+                     trackProviderClick();
+                     router.push(reviewsHref);
+                  }}
                   onMouseEnter={openProviderTooltip}
                   onMouseLeave={closeProviderTooltip}
                   onFocus={openProviderTooltip}
