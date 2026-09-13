@@ -122,8 +122,13 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
       // Optional: newer field the backend may not have backfilled onto
       // every record yet, so an absent/malformed value defaults to an
       // empty array instead of dropping the whole record.
+      //
+      // The feed also packs a noisy "Trial: Unconfirmed" marker into this
+      // array alongside real payment methods (see formatPaymentMethod,
+      // TAB_PAYMENT_METHOD_MARKERS) — it has no product-facing meaning, so
+      // it's dropped here rather than reaching any consumer.
       const paymentMethods = Array.isArray(raw.payment_methods)
-         ? raw.payment_methods.filter(isNonEmptyString)
+         ? raw.payment_methods.filter(isNonEmptyString).filter((method) => method !== "Trial: Unconfirmed")
          : [];
       // Optional, same reasoning: not backfilled onto every record yet.
       const domainAgeDays = isFiniteNumber(raw.domain_age_days) ? raw.domain_age_days : null;
