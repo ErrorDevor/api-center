@@ -30,6 +30,8 @@ export const en = {
       // this is what ModelRow / CommentCardOptions show instead of that
       // internal marker.
       trialAvailable: "Free access",
+      aiProviders: "AI-providers",
+      providersSearch: "Search providers",
    },
 
    models: {
@@ -662,9 +664,39 @@ export const en = {
          },
       },
    },
+
    featureTestingModal: {
       title: "Feature in Testing",
       text: "This functionality is currently available only to PRO users. We are actively testing the system and will soon open access to it for all participants.",
+   },
+
+   aiProviders: {
+      name: "Provider name",
+      models: "Models",
+      age: "Age",
+      paymentMethod: "Payment method",
+      status: "Status",
+      reviews: "Reviews",
+      sortByName: "Sort by name",
+      sortByStatus: "Sort by status",
+      working: "Working",
+      notWorking: "Not working",
+      verifiedProvider: "Verified provider",
+
+      filters: {
+         status: "Status",
+         all: "All",
+         working: "Working",
+         notWorking: "Not working",
+         reset: "Reset",
+         show: "Show",
+      },
+
+      sort: {
+         default: "Default",
+         working: "Working first",
+         notWorking: "Not working first",
+      },
    },
 } as const;
 
@@ -706,6 +738,8 @@ export const ru: Dictionary = {
       buttonText: "Ответить",
       buttonBack: "Назад",
       trialAvailable: "Бесплатный доступ",
+      aiProviders: "AI-провайдеры",
+      providersSearch: "Поиск провайдеров...",
    },
 
    models: {
@@ -1333,9 +1367,39 @@ export const ru: Dictionary = {
          },
       },
    },
+
    featureTestingModal: {
       title: "Раздел находится в режиме тестирования",
       text: "В данный момент этот функционал доступен только PRO-пользователям. Мы активно тестируем систему и в скором времени откроем к ней доступ для всех участников.",
+   },
+
+   aiProviders: {
+      name: "Название провайдера",
+      models: "Модели",
+      age: "Возраст",
+      paymentMethod: "Способ оплаты",
+      status: "Статус",
+      reviews: "Отзывы",
+      sortByName: "Сортировать по названию",
+      sortByStatus: "Сортировать по статусу",
+      working: "Работает",
+      notWorking: "Не работает",
+      verifiedProvider: "Проверенный провайдер",
+
+      filters: {
+         status: "Статус",
+         all: "Все",
+         working: "Работает",
+         notWorking: "Не работает",
+         reset: "Сбросить",
+         show: "Показать",
+      },
+
+      sort: {
+         default: "По умолчанию",
+         working: "По статусу (Работает)",
+         notWorking: "По статусу (Не работает)",
+      },
    },
 };
 
