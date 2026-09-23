@@ -2,53 +2,85 @@
 
 import React from "react";
 
+import { useRouter } from "next/navigation";
+
 import clsx from "clsx";
 import { Provider } from "screens/11-AiProviders/lib/data";
 
 import { useTranslation } from "shared/lib/i18n";
+import { daysToProviderAge, formatProviderAge } from "shared/lib/i18n/formatters";
+import { useProviderCommentSummary } from "shared/lib/providerComments/useProviderCommentSummary";
+import { useProviderDescriptions } from "shared/lib/providerDescriptions/useProviderDescriptions";
 import Image from "shared/ui/base/Image";
 
 import css from "./AiProviderRow.module.scss";
 
 interface AiProviderRowProps {
    provider: Provider;
-   selected?: boolean;
    workingLabel: string;
    notWorkingLabel: string;
    verifiedLabel: string;
-   onSelect?: (vendorId: string | undefined) => void;
 }
 
 export const AiProviderRow: React.FC<AiProviderRowProps> = ({
    provider,
-   selected,
    workingLabel,
    notWorkingLabel,
    verifiedLabel,
-   onSelect,
 }) => {
-   const { t } = useTranslation();
+   const { t, locale } = useTranslation();
+   const router = useRouter();
+   const { entries: providerDescriptions } = useProviderDescriptions();
+   const { summary: commentSummary } = useProviderCommentSummary(provider.id);
 
-   const visibleModels = provider.models.slice(0, 5);
+   const reviewsHref = `/reviews?provider=${encodeURIComponent(provider.id)}`;
+   const reviewsCount = commentSummary?.totalComments ?? provider.reviews.positive;
+   const reportsCount = commentSummary?.negativeCount ?? provider.reviews.negative;
+
+   const descriptionEntry = providerDescriptions.find(
+      (entry) => entry.providerDomain === provider.id
+   );
+   const description = descriptionEntry
+      ? locale === "ru"
+         ? descriptionEntry.descriptionRu
+         : descriptionEntry.descriptionEn
+      : t.providers.items.generic.description.replace("{provider}", provider.name);
+
+   const age =
+      provider.domainAgeDays != null
+         ? formatProviderAge(daysToProviderAge(provider.domainAgeDays), locale)
+         : null;
+
+   const uniqueIconModels = React.useMemo(() => {
+      const seenIcons = new Set<string>();
+
+      return provider.models.filter((model) => {
+         if (!model.icon || seenIcons.has(model.icon)) {
+            return false;
+         }
+
+         seenIcons.add(model.icon);
+
+         return true;
+      });
+   }, [provider.models]);
+
+   const visibleModels = uniqueIconModels.slice(0, 5);
    const hiddenModelsCount = Math.max(0, provider.models.length - visibleModels.length);
 
    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-      if (!onSelect) {
-         return;
-      }
-
       if (event.key === "Enter" || event.key === " ") {
          event.preventDefault();
-         onSelect(provider.id);
+         router.push(reviewsHref);
       }
    };
 
    return (
       <div
-         className={clsx(css.provider_row, selected && css.provider_row_selected)}
-         role={onSelect ? "button" : undefined}
-         tabIndex={onSelect ? 0 : undefined}
-         onClick={() => onSelect?.(provider.id)}
+         className={css.provider_row}
+         role="button"
+         tabIndex={0}
+         onClick={() => router.push(reviewsHref)}
          onKeyDown={handleKeyDown}
       >
          <div className={css.provider_cell}>
@@ -64,20 +96,22 @@ export const AiProviderRow: React.FC<AiProviderRowProps> = ({
 
                   <span className={css.provider_name}>{provider.name}</span>
 
-                  <span className={css.provider_age}>{provider.age}</span>
+                  {age && <span className={css.provider_age}>{age}</span>}
                </div>
 
-               <p className={css.provider_description}>{provider.description}</p>
+               <p className={css.provider_description}>{description}</p>
             </div>
          </div>
 
-         <div className={css.provider_age_mobile}>
-            <span className={css.mobile_label}>{t.aiProviders.age}</span>
+         {age && (
+            <div className={css.provider_age_mobile}>
+               <span className={css.mobile_label}>{t.aiProviders.age}</span>
 
-            <span className={css.mobile_dots} />
+               <span className={css.mobile_dots} />
 
-            <span className={css.provider_age_mobile_value}>{provider.age}</span>
-         </div>
+               <span className={css.provider_age_mobile_value}>{age}</span>
+            </div>
+         )}
 
          <div className={css.provider_cell}>
             <span className={css.mobile_label}>{t.aiProviders.models}</span>
@@ -86,11 +120,14 @@ export const AiProviderRow: React.FC<AiProviderRowProps> = ({
 
             {provider.models.length > 0 && (
                <div className={css.provider_models}>
-                  {visibleModels.map((model) => (
-                     <div key={model.id} className={css.provider_model_icon}>
-                        <Image.Default src={model.icon} alt={model.name} title={model.name} />
-                     </div>
-                  ))}
+                  {visibleModels.map(
+                     (model) =>
+                        model.icon && (
+                           <div key={model.id} className={css.provider_model_icon}>
+                              <Image.Default src={model.icon} alt={model.name} title={model.name} />
+                           </div>
+                        )
+                  )}
 
                   {hiddenModelsCount > 0 && (
                      <span className={css.provider_models_more}>+{hiddenModelsCount}</span>
@@ -130,16 +167,18 @@ export const AiProviderRow: React.FC<AiProviderRowProps> = ({
             <span className={css.mobile_dots} />
 
             <a
+               href={reviewsHref}
                className={css.reviews}
                onClick={(event) => {
                   event.preventDefault();
                   event.stopPropagation();
+                  router.push(reviewsHref);
                }}
             >
-               <span>123</span>
+               <span>{reviewsCount}</span>
 
                <div className={css.reports}>
-                  <div className={css.reports_inner}>12</div>
+                  <div className={css.reports_inner}>{reportsCount}</div>
                </div>
             </a>
          </div>

@@ -25,7 +25,7 @@ export default function AiProvidersPage({ params }: Props) {
    const [mode, setMode] = React.useState<SidebarMode>("api");
    const selectedVendorId = segments?.[0];
    const handleSelectVendor = (vendorId: string | undefined) => {
-      router.push(vendorId ? `/group-buys/${vendorId}` : "/group-buys");
+      router.push(vendorId ? `/home/${vendorId}` : "/home");
    };
 
    return (

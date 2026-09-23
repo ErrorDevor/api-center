@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { PROVIDERS } from "./lib/data";
+import { recordsToProviders } from "./lib/providers-to-list";
 import { MobileSortValue, ProviderStatusFilter, SortKey, SortState } from "./lib/types";
 import { AiProviderRow } from "./ui/AiProviderRow";
 import { HeaderCell } from "./ui/HeaderCell";
@@ -10,6 +10,7 @@ import clsx from "clsx";
 
 import { useIsMobile } from "shared/lib/hooks/useIsMobile";
 import { useTranslation } from "shared/lib/i18n";
+import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
 import { ContentHeader } from "shared/ui/components/ContentHeader";
 import { Pagination } from "shared/ui/components/Pagination";
 import { Search } from "shared/ui/components/Search";
@@ -38,6 +39,8 @@ export const AiProvidersScreen: React.FC<Prop> = ({
 }) => {
    const { t } = useTranslation();
    const isMobile = useIsMobile();
+   const { records } = useProviderRecords();
+   const providers = React.useMemo(() => recordsToProviders(records), [records]);
 
    const buttonRef = React.useRef<HTMLButtonElement>(null);
    const tableRef = React.useRef<HTMLDivElement>(null);
@@ -91,11 +94,11 @@ export const AiProvidersScreen: React.FC<Prop> = ({
 
    const filteredProviders = React.useMemo(() => {
       if (statusFilter === "all") {
-         return PROVIDERS;
+         return providers;
       }
 
-      return PROVIDERS.filter((provider) => provider.status === statusFilter);
-   }, [statusFilter]);
+      return providers.filter((provider) => provider.status === statusFilter);
+   }, [providers, statusFilter]);
 
    const sortedProviders = React.useMemo(() => {
       return [...filteredProviders].sort((firstProvider, secondProvider) => {
@@ -318,11 +321,9 @@ export const AiProvidersScreen: React.FC<Prop> = ({
                               <AiProviderRow
                                  key={provider.id}
                                  provider={provider}
-                                 selected={selectedVendorId === provider.id}
                                  workingLabel={t.aiProviders.working}
                                  notWorkingLabel={t.aiProviders.notWorking}
                                  verifiedLabel={t.aiProviders.verifiedProvider}
-                                 onSelect={onSelectVendor}
                               />
                            ))}
                         </div>
