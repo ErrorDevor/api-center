@@ -102,6 +102,24 @@ export const en = {
          readMore: "Read more",
          showLess: "Show less",
       },
+      // Pinned row shown above the reseller listing on a specific model's
+      // page (see BestAiPriceRow) — BestAIPrice's own gateway, not a
+      // ranked reseller entry. Pricing comes live from the same retail
+      // table the gateway bills from (see useGatewayPricing); everything
+      // else here is a standing claim about the gateway itself, not
+      // per-model data.
+      bestAiPrice: {
+         badge: "BestAIPrice",
+         tagline: "Our own gateway, not a reseller",
+         available: "Available now",
+         pricingSyncing: "Pricing syncing…",
+         unifiedKey: "Unified API key",
+         autoFailover: "Automatic failover",
+         usdtPayment: "USDT payment",
+         docs: "Documentation",
+         ctaAuthenticated: "Use BestAIPrice API",
+         ctaUnauthenticated: "Get API key",
+      },
    },
 
    forum: {
@@ -809,6 +827,18 @@ export const ru: Dictionary = {
          defaultProvider: "AI",
          readMore: "Читать далее",
          showLess: "Скрыть",
+      },
+      bestAiPrice: {
+         badge: "BestAIPrice",
+         tagline: "Собственный шлюз, а не перепродавец",
+         available: "Доступно уже сейчас",
+         pricingSyncing: "Цена синхронизируется…",
+         unifiedKey: "Единый API-ключ",
+         autoFailover: "Автоматический резерв",
+         usdtPayment: "Оплата USDT",
+         docs: "Документация",
+         ctaAuthenticated: "Использовать BestAIPrice API",
+         ctaUnauthenticated: "Получить API-ключ",
       },
    },
 

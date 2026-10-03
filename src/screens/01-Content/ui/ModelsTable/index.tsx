@@ -12,6 +12,7 @@ import { useProviderPopularity } from "shared/lib/providers/popularity/useProvid
 import { Pagination } from "shared/ui/components/Pagination";
 import { DropdownArrowIcon, SortIcon } from "shared/ui/icons";
 
+import { BestAiPriceRow } from "../BestAiPriceRow";
 import { ModelRow } from "../ModelRow";
 
 import css from "./ModelsTable.module.scss";
@@ -40,9 +41,14 @@ interface Props {
    // same state instead of two disconnected sorts.
    sort: SortState;
    onSortChange: (sort: SortState) => void;
+   // Set only on a specific model's page (Content's selectedModelId) — shows
+   // the pinned BestAIPrice row above the reseller listing for that model.
+   // Not shown on the collapsed "all providers" / vendor-only listings,
+   // where there's no single model to price it against.
+   pinnedModelId?: string;
 }
 
-export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange }) => {
+export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange, pinnedModelId }) => {
    const { t } = useTranslation();
    const { getClickCount, version: popularityVersion } = useProviderPopularity();
 
@@ -335,6 +341,13 @@ export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange }) => 
 
                <div ref={bodyScrollRef} className={css.table_body_scroll}>
                   <div className={css.table_body}>
+                     {pinnedModelId && (
+                        <BestAiPriceRow
+                           canonicalModelId={pinnedModelId}
+                           modelName={models[0]?.name ?? pinnedModelId}
+                        />
+                     )}
+
                      {visibleModels.length === 0 ? (
                         <div className={css.empty_state}>{t.content.table.emptyState}</div>
                      ) : (
