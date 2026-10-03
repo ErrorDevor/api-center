@@ -335,7 +335,12 @@ export const Content: React.FC<Prop> = ({
             />
 
             <div className={css.content_list}>
-               <ModelsTable models={filteredModels} sort={sort} onSortChange={setSort} />
+               <ModelsTable
+                  models={filteredModels}
+                  sort={sort}
+                  onSortChange={setSort}
+                  pinnedModelId={selectedModelId}
+               />
             </div>
          </div>
       </div>
