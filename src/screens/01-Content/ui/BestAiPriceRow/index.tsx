@@ -40,6 +40,13 @@ export const BestAiPriceRow: React.FC<Prop> = ({ canonicalModelId, modelName }) 
    // link always points somewhere sensible even before the profile check
    // resolves; the button itself is disabled until status is known so a
    // click can't race the auth check.
+   // The row is only for models the gateway supports: once pricing has
+   // loaded, null means "not offered", so no row at all (undefined = still
+   // loading, keep the row with its syncing placeholder).
+   if (pricing === null) {
+      return null;
+   }
+
    const isAuthenticated = status === "authenticated";
    const isAuthKnown = status !== "loading";
 
@@ -107,8 +114,12 @@ export const BestAiPriceRow: React.FC<Prop> = ({ canonicalModelId, modelName }) 
                )}
             </div>
 
-            {pricing?.available && (
-               <span className={css.availability}>{t.content.bestAiPrice.available}</span>
+            {pricing && (
+               <span className={clsx(css.availability, !pricing.available && css.unavailable)}>
+                  {pricing.available
+                     ? t.content.bestAiPrice.available
+                     : t.content.bestAiPrice.unavailable}
+               </span>
             )}
          </div>
 
