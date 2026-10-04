@@ -14,7 +14,7 @@ import css from "./BestAiPriceRow.module.scss";
 
 // Where an authenticated user manages their key/connection — not a route in
 // this app, so a plain external link rather than client-side navigation.
-const CABINET_URL = "https://bestaiprice.com/account";
+const CABINET_URL = "https://bestaiprice.com/gateway/keys";
 const DOCS_URL = "https://bestaiprice.com/docs";
 
 interface Prop {
