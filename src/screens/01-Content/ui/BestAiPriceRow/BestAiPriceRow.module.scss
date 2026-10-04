@@ -141,23 +141,6 @@
    }
 }
 
-.availability {
-   display: inline-flex;
-   align-items: center;
-   height: 2rem;
-   padding: 0 0.7rem;
-   border-radius: 10rem;
-   white-space: nowrap;
-
-   background: rgba(16, 185, 129, 0.12);
-   @include fontInterTight(1.2rem, 1.6rem, -0.01em, 500, #10b981);
-
-   &.unavailable {
-      background: rgba(239, 68, 68, 0.12);
-      @include fontInterTight(1.2rem, 1.6rem, -0.01em, 500, #ef4444);
-   }
-}
-
 .badges {
    display: flex;
    flex-wrap: wrap;

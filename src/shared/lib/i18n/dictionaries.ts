@@ -111,9 +111,6 @@ export const en = {
       bestAiPrice: {
          badge: "BestAIPrice",
          tagline: "Our own gateway, not a reseller",
-         available: "Available now",
-         unavailable: "Temporarily unavailable",
-         pricingSyncing: "Pricing syncing…",
          unifiedKey: "Unified API key",
          autoFailover: "Automatic failover",
          usdtPayment: "USDT payment",
@@ -832,9 +829,6 @@ export const ru: Dictionary = {
       bestAiPrice: {
          badge: "BestAIPrice",
          tagline: "Собственный шлюз, а не перепродавец",
-         available: "Доступно уже сейчас",
-         unavailable: "Временно недоступно",
-         pricingSyncing: "Цена синхронизируется…",
          unifiedKey: "Единый API-ключ",
          autoFailover: "Автоматический резерв",
          usdtPayment: "Оплата USDT",

@@ -40,10 +40,9 @@ export const BestAiPriceRow: React.FC<Prop> = ({ canonicalModelId, modelName }) 
    // link always points somewhere sensible even before the profile check
    // resolves; the button itself is disabled until status is known so a
    // click can't race the auth check.
-   // The row is only for models the gateway supports: once pricing has
-   // loaded, null means "not offered", so no row at all (undefined = still
-   // loading, keep the row with its syncing placeholder).
-   if (pricing === null) {
+   // The row is only for models the gateway supports: no row while pricing
+   // is still loading (undefined) or when the model isn't offered (null).
+   if (!pricing) {
       return null;
    }
 
@@ -75,7 +74,7 @@ export const BestAiPriceRow: React.FC<Prop> = ({ canonicalModelId, modelName }) 
 
          <div className={css.cell}>
             <div className={css.prices}>
-               {pricing && pricing.nativePriceUsd !== null ? (
+               {pricing.nativePriceUsd !== null ? (
                   <div className={css.price}>
                      <div className={css.price_value}>
                         <Image.Default src="/icons/energy.svg" alt="" />
@@ -85,7 +84,7 @@ export const BestAiPriceRow: React.FC<Prop> = ({ canonicalModelId, modelName }) 
                         </strong>
                      </div>
                   </div>
-               ) : pricing ? (
+               ) : (
                   <>
                      <div className={css.price}>
                         <span>{t.common.input}:</span>
@@ -109,18 +108,9 @@ export const BestAiPriceRow: React.FC<Prop> = ({ canonicalModelId, modelName }) 
                         </div>
                      </div>
                   </>
-               ) : (
-                  <span className={css.price_pending}>{t.content.bestAiPrice.pricingSyncing}</span>
                )}
             </div>
 
-            {pricing && (
-               <span className={clsx(css.availability, !pricing.available && css.unavailable)}>
-                  {pricing.available
-                     ? t.content.bestAiPrice.available
-                     : t.content.bestAiPrice.unavailable}
-               </span>
-            )}
          </div>
 
          <div className={css.cell}>
