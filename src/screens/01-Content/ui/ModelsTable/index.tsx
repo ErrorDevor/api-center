@@ -49,7 +49,7 @@ interface Props {
 }
 
 export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange, pinnedModelId }) => {
-   const { t } = useTranslation();
+   const { t, locale } = useTranslation();
    const { getClickCount, version: popularityVersion } = useProviderPopularity();
 
    const tableRef = React.useRef<HTMLDivElement>(null);
@@ -345,6 +345,7 @@ export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange, pinne
                         <BestAiPriceRow
                            canonicalModelId={pinnedModelId}
                            modelName={models[0]?.name ?? pinnedModelId}
+                           description={models[0]?.description[locale]}
                         />
                      )}
 
