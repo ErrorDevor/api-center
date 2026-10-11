@@ -81,7 +81,7 @@ export const BestAiPriceRow: React.FC<Prop> = ({ canonicalModelId, modelName, de
                </div>
 
                <div className={css.model_info}>
-                  <strong>{modelName}</strong>
+                  <strong>{modelName.replace(/\s*\([^)]*\)\s*$/, "")}</strong>
                   <span>{description || t.content.table.descriptionUnavailable}</span>
                </div>
             </div>
@@ -143,7 +143,10 @@ export const BestAiPriceRow: React.FC<Prop> = ({ canonicalModelId, modelName, de
             <span className={css.mobile_label}>{t.content.table.tags}</span>
             <span className={css.mobile_dots} />
 
-            <span className={css.payment_value_text}>{t.content.bestAiPrice.usdtPayment}</span>
+            <span className={css.payment_value}>
+               <Image.Default src="/icons/info.svg" alt="" className={css.payment_info_icon} />
+               <span className={css.payment_value_text}>{t.content.bestAiPrice.usdtPayment}</span>
+            </span>
          </div>
 
          <div className={css.table_cell}>
