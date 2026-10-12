@@ -145,20 +145,14 @@ export const toSidebarProviders = (records: ProviderPriceRecord[]): ProviderItem
       };
    };
 
-   // Fixed known vendors first (in their original sidebar order), even ones
-   // with zero records today — then any vendor providers.json introduces
-   // that isn't in the known list yet, so new data is never silently
-   // dropped.
+   // Known vendors keep their fixed sidebar order, followed by any vendor
+   // providers.json introduces that isn't in the known list yet, so new data
+   // is never silently dropped. Vendors without listings are hidden.
    const extraVendorIds = Array.from(modelsByVendor.keys())
       .filter((vendorId) => !KNOWN_VENDOR_IDS.includes(vendorId))
       .sort((a, b) => vendorListingCount(b) - vendorListingCount(a));
 
    const providers = [...KNOWN_VENDOR_IDS, ...extraVendorIds].map(toProviderItem);
 
-   // Vendors with no listings yet sink to the bottom instead of cluttering
-   // their fixed slot among vendors that actually have models.
-   const withListings = providers.filter((provider) => provider.count > 0);
-   const withoutListings = providers.filter((provider) => provider.count === 0);
-
-   return [...withListings, ...withoutListings];
+   return providers.filter((provider) => provider.count > 0);
 };
