@@ -59,16 +59,14 @@ interface SortState {
 
 interface Prop {
    className?: string;
-   activeCategoryId: RankingCategory["id"];
-   onCategoryChange: (categoryId: RankingCategory["id"]) => void;
 }
 
-export const RatingTable: React.FC<Prop> = ({
-   className,
-   activeCategoryId,
-   onCategoryChange,
-}) => {
+export const RatingTable: React.FC<Prop> = ({ className }) => {
    const { t } = useTranslation();
+
+   const [activeCategoryId, setActiveCategoryId] = React.useState(
+      RANKING_CATEGORIES[0].id
+   );
 
    const category: RankingCategory =
       RANKING_CATEGORIES.find((item) => item.id === activeCategoryId) ??
@@ -154,7 +152,7 @@ export const RatingTable: React.FC<Prop> = ({
    }, [isMobile, activeCategoryId, sortedEntries.length]);
 
    const handleCategoryChange = (categoryId: RankingCategory["id"]) => {
-      onCategoryChange(categoryId);
+      setActiveCategoryId(categoryId);
       setCurrentPage(1);
    };
 
@@ -262,7 +260,7 @@ export const RatingTable: React.FC<Prop> = ({
    };
 
    return (
-      <section id="rating-table" className={clsx(css.rating_table, className)}>
+      <section className={clsx(css.rating_table, className)}>
          <h3 className={css.rating_table_title}>{t.rating.title}</h3>
 
          <div className={css.rating_table_tabs}>

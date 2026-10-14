@@ -88,11 +88,7 @@ export const Header: React.FC = () => {
 
             {status === "authenticated" && user ? (
                <div className={css.header_account_block}>
-                  {/* /gateway is proxied by nginx to sub2api, not a Next route — a plain
-                      anchor forces a full page load instead of client-side routing. */}
-                  <a href="/gateway" aria-label="Dashboard">
-                     <UserInfo userName={user.email} withName={false} />
-                  </a>
+                  <UserInfo userName={user.email} withName={false} />
 
                   <Button variant="grey" className={css.logout_button} onClick={handleLogout}>
                      {t.common.logout}

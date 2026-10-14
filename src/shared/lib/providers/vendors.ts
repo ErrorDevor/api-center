@@ -36,7 +36,7 @@ export const VENDOR_DISPLAY_NAMES: Record<string, string> = {
    deepseek: "DeepSeek",
    minimax: "Minimax",
    anthropic: "Anthropic",
-   xai: "Grok",
+   xai: "xAI",
    chatglm: "ChatGLM",
    grok: "Grok",
    // Shown as the model brand rather than the parent company (Zhipu makes

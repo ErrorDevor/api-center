@@ -15,13 +15,11 @@ import { collapseToCheapest } from "./lib/collapseToCheapest";
 import { filterModelsByQuery } from "./lib/matchModelQuery";
 import { toModelItems } from "./lib/providers-to-models";
 import { ModelsTable } from "./ui/ModelsTable";
-import type { PinnedModel } from "./ui/ModelsTable";
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
 import { type ModelContentType, modelMatchesContentType } from "shared/lib/models/modelType";
 import { useModelCatalog } from "shared/lib/models/useModelCatalog";
-import { useGatewayPricing } from "shared/lib/gatewayPricing/useGatewayPricing";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
 import { getVendorDisplayName, getVendorId } from "shared/lib/providers/vendors";
 import { GENERIC_VENDOR_SLUG } from "shared/lib/vendorDescriptions/types";
@@ -55,9 +53,6 @@ interface Prop {
    onSelectModelType?: (modelTypeId: string | undefined) => void;
 }
 
-// Vendors whose top model is pinned as a BestAIPrice row on the main listing.
-const MAIN_PAGE_PINNED_VENDORS = ["google", "openai", "anthropic"];
-
 export const Content: React.FC<Prop> = ({
    className,
    selectedVendorId,
@@ -74,7 +69,6 @@ export const Content: React.FC<Prop> = ({
    const { entries: vendorDescriptions } = useVendorDescriptions();
 
    const models = React.useMemo(() => toModelItems(records, modelCatalog), [records, modelCatalog]);
-   const { entries: gatewayPricing } = useGatewayPricing();
 
    // A search behaves like drilling in: results stay per-reseller (not
    // collapsed) and default to cheapest-first, so a "sonnet" query is a
@@ -137,68 +131,6 @@ export const Content: React.FC<Prop> = ({
       selectedSearchQuery,
       activeTab,
    ]);
-   // BestAIPrice rows pinned above the reseller listing. A model page pins
-   // that model; a vendor page its 3 most popular models; the main listing
-   // the single most popular model of each flagship vendor. "Popular" =
-   // offered by the most distinct resellers (the only per-model popularity
-   // signal we have), among models the gateway actually prices.
-   const pinnedModels = React.useMemo<PinnedModel[]>(() => {
-      const toPinned = (canonicalModelId: string): PinnedModel | null => {
-         const model = models.find((item) => item.canonicalModelId === canonicalModelId);
-
-         return {
-            canonicalModelId,
-            name: model?.name ?? canonicalModelId,
-            description: model?.description[locale],
-         };
-      };
-
-      if (selectedModelId) {
-         return [toPinned(selectedModelId)].filter((item): item is PinnedModel => item !== null);
-      }
-
-      // A search or model-type filter isn't a text-model price comparison.
-      if (isSearching || selectedModelType) {
-         return [];
-      }
-
-      const pricedIds = new Set(
-         gatewayPricing
-            .filter(
-               (entry) =>
-                  (entry.inputPrice !== null && entry.outputPrice !== null) ||
-                  entry.nativePriceUsd !== null
-            )
-            .map((entry) => entry.canonicalModelId)
-      );
-
-      const resellersByModel = new Map<string, Set<string>>();
-
-      for (const model of models) {
-         if (!pricedIds.has(model.canonicalModelId)) {
-            continue;
-         }
-
-         const resellers = resellersByModel.get(model.canonicalModelId) ?? new Set<string>();
-
-         resellers.add(model.providerDomain);
-         resellersByModel.set(model.canonicalModelId, resellers);
-      }
-
-      const topForVendor = (vendorId: string, limit: number): string[] =>
-         [...resellersByModel.entries()]
-            .filter(([canonicalModelId]) => getVendorId(canonicalModelId) === vendorId)
-            .sort((first, second) => second[1].size - first[1].size)
-            .slice(0, limit)
-            .map(([canonicalModelId]) => canonicalModelId);
-
-      const ids = selectedVendorId
-         ? topForVendor(selectedVendorId, 3)
-         : MAIN_PAGE_PINNED_VENDORS.flatMap((vendorId) => topForVendor(vendorId, 1));
-
-      return ids.map(toPinned).filter((item): item is PinnedModel => item !== null);
-   }, [models, gatewayPricing, locale, selectedModelId, selectedVendorId, selectedModelType, isSearching]);
-
    const [isDescriptionExpanded, setIsDescriptionExpanded] = React.useState(false);
    const descriptionRef = React.useRef<HTMLParagraphElement>(null);
    const [isDescriptionOverflowing, setIsDescriptionOverflowing] = React.useState(false);
@@ -408,7 +340,7 @@ export const Content: React.FC<Prop> = ({
                   models={filteredModels}
                   sort={sort}
                   onSortChange={setSort}
-                  pinnedModels={pinnedModels}
+                  pinnedModelId={selectedModelId}
                />
             </div>
          </div>
