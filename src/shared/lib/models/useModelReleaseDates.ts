@@ -2,6 +2,8 @@
 
 import React from "react";
 
+import { getModelReleaseDates } from "./releaseDates.action";
+
 type ReleaseDates = Record<string, string>;
 
 // One shared request per page load, same pattern as useProviderRecords.
@@ -9,14 +11,11 @@ let datesPromise: Promise<ReleaseDates> | null = null;
 
 const fetchReleaseDates = (): Promise<ReleaseDates> => {
    if (!datesPromise) {
-      datesPromise = fetch("/api/models/release-dates")
-         .then((response) => (response.ok ? response.json() : { dates: {} }))
-         .then((body: { dates?: ReleaseDates }) => body.dates ?? {})
-         .catch(() => {
-            datesPromise = null;
+      datesPromise = getModelReleaseDates().catch(() => {
+         datesPromise = null;
 
-            return {};
-         });
+         return {};
+      });
    }
 
    return datesPromise;

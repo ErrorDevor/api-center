@@ -79,7 +79,7 @@ export const MODELS_SORT_PRESETS: Record<ModelsSortValue, SortState> = {
    // page, aggregated by the popularity API), not the review count that
    // shares the "reviews" sort key with the Отзывы column.
    popular: { key: "popularity", direction: "desc" },
-   // Release date from /api/models/release-dates, version in the id as tiebreak.
+   // Release date from releaseDates.action, version in the id as tiebreak.
    newest: { key: "newest", direction: "desc" },
 };
 

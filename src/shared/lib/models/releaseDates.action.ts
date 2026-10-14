@@ -1,12 +1,16 @@
-// GET /api/models/release-dates — { dates: { "<model-slug>": "YYYY-MM-DD" } }.
-// Neither models.json nor providers.json carries a release date, so it is
-// pulled from two public catalogs and merged server-side (one cached fetch
-// instead of every visitor hitting them): llm-stats.com first, OpenRouter's
-// `created` timestamp as the fallback for slugs llm-stats doesn't list.
-// Keys are the slug part of canonical_model_id, lowercased with "." -> "-"
-// (see normalizeModelSlug), so "gpt-5.4" and "gpt-5-4" meet in the middle.
+"use server";
+
+// Server action (no public URL, unlike a route handler) returning
+// { "<model-slug>": "YYYY-MM-DD" }. Neither models.json nor providers.json
+// carries a release date, so it is pulled from two public catalogs and merged
+// server-side, with an in-memory cache so visitors don't each hit them:
+// llm-stats.com first, OpenRouter's `created` timestamp as the fallback for
+// slugs llm-stats doesn't list. Keys are the slug part of canonical_model_id,
+// lowercased with "." -> "-" so "gpt-5.4" and "gpt-5-4" meet in the middle.
 
 const REVALIDATE_SECONDS = 60 * 60 * 24;
+
+let cache: { at: number; dates: Record<string, string> } | null = null;
 
 const LLM_STATS_URL = "https://api.llm-stats.com/v1/models";
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/models";
@@ -33,7 +37,11 @@ const fetchJson = async (url: string): Promise<unknown> => {
    }
 };
 
-export async function GET(): Promise<Response> {
+export async function getModelReleaseDates(): Promise<Record<string, string>> {
+   if (cache && Date.now() - cache.at < REVALIDATE_SECONDS * 1000) {
+      return cache.dates;
+   }
+
    const [llmStats, openRouter] = await Promise.all([
       fetchJson(LLM_STATS_URL),
       fetchJson(OPENROUTER_URL),
@@ -41,8 +49,7 @@ export async function GET(): Promise<Response> {
 
    const dates: Record<string, string> = {};
 
-   const openRouterModels =
-      (openRouter as { data?: OpenRouterModel[] } | null)?.data ?? [];
+   const openRouterModels = (openRouter as { data?: OpenRouterModel[] } | null)?.data ?? [];
 
    for (const model of openRouterModels) {
       if (typeof model.id !== "string" || typeof model.created !== "number") {
@@ -71,8 +78,9 @@ export async function GET(): Promise<Response> {
       }
    }
 
-   return Response.json(
-      { dates },
-      { headers: { "Cache-Control": `public, s-maxage=${REVALIDATE_SECONDS}` } }
-   );
+   if (Object.keys(dates).length > 0) {
+      cache = { at: Date.now(), dates };
+   }
+
+   return dates;
 }

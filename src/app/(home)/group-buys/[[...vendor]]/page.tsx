@@ -35,6 +35,18 @@ export default function GroupBuysPage({ params }: Props) {
       router.push(vendorId ? `/group-buys/${vendorId}` : "/group-buys");
    };
 
+   // Group buys can only be narrowed by vendor, so picking a model or a model
+   // type in the sidebar continues on /home, where those filters live.
+   const handleSelectModel = (canonicalModelId: string | undefined) => {
+      if (canonicalModelId) {
+         router.push(`/home/${canonicalModelId}`);
+      }
+   };
+
+   const handleSelectModelType = (modelTypeId: string | undefined) => {
+      router.push(modelTypeId ? `/home?type=${encodeURIComponent(modelTypeId)}` : "/home");
+   };
+
    return (
       <AppLayout
          isSidebarCollapsed={collapsed}
@@ -46,6 +58,8 @@ export default function GroupBuysPage({ params }: Props) {
                onToggleCollapsed={() => setCollapsed((current) => !current)}
                activeVendorId={selectedVendorId}
                onSelectVendor={handleSelectVendor}
+               onSelectModel={handleSelectModel}
+               onSelectModelType={handleSelectModelType}
             />
          }
       >
