@@ -4,6 +4,7 @@ import { ratingCategories } from "../../lib/rating.data";
 import type { RatingCategoryIcon } from "../../lib/rating.type";
 import clsx from "clsx";
 
+import type { RankingCategoryId } from "shared/lib/rankings/types";
 import { useTranslation } from "shared/lib/i18n";
 import Image from "shared/ui/base/Image";
 
@@ -11,9 +12,10 @@ import css from "./RatingCategories.module.scss";
 
 interface Prop {
    className?: string;
+   onSelectCategory?: (rankingCategoryId: RankingCategoryId) => void;
 }
 
-export const RatingCategories: React.FC<Prop> = ({ className }) => {
+export const RatingCategories: React.FC<Prop> = ({ className, onSelectCategory }) => {
    const { t } = useTranslation();
 
    const renderIcon = (icon: RatingCategoryIcon) => {
@@ -42,7 +44,19 @@ export const RatingCategories: React.FC<Prop> = ({ className }) => {
                const translation = t.rating.categories[item.translationKey];
 
                return (
-                  <article key={item.id} className={css.rating_category}>
+                  <article
+                     key={item.id}
+                     className={css.rating_category}
+                     role="button"
+                     tabIndex={0}
+                     onClick={() => onSelectCategory?.(item.rankingCategoryId)}
+                     onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                           event.preventDefault();
+                           onSelectCategory?.(item.rankingCategoryId);
+                        }
+                     }}
+                  >
                      <div
                         className={clsx(
                            css.rating_category_icon,

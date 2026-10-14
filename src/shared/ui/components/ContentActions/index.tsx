@@ -42,7 +42,8 @@ export const ContentActions = <T extends string = SortValue>({
 
    return (
       <div className={clsx(css.content_actions, className)}>
-         <FilterDropdown name={t.common.filter} variant={variant} />
+         {/* Filter is a group-buys-only feature. */}
+         {variant === "group-buys" && <FilterDropdown name={t.common.filter} variant={variant} />}
 
          <SortDropdown
             name={t.content.actions.tableView}

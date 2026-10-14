@@ -59,14 +59,21 @@ interface SortState {
 
 interface Prop {
    className?: string;
+   // Controlled tab (the category cards above the table switch it); the
+   // table keeps its own state when these aren't passed.
+   activeCategoryId?: RankingCategory["id"];
+   onCategoryChange?: (categoryId: RankingCategory["id"]) => void;
 }
 
-export const RatingTable: React.FC<Prop> = ({ className }) => {
+export const RatingTable: React.FC<Prop> = ({
+   className,
+   activeCategoryId: controlledCategoryId,
+   onCategoryChange,
+}) => {
    const { t } = useTranslation();
 
-   const [activeCategoryId, setActiveCategoryId] = React.useState(
-      RANKING_CATEGORIES[0].id
-   );
+   const [ownCategoryId, setOwnCategoryId] = React.useState(RANKING_CATEGORIES[0].id);
+   const activeCategoryId = controlledCategoryId ?? ownCategoryId;
 
    const category: RankingCategory =
       RANKING_CATEGORIES.find((item) => item.id === activeCategoryId) ??
@@ -152,7 +159,8 @@ export const RatingTable: React.FC<Prop> = ({ className }) => {
    }, [isMobile, activeCategoryId, sortedEntries.length]);
 
    const handleCategoryChange = (categoryId: RankingCategory["id"]) => {
-      setActiveCategoryId(categoryId);
+      setOwnCategoryId(categoryId);
+      onCategoryChange?.(categoryId);
       setCurrentPage(1);
    };
 
@@ -260,7 +268,7 @@ export const RatingTable: React.FC<Prop> = ({ className }) => {
    };
 
    return (
-      <section className={clsx(css.rating_table, className)}>
+      <section id="rating-table" className={clsx(css.rating_table, className)}>
          <h3 className={css.rating_table_title}>{t.rating.title}</h3>
 
          <div className={css.rating_table_tabs}>

@@ -6,24 +6,28 @@ export const ratingCategories: RatingCategory[] = [
       icon: "code",
       tone: "blue",
       translationKey: "programming",
+      rankingCategoryId: "llm",
    },
    {
       id: "texts",
       icon: "text",
       tone: "pink",
       translationKey: "texts",
+      rankingCategoryId: "llm",
    },
    {
       id: "research",
       icon: "research",
       tone: "purple",
       translationKey: "research",
+      rankingCategoryId: "llm",
    },
    {
       id: "images",
       icon: "image",
       tone: "green",
       translationKey: "images",
+      rankingCategoryId: "image-generation",
    },
 ];
 

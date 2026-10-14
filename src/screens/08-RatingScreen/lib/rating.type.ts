@@ -1,3 +1,5 @@
+import type { RankingCategoryId } from "shared/lib/rankings/types";
+
 export type RatingCategoryIcon = "code" | "text" | "research" | "image";
 
 export type RatingCategoryTone = "blue" | "pink" | "purple" | "green";
@@ -13,6 +15,8 @@ export interface RatingCategory {
    icon: RatingCategoryIcon;
    tone: RatingCategoryTone;
    translationKey: RatingCategoryTranslationKey;
+   // Leaderboard tab the card opens.
+   rankingCategoryId: RankingCategoryId;
 }
 
 // The /rating table now renders straight from shared/lib/rankings — see

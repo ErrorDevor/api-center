@@ -4,6 +4,8 @@ import React from "react";
 
 import clsx from "clsx";
 
+import { RANKING_CATEGORIES } from "shared/lib/rankings/categories";
+import type { RankingCategoryId } from "shared/lib/rankings/types";
 import { ContentHeader } from "shared/ui/components/ContentHeader";
 
 import { RatingAbout, RatingCategories, RatingExplore, RatingTable } from "./ui";
@@ -17,6 +19,21 @@ interface Prop {
 }
 
 export const RatingScreen: React.FC<Prop> = ({ className, selectedVendorId, onSelectVendor }) => {
+   const [activeCategoryId, setActiveCategoryId] = React.useState<RankingCategoryId>(
+      RANKING_CATEGORIES[0].id
+   );
+
+   // The category cards jump to the matching leaderboard tab.
+   const handleSelectCategory = (categoryId: RankingCategoryId) => {
+      setActiveCategoryId(categoryId);
+
+      requestAnimationFrame(() => {
+         document
+            .getElementById("rating-table")
+            ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+   };
+
    return (
       <div className={clsx(css.rating, className)}>
          <ContentHeader
@@ -27,8 +44,11 @@ export const RatingScreen: React.FC<Prop> = ({ className, selectedVendorId, onSe
          />
 
          <div className={css.rating_content}>
-            <RatingCategories />
-            <RatingTable />
+            <RatingCategories onSelectCategory={handleSelectCategory} />
+            <RatingTable
+               activeCategoryId={activeCategoryId}
+               onCategoryChange={setActiveCategoryId}
+            />
             <RatingExplore />
             <RatingAbout />
          </div>
