@@ -27,6 +27,7 @@ interface Prop {
    role?: string;
    inquiries?: number;
    withName?: boolean;
+   onAvatarClick?: () => void;
 }
 
 export const UserInfo: React.FC<Prop> = ({
@@ -38,12 +39,13 @@ export const UserInfo: React.FC<Prop> = ({
    role,
    inquiries,
    withName = true,
+   onAvatarClick,
 }) => {
    const avatar = userAvatar || getFallbackAvatar(userName);
 
    return (
       <div className={clsx(css.user_info, className)}>
-         <AccountButton avatar={avatar} />
+         <AccountButton avatar={avatar} onClick={onAvatarClick} />
 
          {withName && (
             <div className={css.user_info_name}>

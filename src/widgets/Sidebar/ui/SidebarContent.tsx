@@ -15,6 +15,7 @@ import clsx from "clsx";
 
 import { gaTrackFilterApply } from "shared/lib/analytics/ga";
 import { useTranslation } from "shared/lib/i18n";
+import { type ModelContentType, modelMatchesContentType } from "shared/lib/models/modelType";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
 import { DiscussionsIcon, DropdownArrowIcon, LeaderboardIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
@@ -59,7 +60,6 @@ export const SidebarContent: React.FC<Props> = ({
    const { t } = useTranslation();
    const { records } = useProviderRecords();
 
-   const providers = React.useMemo(() => toSidebarProviders(records), [records]);
    const modelTypeList = React.useMemo(() => buildModelTypeList(records), [records]);
 
    const isControlled = onSelectVendor !== undefined;
@@ -80,6 +80,24 @@ export const SidebarContent: React.FC<Props> = ({
    const activeModelType = isModelTypeControlled
       ? (activeModelTypeId ?? ALL_MODEL_TYPES_ID)
       : uncontrolledModelTypeId;
+
+   // The provider list follows the selected model type: counts only include
+   // that type's listings and vendors with none (e.g. Anthropic under
+   // "Audio & Video") drop out instead of leading to an empty table.
+   const providers = React.useMemo(
+      () =>
+         toSidebarProviders(
+            activeModelType === ALL_MODEL_TYPES_ID
+               ? records
+               : records.filter((record) =>
+                    modelMatchesContentType(
+                       record.canonicalModelId,
+                       activeModelType as ModelContentType
+                    )
+                 )
+         ),
+      [records, activeModelType]
+   );
 
    const visibleProviders =
       showAll || providers.length <= VISIBLE_PROVIDERS_COUNT

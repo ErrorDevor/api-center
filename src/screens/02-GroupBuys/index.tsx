@@ -101,7 +101,7 @@ export const GroupBuysContent: React.FC<Props> = ({
             resultsLabel={t.content.results}
             tabs={headerTabs}
             activeTab={activeTab}
-            actionsVariant="group"
+            actionsVariant="group-buys"
             onTabChange={setActiveTab}
             sortOptions={sortOptions}
             sortValue={sort}
@@ -111,7 +111,7 @@ export const GroupBuysContent: React.FC<Props> = ({
          />
 
          <ContentActions
-            variant="group"
+            variant="group-buys"
             className={css.content_actions}
             sortOptions={sortOptions}
             sortValue={sort}

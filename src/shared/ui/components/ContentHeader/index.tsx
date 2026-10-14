@@ -31,7 +31,7 @@ interface Props<T extends string, TSort extends string = SortValue> {
    resultsLabel?: string;
    tabs?: readonly ContentHeaderTab<T>[];
    activeTab?: T;
-   actionsVariant?: "group" | "api" | "forum";
+   actionsVariant?: "group" | "group-buys" | "api" | "forum";
    onTabChange?: (tabId: T) => void;
    // Forwarded to the desktop "Сортировка" dropdown rendered in here (see
    // ContentActions' own sortOptions/sortValue/onSortChange) — this is the

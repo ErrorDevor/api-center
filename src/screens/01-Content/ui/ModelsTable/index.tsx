@@ -5,6 +5,7 @@ import React from "react";
 import clsx from "clsx";
 import type { ModelItem, SortKey, SortState } from "screens/01-Content/lib/content.data";
 import { diversifyAdjacentProviders } from "screens/01-Content/lib/diversifyProviders";
+import type { PinnedModel } from "screens/01-Content/lib/usePinnedModels";
 
 import { useIsMobile } from "shared/lib/hooks/useIsMobile";
 import { useTranslation } from "shared/lib/i18n";
@@ -43,14 +44,13 @@ interface Props {
    // same state instead of two disconnected sorts.
    sort: SortState;
    onSortChange: (sort: SortState) => void;
-   // Set only on a specific model's page (Content's selectedModelId) — shows
-   // the pinned BestAIPrice row above the reseller listing for that model.
-   // Not shown on the collapsed "all providers" / vendor-only listings,
-   // where there's no single model to price it against.
-   pinnedModelId?: string;
+   // Models that get a pinned BestAIPrice row above the reseller listing
+   // (see usePinnedModels: the model itself on a model page, the vendor's
+   // top 3 on a vendor page, the top Gemini/OpenAI/Claude on the main one).
+   pinnedModels?: PinnedModel[];
 }
 
-export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange, pinnedModelId }) => {
+export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange, pinnedModels = [] }) => {
    const { t, locale } = useTranslation();
    const { getClickCount, version: popularityVersion } = useProviderPopularity();
    const { getReleaseDate } = useModelReleaseDates();
@@ -372,13 +372,14 @@ export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange, pinne
 
                <div ref={bodyScrollRef} className={css.table_body_scroll}>
                   <div className={css.table_body}>
-                     {pinnedModelId && (
+                     {pinnedModels.map(({ id, model }) => (
                         <BestAiPriceRow
-                           canonicalModelId={pinnedModelId}
-                           modelName={models[0]?.name ?? pinnedModelId}
-                           description={models[0]?.description[locale]}
+                           key={id}
+                           canonicalModelId={id}
+                           modelName={model.name}
+                           description={model.description[locale]}
                         />
-                     )}
+                     ))}
 
                      {visibleModels.length === 0 ? (
                         <div className={css.empty_state}>{t.content.table.emptyState}</div>

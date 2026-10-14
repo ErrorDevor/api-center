@@ -9,6 +9,7 @@ import { useAuth } from "shared/lib/auth";
 import { useTranslation } from "shared/lib/i18n";
 import Image from "shared/ui/base/Image";
 import { NextLink } from "shared/ui/base/NextLink";
+import { CABINET_URL } from "shared/lib/gatewayPricing/cabinet";
 import { CatalogSearch } from "shared/ui/components/CatalogSearch";
 // import { CurrencyDropdown } from "shared/ui/components/CurrencyDropdown";
 import { LanguageDropdown } from "shared/ui/components/LanguageDropdown";
@@ -44,6 +45,11 @@ export const Header: React.FC = () => {
    const handleSignup = () => {
       gaTrackSignupClick();
       router.replace("/signup");
+   };
+
+   // The gateway dashboard lives outside this Next app, so a full navigation.
+   const handleOpenDashboard = () => {
+      window.location.assign(CABINET_URL);
    };
 
    const handleLogout = async () => {
@@ -88,7 +94,11 @@ export const Header: React.FC = () => {
 
             {status === "authenticated" && user ? (
                <div className={css.header_account_block}>
-                  <UserInfo userName={user.email} withName={false} />
+                  <UserInfo
+                     userName={user.email}
+                     withName={false}
+                     onAvatarClick={handleOpenDashboard}
+                  />
 
                   <Button variant="grey" className={css.logout_button} onClick={handleLogout}>
                      {t.common.logout}

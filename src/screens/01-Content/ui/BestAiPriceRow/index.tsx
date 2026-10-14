@@ -3,6 +3,7 @@
 import React from "react";
 
 import { useAuth } from "shared/lib/auth";
+import { CABINET_URL } from "shared/lib/gatewayPricing/cabinet";
 import { useGatewayPricing } from "shared/lib/gatewayPricing/useGatewayPricing";
 import { useTranslation } from "shared/lib/i18n";
 import { useProviderCommentSummary } from "shared/lib/providerComments/useProviderCommentSummary";
@@ -14,7 +15,6 @@ import { ModelIcon } from "shared/ui/icons";
 // visually identical to the reseller rows around it.
 import css from "../ModelRow/ModelRow.module.scss";
 
-const CABINET_URL = "https://bestaiprice.com/gateway/keys";
 const PROVIDER_DOMAIN = "bestaiprice.com";
 const PROVIDER_NAME = "BestAIPrice";
 

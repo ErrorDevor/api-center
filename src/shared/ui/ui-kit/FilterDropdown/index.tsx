@@ -73,7 +73,7 @@ const aiType: FilterTypeData = [
 interface Prop {
    className?: string;
    name: string;
-   variant?: "api" | "group" | "forum";
+   variant?: "api" | "group" | "group-buys" | "forum";
 }
 
 export const FilterDropdown: React.FC<Prop> = ({ className, name, variant = "api" }) => {
@@ -103,7 +103,8 @@ export const FilterDropdown: React.FC<Prop> = ({ className, name, variant = "api
             contentClassName={css.account_type_modal}
             onClose={() => setIsOpen(false)}
          >
-            {variant === "api" ? (
+            {/* Account-type filter is group-buys only. */}
+            {variant === "group-buys" ? (
                <FilterType data={aiType} onClose={() => setIsOpen(false)} />
             ) : (
                <FreeTest onClose={() => setIsOpen(false)} />

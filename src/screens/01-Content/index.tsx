@@ -14,6 +14,7 @@ import {
 import { collapseToCheapest } from "./lib/collapseToCheapest";
 import { filterModelsByQuery } from "./lib/matchModelQuery";
 import { toModelItems } from "./lib/providers-to-models";
+import { usePinnedModels } from "./lib/usePinnedModels";
 import { ModelsTable } from "./ui/ModelsTable";
 import clsx from "clsx";
 
@@ -80,6 +81,8 @@ export const Content: React.FC<Prop> = ({
    // active search — still shows every reseller's row. A Model-Type filter
    // alone doesn't count as drilling in — same rule as defaultSort below.
    const isMainListing = !selectedVendorId && !selectedModelId && !isSearching;
+
+   const pinnedModels = usePinnedModels(models, selectedVendorId, selectedModelId);
 
    const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
 
@@ -340,7 +343,7 @@ export const Content: React.FC<Prop> = ({
                   models={filteredModels}
                   sort={sort}
                   onSortChange={setSort}
-                  pinnedModelId={selectedModelId}
+                  pinnedModels={pinnedModels}
                />
             </div>
          </div>
