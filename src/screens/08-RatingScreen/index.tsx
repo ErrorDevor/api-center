@@ -4,6 +4,8 @@ import React from "react";
 
 import clsx from "clsx";
 
+import { RANKING_CATEGORIES } from "shared/lib/rankings/categories";
+import type { RankingCategory } from "shared/lib/rankings/categories";
 import { ContentHeader } from "shared/ui/components/ContentHeader";
 
 import { RatingAbout, RatingCategories, RatingExplore, RatingTable } from "./ui";
@@ -17,6 +19,10 @@ interface Prop {
 }
 
 export const RatingScreen: React.FC<Prop> = ({ className, selectedVendorId, onSelectVendor }) => {
+   const [activeCategoryId, setActiveCategoryId] = React.useState<RankingCategory["id"]>(
+      RANKING_CATEGORIES[0].id
+   );
+
    return (
       <div className={clsx(css.rating, className)}>
          <ContentHeader
@@ -27,8 +33,8 @@ export const RatingScreen: React.FC<Prop> = ({ className, selectedVendorId, onSe
          />
 
          <div className={css.rating_content}>
-            <RatingCategories />
-            <RatingTable />
+            <RatingCategories onSelectCategory={setActiveCategoryId} />
+            <RatingTable activeCategoryId={activeCategoryId} onCategoryChange={setActiveCategoryId} />
             <RatingExplore />
             <RatingAbout />
          </div>
