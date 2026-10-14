@@ -24,8 +24,18 @@ export default function RatingPage({ params }: Props) {
    const [collapsed, setCollapsed] = React.useState(false);
    const [mode, setMode] = React.useState<SidebarMode>("api");
    const selectedVendorId = segments?.[0];
+   // The leaderboard has no vendor/model/type filters of its own, so a
+   // sidebar selection leaves for /home, where those filters live.
    const handleSelectVendor = (vendorId: string | undefined) => {
-      router.push(vendorId ? `/group-buys/${vendorId}` : "/group-buys");
+      router.push(vendorId ? `/home/${vendorId}` : "/home");
+   };
+   const handleSelectModel = (canonicalModelId: string | undefined) => {
+      if (canonicalModelId) {
+         router.push(`/home/${canonicalModelId}`);
+      }
+   };
+   const handleSelectModelType = (modelTypeId: string | undefined) => {
+      router.push(modelTypeId ? `/home?type=${encodeURIComponent(modelTypeId)}` : "/home");
    };
 
    return (
@@ -37,6 +47,9 @@ export default function RatingPage({ params }: Props) {
                mode={mode}
                collapsed={collapsed}
                onToggleCollapsed={() => setCollapsed((prev) => !prev)}
+               onSelectVendor={handleSelectVendor}
+               onSelectModel={handleSelectModel}
+               onSelectModelType={handleSelectModelType}
             />
          }
       >

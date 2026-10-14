@@ -3,10 +3,17 @@
  * before the slash is the model vendor (the company that makes the model),
  * as opposed to provider_name/provider_domain which is the reseller.
  */
-export const getVendorId = (canonicalModelId: string): string => {
-   const [vendorId] = canonicalModelId.split("/");
+// The feed spells some vendors in more than one way (moonshot / moonshotai);
+// fold them into one id so the sidebar and rows show a single vendor.
+const VENDOR_ID_ALIASES: Record<string, string> = {
+   moonshotai: "moonshot",
+};
 
-   return vendorId || canonicalModelId;
+export const getVendorId = (canonicalModelId: string): string => {
+   const [rawVendorId] = canonicalModelId.split("/");
+   const vendorId = rawVendorId || canonicalModelId;
+
+   return VENDOR_ID_ALIASES[vendorId] ?? vendorId;
 };
 
 // Fixed sidebar order — matches the original design's vendor list, kept
