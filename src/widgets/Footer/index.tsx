@@ -1,15 +1,1 @@
-"use client";
-
-import React from "react";
-
-import clsx from "clsx";
-
-import css from "./Footer.module.scss";
-
-export const Footer: React.FC = () => {
-  return (
-    <footer className={clsx(css.footer)}>
-      <></>
-    </footer>
-  );
-};
+export { SiteFooter as Footer } from "shared/ui/components/SiteFooter";

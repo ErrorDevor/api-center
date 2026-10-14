@@ -1,0 +1,30 @@
+.footer {
+   height: var(--footer-height, 2.8rem);
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   gap: 1.6rem;
+   padding: 0 1.2rem;
+   color: #797a79;
+
+   @include fontInterTight(1.2rem, 1.6rem, 0, 400, #797a79);
+
+   &_nav {
+      display: flex;
+      align-items: center;
+      gap: 1.6rem;
+   }
+
+   &_link {
+      color: inherit;
+      text-decoration: none;
+
+      &:hover {
+         color: #212121;
+      }
+   }
+
+   @include screenMD {
+      display: none;
+   }
+}

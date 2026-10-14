@@ -4,6 +4,8 @@ import React, { forwardRef } from "react";
 
 import clsx from "clsx";
 
+import { SiteFooter } from "shared/ui/components/SiteFooter";
+
 import css from "./AppLayout.module.scss";
 
 interface Props {
@@ -30,6 +32,8 @@ export const AppLayout = forwardRef<HTMLDivElement, Props>(
                   <div className={css.main_content}>{children}</div>
                </div>
             </div>
+
+            <SiteFooter />
          </div>
       );
    }
