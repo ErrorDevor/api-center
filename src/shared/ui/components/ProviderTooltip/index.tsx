@@ -37,6 +37,9 @@ interface Props {
    // daysToProviderAge). Falls back to details.age (the static stub) when
    // the backend hasn't backfilled it for this record yet.
    age?: ProviderAge;
+   // When set, the provider name in the header links to the provider's page.
+   href?: string;
+   onNameClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
    onMouseEnter?: () => void;
    onMouseLeave?: () => void;
 }
@@ -51,6 +54,8 @@ export const ProviderTooltip: React.FC<Props> = ({
    reviewsCount,
    reportsCount,
    age,
+   href,
+   onNameClick,
    onMouseEnter,
    onMouseLeave,
 }) => {
@@ -99,7 +104,13 @@ export const ProviderTooltip: React.FC<Props> = ({
          onMouseLeave={onMouseLeave}
       >
          <div className={css.provider_modal_header}>
-            <span className={css.provider_modal_name}>{providerName}</span>
+            {href ? (
+               <a href={href} className={css.provider_modal_name} onClick={onNameClick}>
+                  {providerName}
+               </a>
+            ) : (
+               <span className={css.provider_modal_name}>{providerName}</span>
+            )}
 
             <Image.Default src="/icons/verified.svg" className={css.provider_modal_verified} />
          </div>

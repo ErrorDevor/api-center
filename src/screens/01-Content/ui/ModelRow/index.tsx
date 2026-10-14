@@ -577,6 +577,12 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                      reviewsCount={commentSummary?.totalComments}
                      reportsCount={commentSummary?.negativeCount}
                      age={providerAge}
+                     href={reviewsHref}
+                     onNameClick={(event) => {
+                        event.preventDefault();
+                        trackProviderClick();
+                        router.push(reviewsHref);
+                     }}
                      position={providerTooltipPosition}
                      onMouseEnter={openProviderTooltip}
                      onMouseLeave={closeProviderTooltip}

@@ -134,6 +134,12 @@ export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange, pinne
                result =
                   getClickCount(firstModel.providerDomain) -
                   getClickCount(secondModel.providerDomain);
+
+               // Providers nobody has clicked yet all tie at 0 — rank those
+               // by review count so the order isn't arbitrary.
+               if (result === 0) {
+                  result = firstModel.reviews - secondModel.reviews;
+               }
                break;
          }
 
