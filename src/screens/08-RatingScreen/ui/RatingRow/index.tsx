@@ -8,7 +8,6 @@ import { formatMetric } from "shared/lib/rankings/format";
 import type { RankingEntry } from "shared/lib/rankings/types";
 import { getModelVendorIcon } from "shared/lib/rankings/vendor-icons";
 import Image from "shared/ui/base/Image";
-import { ModelIcon } from "shared/ui/icons";
 
 import css from "./RatingRow.module.scss";
 
@@ -51,7 +50,15 @@ export const RatingRow: React.FC<Prop> = ({ className, entry, columns }) => {
                      alt=""
                   />
                ) : (
-                  <ModelIcon className={css.rating_row_model_icon} />
+                  <span
+                     className={clsx(
+                        css.rating_row_model_icon,
+                        css.rating_row_model_icon_placeholder,
+                     )}
+                     aria-hidden
+                  >
+                     {entry.model.trim().charAt(0).toUpperCase()}
+                  </span>
                )}
 
                <div className={css.rating_row_model_content}>

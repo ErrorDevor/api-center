@@ -64,6 +64,14 @@
       border-radius: 0.8rem;
       background: linear-gradient(178.65deg, #ededed 7.92%, #f2f2f2 64.53%);
       object-fit: contain;
+
+      &_placeholder {
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         padding: 0;
+         @include fontInterTight(1.6rem, 2rem, 0, 600, #8a8a8a);
+      }
    }
 
    &_model_content {
