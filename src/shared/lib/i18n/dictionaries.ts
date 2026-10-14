@@ -83,6 +83,7 @@ export const en = {
             nameAsc: "Name (A-Z)",
             priceAsc: "Cheapest first",
             priceDesc: "Most expensive first",
+            newest: "Newest models first",
          },
       },
       table: {
@@ -807,6 +808,7 @@ export const ru: Dictionary = {
             nameAsc: "По названию (А-Я)",
             priceAsc: "Сначала дешёвые",
             priceDesc: "Сначала дорогие",
+            newest: "Сначала новые модели",
          },
       },
       table: {

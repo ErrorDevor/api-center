@@ -11,7 +11,7 @@ import { useTranslation } from "shared/lib/i18n";
 import Image from "shared/ui/base/Image";
 import { NextLink } from "shared/ui/base/NextLink";
 import { CatalogSearch } from "shared/ui/components/CatalogSearch";
-import { CurrencyDropdown } from "shared/ui/components/CurrencyDropdown";
+// import { CurrencyDropdown } from "shared/ui/components/CurrencyDropdown";
 import { LanguageDropdown } from "shared/ui/components/LanguageDropdown";
 import { CloseIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
@@ -105,7 +105,7 @@ export const MobileSidebar: React.FC<Props> = ({
                   <div className={css.mobile_sidebar_menu_dropdowns}>
                      <LanguageDropdown />
 
-                     <CurrencyDropdown />
+                     {/* <CurrencyDropdown /> */}
                   </div>
 
                   <Button variant="black" className={css.enter_button} onClick={handleLogin}>

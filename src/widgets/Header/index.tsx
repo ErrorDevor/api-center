@@ -10,7 +10,7 @@ import { useTranslation } from "shared/lib/i18n";
 import Image from "shared/ui/base/Image";
 import { NextLink } from "shared/ui/base/NextLink";
 import { CatalogSearch } from "shared/ui/components/CatalogSearch";
-import { CurrencyDropdown } from "shared/ui/components/CurrencyDropdown";
+// import { CurrencyDropdown } from "shared/ui/components/CurrencyDropdown";
 import { LanguageDropdown } from "shared/ui/components/LanguageDropdown";
 import { UserInfo } from "shared/ui/components/UserInfo";
 import { PlusIcon } from "shared/ui/icons";
@@ -77,7 +77,7 @@ export const Header: React.FC = () => {
 
             <LanguageDropdown />
 
-            <CurrencyDropdown />
+            {/* <CurrencyDropdown /> */}
 
             {isGroupBuysPage && (
                <Button variant="black" className={css.create_button} onClick={handleCreate}>

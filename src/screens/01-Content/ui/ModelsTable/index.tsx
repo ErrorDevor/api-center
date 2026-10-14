@@ -8,6 +8,8 @@ import { diversifyAdjacentProviders } from "screens/01-Content/lib/diversifyProv
 
 import { useIsMobile } from "shared/lib/hooks/useIsMobile";
 import { useTranslation } from "shared/lib/i18n";
+import { compareModelVersionDesc, parseModelVersion } from "shared/lib/models/modelVersion";
+import { useModelReleaseDates } from "shared/lib/models/useModelReleaseDates";
 import { useProviderPopularity } from "shared/lib/providers/popularity/useProviderPopularity";
 import { Pagination } from "shared/ui/components/Pagination";
 import { DropdownArrowIcon, SortIcon } from "shared/ui/icons";
@@ -51,6 +53,7 @@ interface Props {
 export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange, pinnedModelId }) => {
    const { t, locale } = useTranslation();
    const { getClickCount, version: popularityVersion } = useProviderPopularity();
+   const { getReleaseDate } = useModelReleaseDates();
 
    const tableRef = React.useRef<HTMLDivElement>(null);
    const bodyScrollRef = React.useRef<HTMLDivElement>(null);
@@ -105,6 +108,28 @@ export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange, pinne
                result = firstModel.reviews - secondModel.reviews;
                break;
 
+            case "newest": {
+               // Dated models first, newest date on top; undated ones (no
+               // catalog knows them) follow, ordered by the version in the id.
+               const firstDate = getReleaseDate(firstModel.canonicalModelId);
+               const secondDate = getReleaseDate(secondModel.canonicalModelId);
+
+               if (firstDate && secondDate) {
+                  result = firstDate.localeCompare(secondDate);
+               } else if (firstDate || secondDate) {
+                  result = firstDate ? 1 : -1;
+               }
+
+               if (result === 0) {
+                  result = compareModelVersionDesc(
+                     parseModelVersion(secondModel.canonicalModelId),
+                     parseModelVersion(firstModel.canonicalModelId)
+                  );
+               }
+
+               break;
+            }
+
             case "popularity":
                result =
                   getClickCount(firstModel.providerDomain) -
@@ -122,7 +147,7 @@ export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange, pinne
       return diversifyAdjacentProviders(sorted);
       // popularityVersion: re-sort when a tracked click changes the counts
       // the "popularity" sort key reads.
-   }, [models, sort, popularityVersion, getClickCount]);
+   }, [models, sort, popularityVersion, getClickCount, getReleaseDate]);
 
    // A new/re-sorted/re-filtered list makes the previous page number
    // meaningless (or out of range) — jump back to page 1.
