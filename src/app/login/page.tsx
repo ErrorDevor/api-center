@@ -1,7 +1,5 @@
-import React from "react";
-
-import { LogIn } from "screens/07-LogIn";
+import { MainScreen } from "screens/00-Onboarding/ui/Main";
 
 export default function LogInPage() {
-   return <LogIn />;
+   return <MainScreen mode="login" />;
 }

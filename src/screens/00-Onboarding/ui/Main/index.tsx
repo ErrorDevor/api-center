@@ -6,43 +6,40 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { useAuth } from "shared/lib/auth";
 import { useTranslation } from "shared/lib/i18n";
+import { SiteFooter } from "shared/ui/components/SiteFooter";
 import Image from "shared/ui/base/Image";
 import { PasswordEyeIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
 
 import css from "./MainScreen.module.scss";
 
-const MainScreenView = () => {
+interface Props {
+   mode?: "register" | "login";
+}
+
+const MainScreenView: React.FC<Props> = ({ mode = "register" }) => {
+   const isLogin = mode === "login";
    const { t } = useTranslation();
    const { mainLanding: content } = t;
    const router = useRouter();
    const searchParams = useSearchParams();
-   const { register } = useAuth();
+   const modelParam = searchParams.get("model");
+   const modelQuery = modelParam ? `?model=${encodeURIComponent(modelParam)}` : "";
+   const { register, login } = useAuth();
    const [isSubmitting, setIsSubmitting] = React.useState(false);
    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
    const [showPassword, setShowPassword] = React.useState(false);
    const [form, setForm] = React.useState({
       email: "",
-      username: "",
       password: "",
    });
 
-   const footerItems = [
-      { label: content.getStarted, href: "#register" },
-      { label: content.partners, href: "#partners" },
-      { label: content.about, href: "#about" },
-      { label: content.media, href: "#media" },
-      { label: content.docs, href: "#docs" },
-   ];
-
-   // sub2api's register endpoint takes only email + password (see
-   // RegistrationForm); the username field is kept for UX continuity.
    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       setIsSubmitting(true);
       setErrorMessage(null);
 
-      const result = await register(form.email, form.password);
+      const result = await (isLogin ? login : register)(form.email, form.password);
 
       setIsSubmitting(false);
 
@@ -113,25 +110,12 @@ const MainScreenView = () => {
                            setForm((current) => ({ ...current, email: event.target.value }))
                         }
                      />
-                     <input
-                        className={css.main_form_input}
-                        type="text"
-                        name="username"
-                        autoComplete="username"
-                        required
-                        placeholder={content.username}
-                        aria-label={content.username}
-                        value={form.username}
-                        onChange={(event) =>
-                           setForm((current) => ({ ...current, username: event.target.value }))
-                        }
-                     />
                      <div className={css.main_form_password}>
                         <input
                            className={css.main_form_input}
                            type={showPassword ? "text" : "password"}
                            name="password"
-                           autoComplete="new-password"
+                           autoComplete={isLogin ? "current-password" : "new-password"}
                            required
                            placeholder={content.password}
                            aria-label={content.password}
@@ -157,10 +141,19 @@ const MainScreenView = () => {
                         className={css.main_form_submit}
                         disabled={isSubmitting}
                      >
-                        {content.createAccount}
+                        {isLogin ? content.logIn : content.createAccount}
                         <Image.Default src="/icons/dot-arrow-white.svg" alt="" />
                      </Button>
                   </form>
+                  <p className={css.main_switch}>
+                     {isLogin ? content.noAccount : content.haveAccount}{" "}
+                     <a
+                        className={css.main_switch_link}
+                        href={`${isLogin ? "/register" : "/login"}${modelQuery}`}
+                     >
+                        {isLogin ? content.createAccount : content.logIn}
+                     </a>
+                  </p>
                </div>
 
                <div className={css.main_hero_visual}>
@@ -183,31 +176,14 @@ const MainScreenView = () => {
                />
             </section>
 
-            <footer className={css.main_footer}>
-               <nav className={css.main_footer_links} aria-label={content.footerNavigation}>
-                  {footerItems.map((item) => (
-                     <a className={css.main_footer_link} key={item.href} href={item.href}>
-                        {item.label}
-                     </a>
-                  ))}
-               </nav>
-               <div className={css.main_footer_bottom}>
-                  <span className={css.main_footer_copyright}>{content.copyright}</span>
-                  <a className={css.main_footer_policy} href="#privacy">
-                     {content.privacy}
-                  </a>
-                  <a className={css.main_footer_policy} href="#terms">
-                     {content.terms}
-                  </a>
-               </div>
-            </footer>
+            <SiteFooter />
          </div>
       </main>
    );
 };
 
-export const MainScreen = () => (
+export const MainScreen: React.FC<Props> = (props) => (
    <React.Suspense fallback={null}>
-      <MainScreenView />
+      <MainScreenView {...props} />
    </React.Suspense>
 );

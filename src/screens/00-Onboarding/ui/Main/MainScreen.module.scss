@@ -117,6 +117,16 @@
    }
 }
 
+.main_switch {
+   margin: 1.6rem 0 0;
+   @include fontInterTight(1.4rem, 2rem, -0.02em, 400, #8b8d98);
+
+   &_link {
+      color: #14132e;
+      text-decoration: underline;
+   }
+}
+
 .main_form {
    display: flex;
    flex-direction: column;
@@ -195,59 +205,6 @@
 
       img {
          margin-left: 1.6rem;
-      }
-   }
-}
-
-.main_footer {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   justify-content: center;
-   gap: 3.2rem;
-   margin-top: auto;
-   padding: 3rem 2.4rem;
-   border-top: 0.2rem solid #ebeef7;
-
-   &_links {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 6rem;
-   }
-
-   &_link {
-      @include fontInterTight(1.6rem, 2rem, -0.02em, 400, #666);
-      @include transition((color));
-
-      &:hover {
-         color: #4791ff;
-      }
-   }
-
-   &_bottom {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 4rem;
-      @include fontInterTight(1.3rem, 1.8rem, -0.02em, 400, #b1b1b1);
-   }
-
-   &_copyright {
-      display: block;
-   }
-
-   &_policy {
-      color: #b1b1b1;
-      text-decoration: none;
-      text-underline-offset: 0.3rem;
-      @include transition((color, text-decoration-color));
-
-      &:hover {
-         color: #4791ff;
-         text-decoration: underline;
       }
    }
 }
@@ -421,44 +378,4 @@
       }
    }
 
-   .main_footer {
-      width: 100%;
-      gap: 2.4rem;
-      margin-top: 0;
-      padding: 2.4rem 1.4rem 4rem;
-      border-top: 0.2rem solid #ebeef7;
-
-      &_links {
-         flex-direction: column;
-         align-items: center;
-         width: 100%;
-         gap: 1.6rem;
-      }
-
-      &_link {
-         text-align: center;
-         @include fontInterTight(1.6rem, 2.2rem, -0.01em, 400, rgba(0, 0, 0, 0.6));
-      }
-
-      &_bottom {
-         flex-direction: column;
-         align-items: center;
-         width: 100%;
-         gap: 1.6rem;
-      }
-
-      &_copyright {
-         text-align: center;
-         @include fontInterTight(1.3rem, 1.8rem, -0.01em, 400, rgba(0, 0, 0, 0.3));
-      }
-
-      &_policy {
-         text-align: center;
-         @include fontInterTight(1.3rem, 1.8rem, -0.01em, 400, rgba(0, 0, 0, 0.3));
-
-         &:hover {
-            color: #4791ff;
-         }
-      }
-   }
 }
