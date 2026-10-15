@@ -39,12 +39,12 @@ export const Header: React.FC = () => {
 
    const handleLogin = () => {
       gaTrackLoginClick();
-      router.replace("/login");
+      router.push("/login");
    };
 
    const handleSignup = () => {
       gaTrackSignupClick();
-      router.replace("/signup");
+      router.push("/register");
    };
 
    // The gateway dashboard lives outside this Next app, so a full navigation.

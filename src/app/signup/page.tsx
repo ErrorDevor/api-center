@@ -1,7 +1,12 @@
-import React from "react";
+import { redirect } from "next/navigation";
 
-import { SignUp } from "screens/06-SignUp";
+interface Props {
+   searchParams: Promise<{ model?: string }>;
+}
 
-export default function SignUpPage() {
-   return <SignUp />;
+// Registration lives on /register now; keep old /signup links working.
+export default async function SignUpPage({ searchParams }: Props) {
+   const { model } = await searchParams;
+
+   redirect(model ? `/register?model=${encodeURIComponent(model)}` : "/register");
 }
