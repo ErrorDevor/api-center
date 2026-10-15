@@ -42,7 +42,7 @@ export const BestAiPriceRow: React.FC<Prop> = ({ canonicalModelId, modelName, de
    const isAuthenticated = status === "authenticated";
    const href = isAuthenticated
       ? CABINET_URL
-      : `/signup?model=${encodeURIComponent(canonicalModelId)}`;
+      : `/register?model=${encodeURIComponent(canonicalModelId)}`;
 
    const open = () => {
       // Wait for the auth check so a click can't race it.

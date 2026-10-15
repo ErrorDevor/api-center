@@ -38,12 +38,12 @@ export const Header: React.FC = () => {
 
    const handleLogin = () => {
       gaTrackLoginClick();
-      router.replace("/login");
+      router.push("/login");
    };
 
    const handleSignup = () => {
       gaTrackSignupClick();
-      router.replace("/signup");
+      router.push("/register");
    };
 
    const handleLogout = async () => {

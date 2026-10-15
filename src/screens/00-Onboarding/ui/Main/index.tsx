@@ -2,6 +2,9 @@
 
 import React from "react";
 
+import { useRouter, useSearchParams } from "next/navigation";
+
+import { useAuth } from "shared/lib/auth";
 import { useTranslation } from "shared/lib/i18n";
 import Image from "shared/ui/base/Image";
 import { PasswordEyeIcon } from "shared/ui/icons";
@@ -9,25 +12,20 @@ import { Button } from "shared/ui/ui-kit/Button";
 
 import css from "./MainScreen.module.scss";
 
-export const MainScreen = () => {
+const MainScreenView = () => {
    const { t } = useTranslation();
    const { mainLanding: content } = t;
+   const router = useRouter();
+   const searchParams = useSearchParams();
+   const { register } = useAuth();
+   const [isSubmitting, setIsSubmitting] = React.useState(false);
+   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
    const [showPassword, setShowPassword] = React.useState(false);
    const [form, setForm] = React.useState({
       email: "",
       username: "",
       password: "",
    });
-
-   const navItems = [
-      { label: content.network, href: "#network" },
-      { label: content.pricing, href: "#pricing" },
-      { label: content.docs, href: "#docs" },
-      { label: content.ecosystem, href: "#ecosystem" },
-      { label: content.about, href: "#about" },
-      { label: content.rentNode, href: "#rent-node" },
-      { label: content.token, href: "#token" },
-   ];
 
    const footerItems = [
       { label: content.getStarted, href: "#register" },
@@ -37,45 +35,28 @@ export const MainScreen = () => {
       { label: content.docs, href: "#docs" },
    ];
 
-   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+   // sub2api's register endpoint takes only email + password (see
+   // RegistrationForm); the username field is kept for UX continuity.
+   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+      setIsSubmitting(true);
+      setErrorMessage(null);
+
+      const result = await register(form.email, form.password);
+
+      setIsSubmitting(false);
+
+      if (result.ok) {
+         const selectedModelId = searchParams.get("model");
+         router.replace(selectedModelId ? `/home/${selectedModelId}` : "/home");
+      } else {
+         setErrorMessage(result.message);
+      }
    };
 
    return (
       <main className={css.main}>
          <div className={css.main_container}>
-            <header className={css.main_header}>
-               <nav className={css.main_nav} aria-label={content.navigation}>
-                  <a className={css.main_nav_brand} href="#register">
-                     <span className={css.main_nav_logo}>
-                        <Image.Default src="/images/Logo.svg" alt="Best Ai Price" />
-                     </span>
-                     <span className={css.main_nav_brand_name}>Best Ai Price</span>
-                  </a>
-                  <div className={css.main_nav_links}>
-                     {navItems.map((item) => (
-                        <a className={css.main_nav_link} key={item.href} href={item.href}>
-                           {item.label}
-                        </a>
-                     ))}
-                  </div>
-                  <a className={css.main_nav_action} href="#register">
-                     {content.getStarted}
-                     <Image.Default src="/icons/dot-arrow.svg" alt="" />
-                  </a>
-
-                  <button
-   className={css.main_nav_menu}
-   type="button"
-   aria-label={content.navigation}
-   aria-expanded={false}
->
-   <span className={css.main_nav_menu_line} />
-   <span className={css.main_nav_menu_line} />
-   <span className={css.main_nav_menu_line} />
-</button>
-               </nav>
-            </header>
             <section className={css.main_hero} id="register">
                <div className={css.main_hero_glow} />
                <div className={css.main_hero_content}>
@@ -169,7 +150,13 @@ export const MainScreen = () => {
                            <PasswordEyeIcon className={css.main_form_password_icon} />
                         </button>
                      </div>
-                     <Button type="submit" variant="blue" className={css.main_form_submit}>
+                     {errorMessage && <p className={css.main_form_error}>{errorMessage}</p>}
+                     <Button
+                        type="submit"
+                        variant="blue"
+                        className={css.main_form_submit}
+                        disabled={isSubmitting}
+                     >
                         {content.createAccount}
                         <Image.Default src="/icons/dot-arrow-white.svg" alt="" />
                      </Button>
@@ -218,3 +205,9 @@ export const MainScreen = () => {
       </main>
    );
 };
+
+export const MainScreen = () => (
+   <React.Suspense fallback={null}>
+      <MainScreenView />
+   </React.Suspense>
+);
