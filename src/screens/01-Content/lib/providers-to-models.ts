@@ -25,7 +25,7 @@ const MISSING_DESCRIPTION: ModelDescription = { ru: "", en: "" };
 const discountFromPrice = (actualPrice: number, officialPrice: number): number | null =>
    officialPrice > 0 ? ((officialPrice - actualPrice) / officialPrice) * 100 : null;
 
-const computeDiscountPercent = (record: ProviderPriceRecord): number | null => {
+const computeRawDiscountPercent = (record: ProviderPriceRecord): number | null => {
    if (record.nativePriceUsd !== null) {
       // Not every natively-priced record has been backfilled with an official
       // price or a precomputed percent yet — null (badge hidden) rather than
@@ -71,6 +71,14 @@ const computeDiscountPercent = (record: ProviderPriceRecord): number | null => {
    // actually cheaper than official, but clamp defensively so a stray bad
    // record can't render "-5% cheaper".
    return Math.max(0, Math.round((inputDiscount + outputDiscount) / 2));
+};
+
+// A 100% discount is impossible (it would mean a free model) and always comes
+// from bad price data, so the badge is hidden rather than shown.
+const computeDiscountPercent = (record: ProviderPriceRecord): number | null => {
+   const percent = computeRawDiscountPercent(record);
+
+   return percent !== null && percent >= 100 ? null : percent;
 };
 
 export const toModelItems = (
