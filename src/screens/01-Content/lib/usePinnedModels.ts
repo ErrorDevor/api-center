@@ -45,8 +45,17 @@ export const usePinnedModels = (
    return React.useMemo(() => {
       const firstListing = new Map<string, ModelItem>();
 
+      const hasOfficialPrice = (model: ModelItem): boolean =>
+         model.officialNativePriceUsd !== null ||
+         (model.officialInputPrice !== null && model.officialOutputPrice !== null);
+
+      // Prefer a listing that carries official prices — not every reseller
+      // record has them backfilled, and the BestAIPrice row's discount is
+      // computed from them.
       for (const model of models) {
-         if (!firstListing.has(model.canonicalModelId)) {
+         const current = firstListing.get(model.canonicalModelId);
+
+         if (!current || (!hasOfficialPrice(current) && hasOfficialPrice(model))) {
             firstListing.set(model.canonicalModelId, model);
          }
       }

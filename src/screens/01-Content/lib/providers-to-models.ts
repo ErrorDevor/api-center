@@ -40,7 +40,7 @@ const computeRawDiscountPercent = (record: ProviderPriceRecord): number | null =
          return null;
       }
 
-      return Math.max(0, Math.round(nativeDiscount));
+      return Math.round(nativeDiscount);
    }
 
    // Natively-priced records are handled above; anything left without a full
@@ -67,18 +67,56 @@ const computeRawDiscountPercent = (record: ProviderPriceRecord): number | null =
       return null;
    }
 
-   // The backend pipeline is only supposed to publish listings that are
-   // actually cheaper than official, but clamp defensively so a stray bad
-   // record can't render "-5% cheaper".
-   return Math.max(0, Math.round((inputDiscount + outputDiscount) / 2));
+   return Math.round((inputDiscount + outputDiscount) / 2);
 };
 
-// A 100% discount is impossible (it would mean a free model) and always comes
-// from bad price data, so the badge is hidden rather than shown.
-const computeDiscountPercent = (record: ProviderPriceRecord): number | null => {
-   const percent = computeRawDiscountPercent(record);
+// A real reseller discount is strictly below 100% (that would be free) and
+// not negative (that would be pricier than official); anything outside that
+// range is bad price data, so the whole listing is dropped, not just its badge.
+const isDiscountInRange = (percent: number | null): boolean =>
+   percent === null || (percent >= 0 && percent < 100);
 
-   return percent !== null && percent >= 100 ? null : percent;
+// Discount of BestAIPrice's own gateway price against the model's official
+// price. Null (badge hidden) when there's nothing to compare against, when
+// BestAIPrice isn't actually cheaper, or for an impossible 100%+ discount.
+export const computeGatewayDiscountPercent = (
+   pricing: {
+      inputPrice: number | null;
+      outputPrice: number | null;
+      nativePriceUsd: number | null;
+   },
+   official: {
+      officialInputPrice: number | null;
+      officialOutputPrice: number | null;
+      officialNativePriceUsd: number | null;
+   }
+): number | null => {
+   let percent: number | null = null;
+
+   if (pricing.nativePriceUsd !== null) {
+      percent =
+         official.officialNativePriceUsd !== null
+            ? discountFromPrice(pricing.nativePriceUsd, official.officialNativePriceUsd)
+            : null;
+   } else if (
+      pricing.inputPrice !== null &&
+      pricing.outputPrice !== null &&
+      official.officialInputPrice !== null &&
+      official.officialOutputPrice !== null
+   ) {
+      const input = discountFromPrice(pricing.inputPrice, official.officialInputPrice);
+      const output = discountFromPrice(pricing.outputPrice, official.officialOutputPrice);
+
+      percent = input !== null && output !== null ? (input + output) / 2 : null;
+   }
+
+   if (percent === null) {
+      return null;
+   }
+
+   const rounded = Math.round(percent);
+
+   return rounded > 0 && rounded < 100 ? rounded : null;
 };
 
 export const toModelItems = (
@@ -89,31 +127,36 @@ export const toModelItems = (
    // per reseller), so index the catalog once instead of scanning it per row.
    const catalogById = new Map(catalog.map((entry) => [entry.canonicalModelId, entry]));
 
-   return records.map((record): ModelItem => {
-      const catalogEntry = catalogById.get(record.canonicalModelId);
-      const description: ModelDescription = catalogEntry
-         ? { ru: catalogEntry.descriptionRu, en: catalogEntry.descriptionEn }
-         : MISSING_DESCRIPTION;
+   return records
+      .filter((record) => isDiscountInRange(computeRawDiscountPercent(record)))
+      .map((record): ModelItem => {
+         const catalogEntry = catalogById.get(record.canonicalModelId);
+         const description: ModelDescription = catalogEntry
+            ? { ru: catalogEntry.descriptionRu, en: catalogEntry.descriptionEn }
+            : MISSING_DESCRIPTION;
 
-      return {
-         id: `${record.providerDomain}__${record.canonicalModelId}`,
-         name: record.modelName,
-         canonicalModelId: record.canonicalModelId,
-         description,
-         inputPrice: record.inputPriceUsdPer1m,
-         outputPrice: record.outputPriceUsdPer1m,
-         nativePriceUsd: record.nativePriceUsd,
-         nativePriceUnit: record.nativePriceUnit,
-         discountPercent: computeDiscountPercent(record),
-         paymentMethods: record.paymentMethods,
-         provider: record.providerName,
-         providerUrl: record.providerUrl,
-         providerUrlRu: record.providerUrlRu,
-         providerUrlEn: record.providerUrlEn,
-         providerDomain: record.providerDomain,
-         reviews: PLACEHOLDER_REVIEWS,
-         reports: PLACEHOLDER_REPORTS,
-         domainAgeDays: record.domainAgeDays,
-      };
-   });
+         return {
+            id: `${record.providerDomain}__${record.canonicalModelId}`,
+            name: record.modelName,
+            canonicalModelId: record.canonicalModelId,
+            description,
+            inputPrice: record.inputPriceUsdPer1m,
+            outputPrice: record.outputPriceUsdPer1m,
+            nativePriceUsd: record.nativePriceUsd,
+            nativePriceUnit: record.nativePriceUnit,
+            discountPercent: computeRawDiscountPercent(record),
+            officialInputPrice: record.officialInputPriceUsdPer1m,
+            officialOutputPrice: record.officialOutputPriceUsdPer1m,
+            officialNativePriceUsd: record.officialNativePriceUsd,
+            paymentMethods: record.paymentMethods,
+            provider: record.providerName,
+            providerUrl: record.providerUrl,
+            providerUrlRu: record.providerUrlRu,
+            providerUrlEn: record.providerUrlEn,
+            providerDomain: record.providerDomain,
+            reviews: PLACEHOLDER_REVIEWS,
+            reports: PLACEHOLDER_REPORTS,
+            domainAgeDays: record.domainAgeDays,
+         };
+      });
 };

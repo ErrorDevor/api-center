@@ -2,6 +2,9 @@
 
 import React from "react";
 
+import type { ModelItem } from "../../lib/content.data";
+import { computeGatewayDiscountPercent } from "../../lib/providers-to-models";
+
 import { useAuth } from "shared/lib/auth";
 import { CABINET_URL } from "shared/lib/gatewayPricing/cabinet";
 import { useGatewayPricing } from "shared/lib/gatewayPricing/useGatewayPricing";
@@ -9,6 +12,10 @@ import { useTranslation } from "shared/lib/i18n";
 import { useProviderCommentSummary } from "shared/lib/providerComments/useProviderCommentSummary";
 import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 import Image from "shared/ui/base/Image";
+import {
+   DiscountTooltip,
+   type DiscountTooltipPosition,
+} from "shared/ui/components/DiscountTooltip";
 import { ModelIcon } from "shared/ui/icons";
 
 // Deliberately reuses ModelRow's styles and markup so the pinned row is
@@ -18,21 +25,83 @@ import css from "../ModelRow/ModelRow.module.scss";
 const PROVIDER_DOMAIN = "bestaiprice.com";
 const PROVIDER_NAME = "BestAIPrice";
 
+const DISCOUNT_TOOLTIP_WIDTH = 200;
+const DISCOUNT_TOOLTIP_HEIGHT = 70;
+const TOOLTIP_GAP = 12;
+const VIEWPORT_PADDING = 8;
+
 interface Prop {
    canonicalModelId: string;
    modelName: string;
    description?: string;
+   // Source of the official prices the discount is computed against.
+   model: ModelItem;
 }
 
 // The pinned BestAIPrice row: looks like any other row, but a click
 // anywhere on it goes to signup (or the keys page when signed in).
-export const BestAiPriceRow: React.FC<Prop> = ({ canonicalModelId, modelName, description }) => {
+export const BestAiPriceRow: React.FC<Prop> = ({
+   canonicalModelId,
+   modelName,
+   description,
+   model,
+}) => {
    const { t } = useTranslation();
    const { status } = useAuth();
    const { getPricingForModel } = useGatewayPricing();
    const { summary } = useProviderCommentSummary(PROVIDER_DOMAIN);
 
    const pricing = getPricingForModel(canonicalModelId);
+
+   const discountId = React.useId();
+   const discountRef = React.useRef<HTMLSpanElement>(null);
+   const [isDiscountOpen, setIsDiscountOpen] = React.useState(false);
+   const [discountPosition, setDiscountPosition] = React.useState<DiscountTooltipPosition>({
+      left: 0,
+      top: 0,
+   });
+
+   const updateDiscountPosition = React.useCallback(() => {
+      const element = discountRef.current;
+
+      if (!element) {
+         return;
+      }
+
+      const rect = element.getBoundingClientRect();
+      const leftPosition = rect.left - DISCOUNT_TOOLTIP_WIDTH - TOOLTIP_GAP;
+      const maxLeft = Math.max(
+         VIEWPORT_PADDING,
+         window.innerWidth - DISCOUNT_TOOLTIP_WIDTH - VIEWPORT_PADDING
+      );
+      const desiredTop = rect.top + rect.height / 2 - DISCOUNT_TOOLTIP_HEIGHT / 2;
+      const maxTop = Math.max(
+         VIEWPORT_PADDING,
+         window.innerHeight - DISCOUNT_TOOLTIP_HEIGHT - VIEWPORT_PADDING
+      );
+
+      setDiscountPosition({
+         left:
+            leftPosition >= VIEWPORT_PADDING
+               ? leftPosition
+               : Math.min(rect.right + TOOLTIP_GAP, maxLeft),
+         top: Math.min(Math.max(VIEWPORT_PADDING, desiredTop), maxTop),
+      });
+   }, []);
+
+   React.useEffect(() => {
+      if (!isDiscountOpen) {
+         return;
+      }
+
+      window.addEventListener("resize", updateDiscountPosition);
+      window.addEventListener("scroll", updateDiscountPosition, true);
+
+      return () => {
+         window.removeEventListener("resize", updateDiscountPosition);
+         window.removeEventListener("scroll", updateDiscountPosition, true);
+      };
+   }, [isDiscountOpen, updateDiscountPosition]);
 
    // No row while pricing is loading (undefined) or the model isn't offered (null).
    if (!pricing) {
@@ -52,6 +121,15 @@ export const BestAiPriceRow: React.FC<Prop> = ({ canonicalModelId, modelName, de
 
       window.location.assign(href);
    };
+
+   const discountPercent = computeGatewayDiscountPercent(pricing, model);
+
+   const openDiscount = () => {
+      updateDiscountPosition();
+      setIsDiscountOpen(true);
+   };
+
+   const closeDiscount = () => setIsDiscountOpen(false);
 
    const vendorIcon = getVendorIcon(getVendorId(canonicalModelId));
    const reviewsCount = summary?.totalComments ?? 0;
@@ -137,6 +215,33 @@ export const BestAiPriceRow: React.FC<Prop> = ({ canonicalModelId, modelName, de
                   </>
                )}
             </div>
+
+            {discountPercent !== null && (
+               <>
+                  <span
+                     ref={discountRef}
+                     className={css.discount}
+                     tabIndex={0}
+                     aria-describedby={isDiscountOpen ? discountId : undefined}
+                     onMouseEnter={openDiscount}
+                     onMouseLeave={closeDiscount}
+                     onFocus={openDiscount}
+                     onBlur={closeDiscount}
+                  >
+                     <span className={css.discount_text}>
+                        {t.models.discount.replace("{percent}", String(discountPercent))}
+                     </span>
+                  </span>
+
+                  {isDiscountOpen && (
+                     <DiscountTooltip
+                        id={discountId}
+                        text={t.models.discountTooltip}
+                        position={discountPosition}
+                     />
+                  )}
+               </>
+            )}
          </div>
 
          <div className={css.table_cell}>

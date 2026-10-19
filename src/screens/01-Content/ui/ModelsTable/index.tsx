@@ -377,6 +377,7 @@ export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange, pinne
                            key={id}
                            canonicalModelId={id}
                            modelName={model.name}
+                           model={model}
                            description={model.description[locale]}
                         />
                      ))}

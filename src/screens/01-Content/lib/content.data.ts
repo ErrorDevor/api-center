@@ -29,6 +29,12 @@ export interface ModelItem {
    // computeDiscountPercent) — the discount badge is hidden entirely rather
    // than showing a misleading "0% cheaper".
    discountPercent: number | null;
+   // Official (undiscounted) prices of the model — the same for every
+   // reseller listing of it; lets the pinned BestAIPrice row compute its own
+   // discount against them.
+   officialInputPrice: number | null;
+   officialOutputPrice: number | null;
+   officialNativePriceUsd: number | null;
    paymentMethods: string[];
    provider: ProviderName;
    // Reseller's site — the Provider column links out here. Use
