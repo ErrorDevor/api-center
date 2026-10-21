@@ -54,6 +54,7 @@ export const en = {
       forum: "Forum",
       discussions: "Discussions",
       liderTable: "Leaderboard",
+      aiProviders: "AI Providers",
       modelTypes: {
          allTypes: "All Types",
          images: "Images",
@@ -812,6 +813,7 @@ export const ru: Dictionary = {
       showMore: "Показать ещё",
       showLess: "Скрыть",
       liderTable: "Таблица лидеров",
+      aiProviders: "AI-провайдеры",
       modelTypeTitle: "Тип модели",
       forum: "Форум",
       discussions: "Обсуждения",

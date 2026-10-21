@@ -17,7 +17,7 @@ import { gaTrackFilterApply } from "shared/lib/analytics/ga";
 import { useTranslation } from "shared/lib/i18n";
 import { type ModelContentType, modelMatchesContentType } from "shared/lib/models/modelType";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
-import { DiscussionsIcon, DropdownArrowIcon, LeaderboardIcon } from "shared/ui/icons";
+import { DiscussionsIcon, DropdownArrowIcon, LeaderboardIcon, TableIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
 
 import { ProviderAccordion } from "./ProviderAccordion";
@@ -163,6 +163,7 @@ export const SidebarContent: React.FC<Props> = ({
    const route = useRouter();
    const pathname = usePathname();
    const isLeaderboardActive = pathname === "/leaderboard" || pathname.startsWith("/leaderboard/");
+   const isAiProvidersActive = pathname === "/ai-providers" || pathname.startsWith("/ai-providers/");
    const isDiscussionsActive = pathname === "/discussions" || pathname.startsWith("/discussions/");
    const [isDiscussionsHovered, setIsDiscussionsHovered] = React.useState(false);
 
@@ -235,6 +236,21 @@ export const SidebarContent: React.FC<Props> = ({
                >
                   <LeaderboardIcon />
                   {t.sidebar.liderTable}
+               </Button>
+
+               <Button
+                  variant="grey"
+                  className={clsx(
+                     css.sidebar_forum_button,
+                     isAiProvidersActive && css.sidebar_forum_button_active
+                  )}
+                  aria-current={isAiProvidersActive ? "page" : undefined}
+                  onClick={() => {
+                     route.push("/ai-providers");
+                  }}
+               >
+                  <TableIcon />
+                  {t.sidebar.aiProviders}
                </Button>
             </div>
 
