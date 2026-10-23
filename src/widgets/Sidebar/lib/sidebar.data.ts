@@ -10,12 +10,12 @@ export type ModelBadge = "new" | "top";
 export const ALL_MODEL_TYPES_ID = "allTypes";
 
 const MODEL_TYPE_ORDER: ModelContentType[] = [
+   "coding",
+   "text",
+   "chat",
    "images",
    "search",
    "audioVideo",
-   "text",
-   "chat",
-   "coding",
 ];
 
 /**
