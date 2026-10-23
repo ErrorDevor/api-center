@@ -1,6 +1,6 @@
 import type { ListData, ModelTypeTranslationKey } from "./sidebar.types";
 
-import { getModelContentTypes, type ModelContentType } from "shared/lib/models/modelType";
+import type { ModelContentType } from "shared/lib/models/modelType";
 import type { ProviderPriceRecord } from "shared/lib/providers/types";
 
 export type SidebarMode = "api" | "group-buys";
@@ -9,7 +9,14 @@ export type ModelBadge = "new" | "top";
 
 export const ALL_MODEL_TYPES_ID = "allTypes";
 
-const MODEL_TYPE_ORDER: ModelContentType[] = ["images", "search", "audioVideo", "text", "chat"];
+const MODEL_TYPE_ORDER: ModelContentType[] = [
+   "images",
+   "search",
+   "audioVideo",
+   "text",
+   "chat",
+   "coding",
+];
 
 /**
  * Builds the Sidebar's "Model Type" list (see modelTypeTitle) straight from
@@ -21,11 +28,14 @@ const MODEL_TYPE_ORDER: ModelContentType[] = ["images", "search", "audioVideo", 
  * Chat, Text, Search, and Images all at once), so these don't sum to "All
  * Types".
  */
-export const buildModelTypeList = (records: ProviderPriceRecord[]): ListData[] => {
+export const buildModelTypeList = (
+   records: ProviderPriceRecord[],
+   getContentTypes: (canonicalModelId: string) => ModelContentType[]
+): ListData[] => {
    const counts = new Map<ModelContentType, number>();
 
    for (const record of records) {
-      for (const contentType of getModelContentTypes(record.canonicalModelId)) {
+      for (const contentType of getContentTypes(record.canonicalModelId)) {
          counts.set(contentType, (counts.get(contentType) ?? 0) + 1);
       }
    }

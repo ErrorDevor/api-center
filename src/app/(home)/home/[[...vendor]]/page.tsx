@@ -19,7 +19,7 @@ export const dynamic = "force-dynamic";
 
 // /home -> nothing selected, /home/[vendor] -> that API's models,
 // /home/[vendor]/[model] -> one model. The Sidebar's "Model Type" filter
-// rides along as `?type=<category>` (images/search/audioVideo/text/chat) so
+// rides along as `?type=<category>` (images/search/audioVideo/text/chat/coding) so
 // each category is its own shareable link too. All selection state lives in
 // the URL rather than only in React state.
 interface Props {

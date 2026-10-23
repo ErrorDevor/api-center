@@ -62,6 +62,7 @@ export const en = {
          audioVideo: "Audio & Video",
          text: "Text",
          chat: "Chat",
+         coding: "Coding",
       },
    },
 
@@ -825,6 +826,7 @@ export const ru: Dictionary = {
          audioVideo: "Аудио и видео",
          text: "Текст",
          chat: "Чат",
+         coding: "Кодинг",
       },
    },
 

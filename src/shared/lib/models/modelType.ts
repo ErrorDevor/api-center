@@ -5,7 +5,7 @@
 // It's a heuristic reading of the catalog as it exists today, not backend
 // truth, and will misclassify a model whose name doesn't match any pattern
 // here.
-export type ModelContentType = "images" | "search" | "audioVideo" | "text" | "chat";
+export type ModelContentType = "images" | "search" | "audioVideo" | "text" | "chat" | "coding";
 
 // Every ModelContentType as a runtime list — lets callers that get an
 // untrusted string (e.g. the /home `?type=` query param) check it's a real
@@ -16,6 +16,7 @@ export const MODEL_CONTENT_TYPES: readonly ModelContentType[] = [
    "audioVideo",
    "text",
    "chat",
+   "coding",
 ];
 
 export const isModelContentType = (value: string | null | undefined): value is ModelContentType =>
@@ -42,23 +43,41 @@ const AUDIO_VIDEO_PATTERN =
 // A model explicitly branded as a search product (e.g. Perplexity's
 // "sonar" line) rather than a general chat model that merely has a search
 // tool available.
-const SEARCH_ONLY_PATTERN = /search|sonar|grounding/;
+const SEARCH_ONLY_PATTERN = /\bsearch\b|sonar|grounding/;
 
 // Non-conversational text utility models (as opposed to the general chat
 // assistants covered by the "general-purpose" fallback below).
 const TEXT_ONLY_PATTERN = /embed|rerank|moderation|completion|\bbase\b/;
 
-// Every general-purpose LLM's tag set — see the note above.
-const GENERAL_PURPOSE_TYPES: ModelContentType[] = ["chat", "text", "search", "images"];
+// Code-specialised models ("qwen3-coder", "gpt-5.1-codex", "devstral",
+// "codestral", "kimi-k2.7-code") that no catalog files under programming
+// yet. The main signal is OpenRouter's own "programming" category (hints.coding);
+// this only backfills by name. Descriptions are deliberately not used — they
+// call general models "great at coding" too.
+const CODING_PATTERN = /code|coder|codex|codestral|devstral|\bswe\b|-build\b/;
 
-export const getModelContentTypes = (canonicalModelId: string): ModelContentType[] => {
+// What a public catalog (see modelCapabilities.action) knows about a model.
+// Optional: models it doesn't list fall back to the name patterns alone.
+interface ModelCapabilityHints {
+   out: string[];
+   search: boolean;
+   coding: boolean;
+}
+
+export const getModelContentTypes = (
+   canonicalModelId: string,
+   hints?: ModelCapabilityHints
+): ModelContentType[] => {
    const slug = canonicalModelId.toLowerCase();
 
-   if (IMAGE_ONLY_PATTERN.test(slug)) {
+   if (hints?.out.includes("image") || IMAGE_ONLY_PATTERN.test(slug)) {
       return ["images"];
    }
 
-   if (AUDIO_VIDEO_PATTERN.test(slug)) {
+   if (
+      hints?.out.some((modality) => modality === "video" || modality === "audio") ||
+      AUDIO_VIDEO_PATTERN.test(slug)
+   ) {
       return ["audioVideo"];
    }
 
@@ -66,14 +85,28 @@ export const getModelContentTypes = (canonicalModelId: string): ModelContentType
       return ["search"];
    }
 
-   if (TEXT_ONLY_PATTERN.test(slug)) {
+   if (TEXT_ONLY_PATTERN.test(slug) || hints?.out.includes("embeddings")) {
       return ["text"];
    }
 
-   return GENERAL_PURPOSE_TYPES;
+   // A general-purpose LLM: Chat and Text, plus Search when it has built-in
+   // web search and Coding when it is a code-specialised model. Reading
+   // images is input, not a generated type, so it no longer tags "images".
+   const types: ModelContentType[] = ["chat", "text"];
+
+   if (hints?.search) {
+      types.push("search");
+   }
+
+   if (hints?.coding || CODING_PATTERN.test(slug)) {
+      types.push("coding");
+   }
+
+   return types;
 };
 
 export const modelMatchesContentType = (
    canonicalModelId: string,
-   contentType: ModelContentType
-): boolean => getModelContentTypes(canonicalModelId).includes(contentType);
+   contentType: ModelContentType,
+   hints?: ModelCapabilityHints
+): boolean => getModelContentTypes(canonicalModelId, hints).includes(contentType);

@@ -19,7 +19,8 @@ import { ModelsTable } from "./ui/ModelsTable";
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
-import { type ModelContentType, modelMatchesContentType } from "shared/lib/models/modelType";
+import type { ModelContentType } from "shared/lib/models/modelType";
+import { useModelContentTypes } from "shared/lib/models/useModelCapabilities";
 import { useModelCatalog } from "shared/lib/models/useModelCatalog";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
 import { getVendorDisplayName, getVendorId } from "shared/lib/providers/vendors";
@@ -68,6 +69,7 @@ export const Content: React.FC<Prop> = ({
    const { records } = useProviderRecords();
    const { entries: modelCatalog } = useModelCatalog();
    const { entries: vendorDescriptions } = useVendorDescriptions();
+   const { getContentTypes } = useModelContentTypes();
 
    const models = React.useMemo(() => toModelItems(records, modelCatalog), [records, modelCatalog]);
 
@@ -99,7 +101,7 @@ export const Content: React.FC<Prop> = ({
 
       if (selectedModelType) {
          result = result.filter((model) =>
-            modelMatchesContentType(model.canonicalModelId, selectedModelType as ModelContentType)
+            getContentTypes(model.canonicalModelId).includes(selectedModelType as ModelContentType)
          );
       }
 
@@ -133,6 +135,7 @@ export const Content: React.FC<Prop> = ({
       selectedModelType,
       selectedSearchQuery,
       activeTab,
+      getContentTypes,
    ]);
    const [isDescriptionExpanded, setIsDescriptionExpanded] = React.useState(false);
    const descriptionRef = React.useRef<HTMLParagraphElement>(null);

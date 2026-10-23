@@ -15,7 +15,8 @@ import clsx from "clsx";
 
 import { gaTrackFilterApply } from "shared/lib/analytics/ga";
 import { useTranslation } from "shared/lib/i18n";
-import { type ModelContentType, modelMatchesContentType } from "shared/lib/models/modelType";
+import type { ModelContentType } from "shared/lib/models/modelType";
+import { useModelContentTypes } from "shared/lib/models/useModelCapabilities";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
 import { DiscussionsIcon, DropdownArrowIcon, LeaderboardIcon, TableIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
@@ -59,8 +60,9 @@ export const SidebarContent: React.FC<Props> = ({
 }) => {
    const { t } = useTranslation();
    const { records } = useProviderRecords();
+   const { getContentTypes } = useModelContentTypes();
 
-   const modelTypeList = React.useMemo(() => buildModelTypeList(records), [records]);
+   const modelTypeList = React.useMemo(() => buildModelTypeList(records, getContentTypes), [records, getContentTypes]);
 
    const isControlled = onSelectVendor !== undefined;
    const isModelTypeControlled = onSelectModelType !== undefined;
@@ -90,13 +92,12 @@ export const SidebarContent: React.FC<Props> = ({
             activeModelType === ALL_MODEL_TYPES_ID
                ? records
                : records.filter((record) =>
-                    modelMatchesContentType(
-                       record.canonicalModelId,
+                    getContentTypes(record.canonicalModelId).includes(
                        activeModelType as ModelContentType
                     )
                  )
          ),
-      [records, activeModelType]
+      [records, activeModelType, getContentTypes]
    );
 
    const visibleProviders =
