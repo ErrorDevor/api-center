@@ -2,7 +2,7 @@
    display: grid;
    grid-template-columns:
       var(--column-1)
-      var(--column-2)
+      minmax(var(--prices-column-min), var(--column-2))
       var(--column-3)
       var(--column-4)
       var(--column-5);
@@ -144,8 +144,8 @@
    display: flex;
    align-items: center;
    justify-content: center;
-   min-width: 0;
-   flex-shrink: 1;
+   min-width: max-content;
+   flex-shrink: 0;
    padding: 0.7rem;
    white-space: nowrap;
    border-radius: 10rem;
@@ -172,10 +172,7 @@
 }
 
 .discount_text {
-   min-width: 0;
-   overflow: hidden;
    white-space: nowrap;
-   text-overflow: ellipsis;
 }
 
 .tags {

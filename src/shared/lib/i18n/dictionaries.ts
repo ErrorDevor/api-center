@@ -35,7 +35,7 @@ export const en = {
    },
 
    models: {
-      discount: "{percent}% cheaper",
+      discount: "-{percent}%",
       discountTooltip: "How much cheaper this provider sells than the official API price",
    },
 
@@ -798,7 +798,7 @@ export const ru: Dictionary = {
    },
 
    models: {
-      discount: "На {percent}% дешевле",
+      discount: "-{percent}%",
       discountTooltip: "Насколько этот поставщик продаёт дешевле официальной цены API",
    },
 
