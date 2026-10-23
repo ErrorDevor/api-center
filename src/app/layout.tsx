@@ -5,6 +5,8 @@ import { Inter_Tight } from "next/font/google";
 
 import { GoogleAnalytics } from "@next/third-parties/google";
 
+import { SITE_URL } from "shared/lib/seo/siteUrl";
+
 import { Providers } from "./providers";
 
 const GA_MEASUREMENT_ID = "G-DS3V7S0NC9";
@@ -17,6 +19,7 @@ const interTight = Inter_Tight({
 });
 
 export const metadata: Metadata = {
+   metadataBase: new URL(SITE_URL),
    title: "APIcenter",
    description: "APIcenter",
    icons: {
