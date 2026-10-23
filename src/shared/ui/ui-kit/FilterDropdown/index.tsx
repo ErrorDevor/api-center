@@ -80,6 +80,9 @@ export interface FilterDropdownConfig {
    priceStep: number;
    // Defaults to hidden (the catalog has no seat availability).
    showStatus?: boolean;
+   // Both default to shown (group-buys); the catalog hides them.
+   showSearch?: boolean;
+   showPayment?: boolean;
    data: FilterTypeData;
    value: FilterTypeValue;
    getResultCount: (value: FilterTypeValue) => number;
@@ -134,6 +137,8 @@ export const FilterDropdown: React.FC<Prop> = ({ className, name, variant = "api
                   priceMax={config.priceMax}
                   priceStep={config.priceStep}
                   showStatus={config.showStatus ?? false}
+                  showSearch={config.showSearch ?? true}
+                  showPayment={config.showPayment ?? true}
                   initialValue={config.value}
                   getResultCount={config.getResultCount}
                   onApply={config.onApply}

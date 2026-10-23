@@ -56,6 +56,8 @@ interface Prop {
    priceMax?: number;
    priceStep?: number;
    showStatus?: boolean;
+   showSearch?: boolean;
+   showPayment?: boolean;
    initialValue?: FilterTypeValue;
    // Number of results the current selection would show — the "Show" button
    // reads it. Without it the button counts the selected items instead.
@@ -74,6 +76,8 @@ export const FilterType: React.FC<Prop> = ({
    priceMax = MAX_PRICE,
    priceStep = PRICE_STEP,
    showStatus = true,
+   showSearch = true,
+   showPayment = true,
    initialValue,
    getResultCount,
    onApply,
@@ -202,12 +206,14 @@ export const FilterType: React.FC<Prop> = ({
             <div className={css.account_type_top}>
                <h6>{title ?? t.filterDropdown.title}</h6>
 
-               <Search
-                  placeholder={searchPlaceholder}
-                  className={css.search_filter}
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-               />
+               {showSearch && (
+                  <Search
+                     placeholder={searchPlaceholder}
+                     className={css.search_filter}
+                     value={query}
+                     onChange={(event) => setQuery(event.target.value)}
+                  />
+               )}
 
                <ul className={css.ai_type_list}>
                   {visibleData.map((group) => (
@@ -314,20 +320,24 @@ export const FilterType: React.FC<Prop> = ({
                </>
             )}
 
-            <div className={css.divider} />
+            {showPayment && (
+               <>
+                  <div className={css.divider} />
 
-            <div className={css.filter_block}>
-               <p>{t.filterDropdown.payment}</p>
+                  <div className={css.filter_block}>
+                     <p>{t.filterDropdown.payment}</p>
 
-               <Button
-                  type="button"
-                  variant="grey"
-                  className={css.choose_payments_button}
-                  onClick={handleOpenPaymentModal}
-               >
-                  {paymentButtonLabel}
-               </Button>
-            </div>
+                     <Button
+                        type="button"
+                        variant="grey"
+                        className={css.choose_payments_button}
+                        onClick={handleOpenPaymentModal}
+                     >
+                        {paymentButtonLabel}
+                     </Button>
+                  </div>
+               </>
+            )}
 
             <div className={css.divider} />
 

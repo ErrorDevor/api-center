@@ -258,6 +258,8 @@ export const Content: React.FC<Prop> = ({
       priceLabel: t.filterDropdown.catalogPrice,
       priceMax: priceCeiling,
       priceStep,
+      showSearch: false,
+      showPayment: false,
       data: filterGroups,
       value: filterValue,
       getResultCount: getFilterResultCount,
