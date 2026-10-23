@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
-import { KNOWN_VENDOR_IDS, VENDOR_DISPLAY_NAMES } from "shared/lib/providers/vendors";
+import { parseProviderPriceRecords } from "shared/lib/providers/types";
+import { getVendorId } from "shared/lib/providers/vendors";
 import { SITE_URL } from "shared/lib/seo/siteUrl";
 
 type ChangeFrequency = NonNullable<MetadataRoute.Sitemap[number]["changeFrequency"]>;
@@ -21,40 +22,106 @@ const STATIC_PATHS: Array<{
    { path: "/discussions", priority: 0.6, changeFrequency: "daily" },
 ];
 
-// Every model vendor the app knows about (the fixed sidebar list plus the
-// ones that currently only carry a display name). Both /home and
-// /group-buys take a `/[vendor]` segment that filters to that vendor, so
-// each is its own shareable, indexable URL.
-const VENDOR_IDS = Array.from(
-   new Set([...KNOWN_VENDOR_IDS, ...Object.keys(VENDOR_DISPLAY_NAMES)])
-);
+// Same feed the catalog reads in the browser (the daily parser's
+// providers.json). Only an absolute URL can be fetched on the server; with
+// the relative dev default the sitemap just lists the static pages.
+const PROVIDERS_JSON_URL = process.env.NEXT_PUBLIC_PROVIDERS_JSON_URL ?? "";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-   const lastModified = new Date();
+// Regenerate hourly rather than on every request — the feed itself only
+// changes when the parser runs.
+export const revalidate = 3600;
+
+const loadRecords = async () => {
+   if (!/^https?:\/\//.test(PROVIDERS_JSON_URL)) {
+      return [];
+   }
+
+   try {
+      const response = await fetch(PROVIDERS_JSON_URL, { next: { revalidate } });
+
+      return response.ok ? parseProviderPriceRecords(await response.json()) : [];
+   } catch {
+      return [];
+   }
+};
+
+// Latest parse date per key, so each URL's lastmod is when its newest offer
+// was actually checked rather than "now".
+const trackLatest = (latest: Map<string, Date>, key: string, checkedAt: string) => {
+   const date = new Date(checkedAt);
+
+   if (Number.isNaN(date.getTime())) {
+      return;
+   }
+
+   const current = latest.get(key);
+
+   if (!current || date > current) {
+      latest.set(key, date);
+   }
+};
+
+const encodePath = (path: string) => path.split("/").map(encodeURIComponent).join("/");
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+   const records = await loadRecords();
+
+   // Built from records only, so a vendor/model/provider with no offers
+   // never gets a URL (no empty categories).
+   const vendors = new Map<string, Date>();
+   const models = new Map<string, Date>();
+   const providers = new Map<string, Date>();
+
+   for (const record of records) {
+      trackLatest(vendors, getVendorId(record.canonicalModelId), record.lastCheckedAt);
+      trackLatest(models, record.canonicalModelId, record.lastCheckedAt);
+      trackLatest(providers, record.providerDomain, record.lastCheckedAt);
+   }
+
+   const latestOverall = [...vendors.values()].reduce<Date | undefined>(
+      (max, date) => (!max || date > max ? date : max),
+      undefined
+   );
 
    const staticEntries: MetadataRoute.Sitemap = STATIC_PATHS.map(
       ({ path, priority, changeFrequency }) => ({
          url: `${SITE_URL}${path}`,
-         lastModified,
+         lastModified: latestOverall,
          changeFrequency,
          priority,
       })
    );
 
-   const vendorEntries: MetadataRoute.Sitemap = VENDOR_IDS.flatMap((vendorId) => [
+   const vendorEntries: MetadataRoute.Sitemap = [...vendors].flatMap(([vendorId, lastModified]) => [
       {
-         url: `${SITE_URL}/home/${vendorId}`,
+         url: `${SITE_URL}/home/${encodeURIComponent(vendorId)}`,
          lastModified,
          changeFrequency: "daily",
          priority: 0.6,
       },
       {
-         url: `${SITE_URL}/group-buys/${vendorId}`,
+         url: `${SITE_URL}/group-buys/${encodeURIComponent(vendorId)}`,
          lastModified,
          changeFrequency: "daily",
          priority: 0.5,
       },
    ]);
 
-   return [...staticEntries, ...vendorEntries];
+   const modelEntries: MetadataRoute.Sitemap = [...models].map(([modelId, lastModified]) => ({
+      url: `${SITE_URL}/home/${encodePath(modelId)}`,
+      lastModified,
+      changeFrequency: "daily",
+      priority: 0.5,
+   }));
+
+   const providerEntries: MetadataRoute.Sitemap = [...providers].map(
+      ([domain, lastModified]) => ({
+         url: `${SITE_URL}/reviews?provider=${encodeURIComponent(domain)}`,
+         lastModified,
+         changeFrequency: "daily",
+         priority: 0.4,
+      })
+   );
+
+   return [...staticEntries, ...vendorEntries, ...modelEntries, ...providerEntries];
 }
