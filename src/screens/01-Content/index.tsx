@@ -309,6 +309,15 @@ export const Content: React.FC<Prop> = ({
       setSort(MODELS_SORT_PRESETS[value]);
    };
 
+   // A pinned BestAIPrice row only belongs above results it matches: with no
+   // matches (or a search/filter that excludes its model) it would sit over
+   // the "No models found" message.
+   const visiblePinnedModels = React.useMemo(() => {
+      const visibleModelIds = new Set(filteredModels.map((model) => model.canonicalModelId));
+
+      return pinnedModels.filter(({ id }) => visibleModelIds.has(id));
+   }, [pinnedModels, filteredModels]);
+
    const resultsCount = filteredModels.length;
    const catalogTitle = selectedVendorId
       ? getVendorDisplayName(selectedVendorId)
@@ -463,7 +472,7 @@ export const Content: React.FC<Prop> = ({
                   models={filteredModels}
                   sort={sort}
                   onSortChange={setSort}
-                  pinnedModels={pinnedModels}
+                  pinnedModels={visiblePinnedModels}
                   limitProviderRuns={shouldLimitProviderRuns}
                />
             </div>
