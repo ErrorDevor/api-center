@@ -2,6 +2,8 @@
 
 import React from "react";
 
+import { useRouter } from "next/navigation";
+
 import type { ModelItem } from "../../lib/content.data";
 import { computeGatewayDiscountPercent } from "../../lib/providers-to-models";
 
@@ -47,12 +49,14 @@ export const BestAiPriceRow: React.FC<Prop> = ({
    model,
 }) => {
    const { t } = useTranslation();
+   const router = useRouter();
    const { status } = useAuth();
    const { getPricingForModel } = useGatewayPricing();
    const { summary } = useProviderCommentSummary(PROVIDER_DOMAIN);
 
    const pricing = getPricingForModel(canonicalModelId);
 
+   const reviewsHref = `/reviews?provider=${encodeURIComponent(PROVIDER_DOMAIN)}`;
    const discountId = React.useId();
    const discountRef = React.useRef<HTMLSpanElement>(null);
    const [isDiscountOpen, setIsDiscountOpen] = React.useState(false);
@@ -259,10 +263,22 @@ export const BestAiPriceRow: React.FC<Prop> = ({
             <span className={css.mobile_dots} />
 
             <div className={css.provider_wrapper}>
-               <span className={css.provider}>
+               {/* The row itself goes to signup/keys, but the provider name
+                   opens the provider's own /reviews page like every other
+                   reseller row does. */}
+               <a
+                  href={reviewsHref}
+                  className={css.provider}
+                  onClick={(event) => {
+                     event.preventDefault();
+                     event.stopPropagation();
+                     router.push(reviewsHref);
+                  }}
+                  onKeyDown={(event) => event.stopPropagation()}
+               >
                   <Image.Default src="/icons/info.svg" alt="" />
                   <span>{PROVIDER_NAME}</span>
-               </span>
+               </a>
             </div>
          </div>
 
