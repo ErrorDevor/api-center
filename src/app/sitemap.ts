@@ -23,19 +23,19 @@ const STATIC_PATHS: Array<{
 ];
 
 // Same feed the catalog reads in the browser (the daily parser's
-// providers.json). Only an absolute URL can be fetched on the server; with
-// the relative dev default the sitemap just lists the static pages.
-const PROVIDERS_JSON_URL = process.env.NEXT_PUBLIC_PROVIDERS_JSON_URL ?? "";
+// providers.json). Production builds point it at a site-relative path
+// ("/gateway/data/providers.json"), which the server can't fetch as-is, so
+// it's resolved against the public origin.
+const PROVIDERS_JSON_URL = new URL(
+   process.env.NEXT_PUBLIC_PROVIDERS_JSON_URL || "/gateway/data/providers.json",
+   SITE_URL
+).toString();
 
 // Regenerate hourly rather than on every request — the feed itself only
 // changes when the parser runs.
 export const revalidate = 3600;
 
 const loadRecords = async () => {
-   if (!/^https?:\/\//.test(PROVIDERS_JSON_URL)) {
-      return [];
-   }
-
    try {
       const response = await fetch(PROVIDERS_JSON_URL, { next: { revalidate } });
 
