@@ -6,7 +6,7 @@ import { clsx } from "clsx";
 
 import { Modal } from "shared/ui/base/Modal";
 import { FilterType } from "shared/ui/components/FilterType";
-import { FilterTypeData } from "shared/ui/components/FilterType";
+import { FilterTypeData, type FilterTypeValue } from "shared/ui/components/FilterType";
 import { FreeTest } from "shared/ui/components/FreeTest";
 import { FilterIcon } from "shared/ui/icons";
 
@@ -70,13 +70,32 @@ const aiType: FilterTypeData = [
    },
 ];
 
+// A real, caller-driven filter (the catalog's) in place of group-buys'
+// visual-only one — see FilterType's matching props.
+export interface FilterDropdownConfig {
+   title: string;
+   searchPlaceholder: string;
+   priceLabel: string;
+   priceMax: number;
+   priceStep: number;
+   // Defaults to hidden (the catalog has no seat availability).
+   showStatus?: boolean;
+   data: FilterTypeData;
+   value: FilterTypeValue;
+   getResultCount: (value: FilterTypeValue) => number;
+   onApply: (value: FilterTypeValue) => void;
+   // Shown as a dot on the button while a filter is applied.
+   isActive: boolean;
+}
+
 interface Prop {
    className?: string;
    name: string;
    variant?: "api" | "group" | "group-buys" | "forum";
+   config?: FilterDropdownConfig;
 }
 
-export const FilterDropdown: React.FC<Prop> = ({ className, name, variant = "api" }) => {
+export const FilterDropdown: React.FC<Prop> = ({ className, name, variant = "api", config }) => {
    const buttonRef = React.useRef<HTMLButtonElement>(null);
    const [isOpen, setIsOpen] = React.useState(false);
 
@@ -92,6 +111,8 @@ export const FilterDropdown: React.FC<Prop> = ({ className, name, variant = "api
          >
             <FilterIcon />
             {name}
+
+            {config?.isActive && <span className={css.filter_dot} aria-hidden="true" />}
          </Button>
 
          <Modal
@@ -104,7 +125,21 @@ export const FilterDropdown: React.FC<Prop> = ({ className, name, variant = "api
             onClose={() => setIsOpen(false)}
          >
             {/* Account-type filter is group-buys only. */}
-            {variant === "group-buys" ? (
+            {config ? (
+               <FilterType
+                  data={config.data}
+                  title={config.title}
+                  searchPlaceholder={config.searchPlaceholder}
+                  priceLabel={config.priceLabel}
+                  priceMax={config.priceMax}
+                  priceStep={config.priceStep}
+                  showStatus={config.showStatus ?? false}
+                  initialValue={config.value}
+                  getResultCount={config.getResultCount}
+                  onApply={config.onApply}
+                  onClose={() => setIsOpen(false)}
+               />
+            ) : variant === "group-buys" ? (
                <FilterType data={aiType} onClose={() => setIsOpen(false)} />
             ) : (
                <FreeTest onClose={() => setIsOpen(false)} />

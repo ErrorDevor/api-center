@@ -32,21 +32,62 @@ export interface FilterTypeGroup {
 
 export type FilterTypeData = FilterTypeGroup[];
 
+// Everything the dropdown lets the user pick. `types` holds
+// "<groupId>-<typeId>" ids (see getTypeId).
+export interface FilterTypeValue {
+   types: string[];
+   minPrice: number;
+   maxPrice: number;
+   isActive: boolean;
+   paymentIds: PaymentMethodId[];
+}
+
 interface Prop {
    className?: string;
    data: FilterTypeData;
    onClose?: () => void;
    onChoosePayment?: (selectedIds: PaymentMethodId[]) => void;
+   // The remaining props let a caller drive a real filter with this UI (the
+   // catalog does). Left out, it behaves as before (group-buys: purely
+   // visual, "Show" just closes).
+   title?: string;
+   searchPlaceholder?: string;
+   priceLabel?: string;
+   priceMax?: number;
+   priceStep?: number;
+   showStatus?: boolean;
+   initialValue?: FilterTypeValue;
+   // Number of results the current selection would show — the "Show" button
+   // reads it. Without it the button counts the selected items instead.
+   getResultCount?: (value: FilterTypeValue) => number;
+   onApply?: (value: FilterTypeValue) => void;
 }
 
-export const FilterType: React.FC<Prop> = ({ className, data, onClose, onChoosePayment }) => {
-   const [selectedTypes, setSelectedTypes] = React.useState<string[]>([]);
-   const [minPrice, setMinPrice] = React.useState(MIN_PRICE);
-   const [maxPrice, setMaxPrice] = React.useState(MAX_PRICE);
-   const [isActive, setIsActive] = React.useState(false);
+export const FilterType: React.FC<Prop> = ({
+   className,
+   data,
+   onClose,
+   onChoosePayment,
+   title,
+   searchPlaceholder = "Codex, Max, Team...",
+   priceLabel,
+   priceMax = MAX_PRICE,
+   priceStep = PRICE_STEP,
+   showStatus = true,
+   initialValue,
+   getResultCount,
+   onApply,
+}) => {
+   const [selectedTypes, setSelectedTypes] = React.useState<string[]>(initialValue?.types ?? []);
+   const [minPrice, setMinPrice] = React.useState(initialValue?.minPrice ?? MIN_PRICE);
+   const [maxPrice, setMaxPrice] = React.useState(initialValue?.maxPrice ?? priceMax);
+   const [isActive, setIsActive] = React.useState(initialValue?.isActive ?? false);
+   const [query, setQuery] = React.useState("");
 
    const [isPaymentModalOpen, setIsPaymentModalOpen] = React.useState(false);
-   const [selectedPaymentIds, setSelectedPaymentIds] = React.useState<PaymentMethodId[]>([]);
+   const [selectedPaymentIds, setSelectedPaymentIds] = React.useState<PaymentMethodId[]>(
+      initialValue?.paymentIds ?? []
+   );
 
    const handleOpenPaymentModal = () => {
       setIsPaymentModalOpen(true);
@@ -88,28 +129,67 @@ export const FilterType: React.FC<Prop> = ({ className, data, onClose, onChooseP
       }, 0);
    }, [selectedTypes]);
 
-   const minPricePercent = ((minPrice - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100;
-   const maxPricePercent = ((maxPrice - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100;
+   const minPricePercent = ((minPrice - MIN_PRICE) / (priceMax - MIN_PRICE)) * 100;
+   const maxPricePercent = ((maxPrice - MIN_PRICE) / (priceMax - MIN_PRICE)) * 100;
 
    const handleMinPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const nextValue = Number(event.target.value);
 
-      setMinPrice(Math.min(nextValue, maxPrice - PRICE_STEP));
+      setMinPrice(Math.min(nextValue, maxPrice - priceStep));
    };
 
    const handleMaxPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const nextValue = Number(event.target.value);
 
-      setMaxPrice(Math.max(nextValue, minPrice + PRICE_STEP));
+      setMaxPrice(Math.max(nextValue, minPrice + priceStep));
+   };
+
+   const currentValue: FilterTypeValue = {
+      types: selectedTypes,
+      minPrice,
+      maxPrice,
+      isActive,
+      paymentIds: selectedPaymentIds,
    };
 
    const handleReset = () => {
       setSelectedTypes([]);
       setMinPrice(MIN_PRICE);
-      setMaxPrice(MAX_PRICE);
+      setMaxPrice(priceMax);
       setIsActive(false);
       setSelectedPaymentIds([]);
+      setQuery("");
+
+      onApply?.({
+         types: [],
+         minPrice: MIN_PRICE,
+         maxPrice: priceMax,
+         isActive: false,
+         paymentIds: [],
+      });
    };
+
+   const handleShow = () => {
+      onApply?.(currentValue);
+      onClose?.();
+   };
+
+   const visibleData = React.useMemo(() => {
+      const needle = query.trim().toLowerCase();
+
+      if (!needle) {
+         return data;
+      }
+
+      return data
+         .map((group) => ({
+            ...group,
+            type: group.type.filter((type) => type.name.toLowerCase().includes(needle)),
+         }))
+         .filter((group) => group.type.length > 0);
+   }, [data, query]);
+
+   const shownCount = getResultCount ? getResultCount(currentValue) : selectedCount;
 
    const paymentButtonLabel =
       selectedPaymentIds.length > 0
@@ -120,12 +200,17 @@ export const FilterType: React.FC<Prop> = ({ className, data, onClose, onChooseP
       <>
          <div className={clsx(css.account_type, className)}>
             <div className={css.account_type_top}>
-               <h6>{t.filterDropdown.title}</h6>
+               <h6>{title ?? t.filterDropdown.title}</h6>
 
-               <Search placeholder="Codex, Max, Team..." className={css.search_filter} />
+               <Search
+                  placeholder={searchPlaceholder}
+                  className={css.search_filter}
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+               />
 
                <ul className={css.ai_type_list}>
-                  {data.map((group) => (
+                  {visibleData.map((group) => (
                      <li key={group.id} className={css.ai_type_list_item}>
                         <h6>{group.name}</h6>
 
@@ -167,7 +252,7 @@ export const FilterType: React.FC<Prop> = ({ className, data, onClose, onChooseP
             <div className={css.divider} />
 
             <div className={css.filter_block}>
-               <p>{t.filterDropdown.price}</p>
+               <p>{priceLabel ?? t.filterDropdown.price}</p>
 
                <div className={css.price_values}>
                   <span>${minPrice}</span>
@@ -188,8 +273,8 @@ export const FilterType: React.FC<Prop> = ({ className, data, onClose, onChooseP
                   <input
                      type="range"
                      min={MIN_PRICE}
-                     max={MAX_PRICE}
-                     step={PRICE_STEP}
+                     max={priceMax}
+                     step={priceStep}
                      value={minPrice}
                      aria-label="Minimum price"
                      className={clsx(css.price_range_input, css.price_range_input_min)}
@@ -199,8 +284,8 @@ export const FilterType: React.FC<Prop> = ({ className, data, onClose, onChooseP
                   <input
                      type="range"
                      min={MIN_PRICE}
-                     max={MAX_PRICE}
-                     step={PRICE_STEP}
+                     max={priceMax}
+                     step={priceStep}
                      value={maxPrice}
                      aria-label="Maximum price"
                      className={clsx(css.price_range_input, css.price_range_input_max)}
@@ -209,21 +294,25 @@ export const FilterType: React.FC<Prop> = ({ className, data, onClose, onChooseP
                </div>
             </div>
 
-            <div className={css.divider} />
+            {showStatus && (
+               <>
+                  <div className={css.divider} />
 
-            <div className={css.filter_block}>
-               <p>{t.filterDropdown.status}</p>
+                  <div className={css.filter_block}>
+                     <p>{t.filterDropdown.status}</p>
 
-               <label className={css.filter_block_active}>
-                  <Checkbox
-                     checked={isActive}
-                     aria-label={t.filterDropdown.active}
-                     onChange={(event) => setIsActive(event.target.checked)}
-                  />
+                     <label className={css.filter_block_active}>
+                        <Checkbox
+                           checked={isActive}
+                           aria-label={t.filterDropdown.active}
+                           onChange={(event) => setIsActive(event.target.checked)}
+                        />
 
-                  <span>{t.filterDropdown.active}</span>
-               </label>
-            </div>
+                        <span>{t.filterDropdown.active}</span>
+                     </label>
+                  </div>
+               </>
+            )}
 
             <div className={css.divider} />
 
@@ -251,11 +340,11 @@ export const FilterType: React.FC<Prop> = ({ className, data, onClose, onChooseP
                   type="button"
                   variant="blue"
                   className={css.show_button}
-                  onClick={onClose}
-                  disabled={selectedCount === 0}
+                  onClick={handleShow}
+                  disabled={!getResultCount && selectedCount === 0}
                >
                   {t.filterDropdown.buttonShow}
-                  <span>({selectedCount})</span>
+                  <span>({shownCount})</span>
                </Button>
             </div>
          </div>

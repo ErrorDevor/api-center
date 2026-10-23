@@ -2,16 +2,17 @@
 
 import React from "react";
 
+import { collapseToCheapest } from "./lib/collapseToCheapest";
 import {
    DEFAULT_SORT,
    MODELS_SORT_PRESETS,
+   type ModelItem,
    type ModelsSortValue,
    type SortState,
    TAB_PAYMENT_METHOD_MARKERS,
    sortStateToValue,
    tabs,
 } from "./lib/content.data";
-import { collapseToCheapest } from "./lib/collapseToCheapest";
 import { filterModelsByQuery } from "./lib/matchModelQuery";
 import { toModelItems } from "./lib/providers-to-models";
 import { usePinnedModels } from "./lib/usePinnedModels";
@@ -19,9 +20,10 @@ import { ModelsTable } from "./ui/ModelsTable";
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
-import { type ModelContentType } from "shared/lib/models/modelType";
+import type { ModelContentType } from "shared/lib/models/modelType";
 import { useModelContentTypes } from "shared/lib/models/useModelCapabilities";
 import { useModelCatalog } from "shared/lib/models/useModelCatalog";
+import { matchesPaymentIds } from "shared/lib/payments/matchPaymentIds";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
 import { getVendorDisplayName, getVendorId } from "shared/lib/providers/vendors";
 import { GENERIC_VENDOR_SLUG } from "shared/lib/vendorDescriptions/types";
@@ -29,14 +31,14 @@ import { useVendorDescriptions } from "shared/lib/vendorDescriptions/useVendorDe
 import { ContentActions } from "shared/ui/components/ContentActions";
 import { ContentHeader } from "shared/ui/components/ContentHeader";
 import { ContentHeaderTab } from "shared/ui/components/ContentHeader";
+import type { FilterTypeData, FilterTypeValue } from "shared/ui/components/FilterType";
 import { Button } from "shared/ui/ui-kit/Button";
+import type { FilterDropdownConfig } from "shared/ui/ui-kit/FilterDropdown";
 import type { SortDropdownOption } from "shared/ui/ui-kit/SortDropdown";
 
 import css from "./Content.module.scss";
 
 type TabId = (typeof tabs)[number]["id"];
-
-const ALL_TYPES_VALUE = "allTypes";
 
 // Same order as the Sidebar's "Model Type" list.
 const MODEL_TYPE_DROPDOWN_ORDER: ModelContentType[] = [
@@ -100,7 +102,84 @@ export const Content: React.FC<Prop> = ({
 
    const [activeTab, setActiveTab] = React.useState<TabId>(tabs[0].id);
 
-   const filteredModels = React.useMemo(() => {
+   // The "Фильтр" dropdown (same UI as group-buys): model types, input-price
+   // range and payment methods. ANDed with the Sidebar's vendor/type
+   // selection and the header tabs.
+   const [catalogFilter, setCatalogFilter] = React.useState<FilterTypeValue | null>(null);
+
+   const priceCeiling = React.useMemo(() => {
+      const prices = models.map((model) => model.inputPrice ?? model.nativePriceUsd ?? 0);
+
+      return Math.max(1, Math.ceil(Math.max(0, ...prices)));
+   }, [models]);
+   const priceStep = priceCeiling > 50 ? 1 : priceCeiling > 10 ? 0.5 : 0.1;
+
+   const defaultFilterValue = React.useMemo<FilterTypeValue>(
+      () => ({ types: [], minPrice: 0, maxPrice: priceCeiling, isActive: false, paymentIds: [] }),
+      [priceCeiling]
+   );
+   const filterValue = catalogFilter ?? defaultFilterValue;
+
+   const matchesCatalogFilter = React.useCallback(
+      (model: ModelItem, value: FilterTypeValue): boolean => {
+         const types = value.types.map((id) => id.replace(/^type-/, ""));
+
+         if (
+            types.length > 0 &&
+            !getContentTypes(model.canonicalModelId).some((type) => types.includes(type))
+         ) {
+            return false;
+         }
+
+         const isPriceFiltered = value.minPrice > 0 || value.maxPrice < priceCeiling;
+         const price = model.inputPrice ?? model.nativePriceUsd;
+
+         if (
+            isPriceFiltered &&
+            (price === null || price < value.minPrice || price > value.maxPrice)
+         ) {
+            return false;
+         }
+
+         return (
+            value.paymentIds.length === 0 ||
+            matchesPaymentIds(model.paymentMethods, value.paymentIds)
+         );
+      },
+      [getContentTypes, priceCeiling]
+   );
+
+   const filterGroups = React.useMemo<FilterTypeData>(() => {
+      const counts = new Map<string, number>();
+
+      for (const record of records) {
+         for (const contentType of getContentTypes(record.canonicalModelId)) {
+            counts.set(contentType, (counts.get(contentType) ?? 0) + 1);
+         }
+      }
+
+      return [
+         {
+            id: "type",
+            name: t.sidebar.modelTypeTitle,
+            type: MODEL_TYPE_DROPDOWN_ORDER.map((contentType) => ({
+               id: contentType,
+               name: t.sidebar.modelTypes[contentType],
+               count: counts.get(contentType) ?? 0,
+            })),
+         },
+      ];
+   }, [records, getContentTypes, t]);
+
+   const isFilterActive =
+      catalogFilter !== null &&
+      (catalogFilter.types.length > 0 ||
+         catalogFilter.minPrice > 0 ||
+         catalogFilter.maxPrice < priceCeiling ||
+         catalogFilter.paymentIds.length > 0);
+
+   // Everything but the dropdown filter and the main-listing collapse.
+   const baseFilteredModels = React.useMemo(() => {
       let result = models;
 
       if (selectedModelId) {
@@ -134,14 +213,9 @@ export const Content: React.FC<Prop> = ({
          );
       }
 
-      if (isMainListing) {
-         result = collapseToCheapest(result);
-      }
-
       return result;
    }, [
       models,
-      isMainListing,
       selectedVendorId,
       selectedModelId,
       selectedModelType,
@@ -149,6 +223,48 @@ export const Content: React.FC<Prop> = ({
       activeTab,
       getContentTypes,
    ]);
+
+   // A vendor family page (e.g. Claude): not a single model, not a search.
+   const isVendorFamilyListing = Boolean(selectedVendorId) && !selectedModelId && !isSearching;
+
+   // The главная and a family page break up runs of the same provider (see
+   // diversifyProviders); a model page / search keeps its plain sort order.
+   const shouldLimitProviderRuns = isMainListing || isVendorFamilyListing;
+
+   const arrangeListing = React.useCallback(
+      (items: ModelItem[]) => (isMainListing ? collapseToCheapest(items) : items),
+      [isMainListing]
+   );
+
+   const filteredModels = React.useMemo(
+      () =>
+         arrangeListing(
+            isFilterActive
+               ? baseFilteredModels.filter((model) => matchesCatalogFilter(model, filterValue))
+               : baseFilteredModels
+         ),
+      [baseFilteredModels, isFilterActive, matchesCatalogFilter, filterValue, arrangeListing]
+   );
+
+   // The "Show (N)" count: listings the table would show with the dropdown's
+   // pending selection, everything else (vendor, tab, search) unchanged.
+   const getFilterResultCount = (value: FilterTypeValue) =>
+      arrangeListing(baseFilteredModels.filter((model) => matchesCatalogFilter(model, value)))
+         .length;
+
+   const filterConfig: FilterDropdownConfig = {
+      title: t.sidebar.modelTypeTitle,
+      searchPlaceholder: t.filterDropdown.catalogSearch,
+      priceLabel: t.filterDropdown.catalogPrice,
+      priceMax: priceCeiling,
+      priceStep,
+      data: filterGroups,
+      value: filterValue,
+      getResultCount: getFilterResultCount,
+      onApply: setCatalogFilter,
+      isActive: isFilterActive,
+   };
+
    const [isDescriptionExpanded, setIsDescriptionExpanded] = React.useState(false);
    const descriptionRef = React.useRef<HTMLParagraphElement>(null);
    const [isDescriptionOverflowing, setIsDescriptionOverflowing] = React.useState(false);
@@ -189,30 +305,6 @@ export const Content: React.FC<Prop> = ({
 
    const handleSortValueChange = (value: ModelsSortValue) => {
       setSort(MODELS_SORT_PRESETS[value]);
-   };
-
-   // Same buckets and per-listing counts as the Sidebar's "Model Type" list.
-   const modelTypeOptions = React.useMemo(() => {
-      const counts = new Map<string, number>();
-
-      for (const record of records) {
-         for (const contentType of getContentTypes(record.canonicalModelId)) {
-            counts.set(contentType, (counts.get(contentType) ?? 0) + 1);
-         }
-      }
-
-      return [
-         { value: ALL_TYPES_VALUE, label: t.sidebar.modelTypes.allTypes, count: records.length },
-         ...MODEL_TYPE_DROPDOWN_ORDER.map((contentType) => ({
-            value: contentType,
-            label: t.sidebar.modelTypes[contentType],
-            count: counts.get(contentType) ?? 0,
-         })),
-      ];
-   }, [records, getContentTypes, t]);
-
-   const handleModelTypeChange = (value: string) => {
-      onSelectModelType?.(value === ALL_TYPES_VALUE ? undefined : value);
    };
 
    const resultsCount = filteredModels.length;
@@ -295,9 +387,7 @@ export const Content: React.FC<Prop> = ({
             sortOptions={sortOptions}
             sortValue={sortStateToValue(sort)}
             onSortChange={handleSortValueChange}
-            modelTypeOptions={modelTypeOptions}
-            modelTypeValue={selectedModelType ?? ALL_TYPES_VALUE}
-            onModelTypeChange={handleModelTypeChange}
+            filter={filterConfig}
             selectedVendorId={selectedVendorId}
             selectedModelId={selectedModelId}
             selectedModelType={selectedModelType}
@@ -363,9 +453,7 @@ export const Content: React.FC<Prop> = ({
                sortOptions={sortOptions}
                sortValue={sortStateToValue(sort)}
                onSortChange={handleSortValueChange}
-               modelTypeOptions={modelTypeOptions}
-               modelTypeValue={selectedModelType ?? ALL_TYPES_VALUE}
-               onModelTypeChange={handleModelTypeChange}
+               filter={filterConfig}
             />
 
             <div className={css.content_list}>
@@ -374,6 +462,7 @@ export const Content: React.FC<Prop> = ({
                   sort={sort}
                   onSortChange={setSort}
                   pinnedModels={pinnedModels}
+                  limitProviderRuns={shouldLimitProviderRuns}
                />
             </div>
          </div>

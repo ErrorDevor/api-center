@@ -2,19 +2,22 @@
 
 import React from "react";
 
-import { type GroupBuysTabId, groupBuys, tabs } from "./lib/groupBuys.data";
+import { type GroupBuyItem, type GroupBuysTabId, groupBuys, tabs } from "./lib/groupBuys.data";
 import { GroupBuysList } from "./ui/GroupBuysList";
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
+import { matchesPaymentIds } from "shared/lib/payments/matchPaymentIds";
 import { useProviderPopularity } from "shared/lib/providers/popularity/useProviderPopularity";
 import { getVendorDisplayName } from "shared/lib/providers/vendors";
 import { ContentActions } from "shared/ui/components/ContentActions";
 import { ContentHeader } from "shared/ui/components/ContentHeader";
 import { ContentHeaderTab } from "shared/ui/components/ContentHeader";
 import { FeatureTestingModal } from "shared/ui/components/FeatureTestingModal";
+import type { FilterTypeValue } from "shared/ui/components/FilterType";
 import { Pagination } from "shared/ui/components/Pagination";
 import { Button } from "shared/ui/ui-kit/Button";
+import type { FilterDropdownConfig } from "shared/ui/ui-kit/FilterDropdown";
 
 import css from "./GroupBuysContent.module.scss";
 
@@ -48,13 +51,94 @@ export const GroupBuysContent: React.FC<Props> = ({
    const [currentPage, setCurrentPage] = React.useState(1);
    const [sort, setSort] = React.useState<GroupBuysSort>("newest");
 
-   const filteredGroupBuys = React.useMemo(() => {
-      if (!selectedVendorId) {
-         return groupBuys;
+   // The "Фильтр" dropdown: service (vendor), price per seat, seat
+   // availability and payment method — ANDed with the Sidebar's vendor.
+   const [filterValue, setFilterValue] = React.useState<FilterTypeValue | null>(null);
+
+   const priceCeiling = React.useMemo(
+      () => Math.max(1, Math.ceil(Math.max(0, ...groupBuys.map((item) => item.price)))),
+      []
+   );
+
+   const defaultFilterValue = React.useMemo<FilterTypeValue>(
+      () => ({ types: [], minPrice: 0, maxPrice: priceCeiling, isActive: false, paymentIds: [] }),
+      [priceCeiling]
+   );
+   const currentFilterValue = filterValue ?? defaultFilterValue;
+
+   const matchesFilter = React.useCallback((item: GroupBuyItem, value: FilterTypeValue) => {
+      const vendors = value.types.map((id) => id.replace(/^service-/, ""));
+
+      if (vendors.length > 0 && !item.vendorIds.some((id) => vendors.includes(id))) {
+         return false;
       }
 
-      return groupBuys.filter((item) => item.vendorIds.includes(selectedVendorId));
-   }, [selectedVendorId]);
+      if (item.price < value.minPrice || item.price > value.maxPrice) {
+         return false;
+      }
+
+      if (value.isActive && item.takenPersons >= item.totalPersons) {
+         return false;
+      }
+
+      return (
+         value.paymentIds.length === 0 || matchesPaymentIds([item.paymentMethod], value.paymentIds)
+      );
+   }, []);
+
+   const vendorFiltered = React.useMemo(
+      () =>
+         selectedVendorId
+            ? groupBuys.filter((item) => item.vendorIds.includes(selectedVendorId))
+            : groupBuys,
+      [selectedVendorId]
+   );
+
+   const filteredGroupBuys = React.useMemo(
+      () => vendorFiltered.filter((item) => matchesFilter(item, currentFilterValue)),
+      [vendorFiltered, matchesFilter, currentFilterValue]
+   );
+
+   const filterConfig = React.useMemo<FilterDropdownConfig>(() => {
+      const counts = new Map<string, number>();
+
+      for (const item of groupBuys) {
+         for (const vendorId of item.vendorIds) {
+            counts.set(vendorId, (counts.get(vendorId) ?? 0) + 1);
+         }
+      }
+
+      return {
+         title: t.filterDropdown.title,
+         searchPlaceholder: t.filterDropdown.groupBuysSearch,
+         priceLabel: t.filterDropdown.price,
+         priceMax: priceCeiling,
+         priceStep: 1,
+         showStatus: true,
+         data: [
+            {
+               id: "service",
+               name: t.filterDropdown.service,
+               type: [...counts].map(([vendorId, count]) => ({
+                  id: vendorId,
+                  name: getVendorDisplayName(vendorId),
+                  count,
+               })),
+            },
+         ],
+         value: currentFilterValue,
+         getResultCount: (value) =>
+            vendorFiltered.filter((item) => matchesFilter(item, value)).length,
+         onApply: setFilterValue,
+         isActive:
+            filterValue !== null &&
+            (filterValue.types.length > 0 ||
+               filterValue.minPrice > 0 ||
+               filterValue.maxPrice < priceCeiling ||
+               filterValue.isActive ||
+               filterValue.paymentIds.length > 0),
+      };
+   }, [t, priceCeiling, currentFilterValue, filterValue, vendorFiltered, matchesFilter]);
 
    const orderedGroupBuys = React.useMemo(() => {
       if (sort !== "popular") {
@@ -106,6 +190,7 @@ export const GroupBuysContent: React.FC<Props> = ({
             sortOptions={sortOptions}
             sortValue={sort}
             onSortChange={handleSortChange}
+            filter={filterConfig}
             selectedVendorId={selectedVendorId}
             onSelectVendor={onSelectVendor}
          />
@@ -116,6 +201,7 @@ export const GroupBuysContent: React.FC<Props> = ({
             sortOptions={sortOptions}
             sortValue={sort}
             onSortChange={handleSortChange}
+            filter={filterConfig}
          />
 
          <div className={css.content_scroll}>

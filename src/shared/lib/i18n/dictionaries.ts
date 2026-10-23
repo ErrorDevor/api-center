@@ -307,6 +307,10 @@ export const en = {
       payment: "Payment methods",
       choosePayment: "Choose methods",
       active: "Active — seats available",
+      catalogPrice: "Input price per 1M tokens",
+      catalogSearch: "Coding, Text, Chat...",
+      groupBuysSearch: "OpenAI, Anthropic...",
+      service: "Service",
    },
 
    freeTest: {
@@ -1057,6 +1061,10 @@ export const ru: Dictionary = {
       payment: "Способы оплаты",
       choosePayment: "Выбрать способы",
       active: "Активна — есть места",
+      catalogPrice: "Цена input за 1M токенов",
+      catalogSearch: "Кодинг, Текст, Чат...",
+      groupBuysSearch: "OpenAI, Anthropic...",
+      service: "Сервис",
    },
 
    freeTest: {
