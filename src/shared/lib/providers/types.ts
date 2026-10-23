@@ -1,4 +1,5 @@
 import { normalizeCanonicalModelId } from "shared/lib/models/canonicalModelId";
+import { sortPaymentMethods } from "shared/lib/payments/sortPaymentMethods";
 
 export type TrustStatus = "green" | "yellow" | "red";
 
@@ -151,7 +152,11 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
       // TAB_PAYMENT_METHOD_MARKERS) — it has no product-facing meaning, so
       // it's dropped here rather than reaching any consumer.
       const paymentMethods = Array.isArray(raw.payment_methods)
-         ? raw.payment_methods.filter(isNonEmptyString).filter((method) => method !== "Trial: Unconfirmed")
+         ? sortPaymentMethods(
+              raw.payment_methods
+                 .filter(isNonEmptyString)
+                 .filter((method) => method !== "Trial: Unconfirmed")
+           )
          : [];
       // Optional, same reasoning: not backfilled onto every record yet.
       const domainAgeDays = isFiniteNumber(raw.domain_age_days) ? raw.domain_age_days : null;

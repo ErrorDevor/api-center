@@ -1,7 +1,8 @@
-import type { Provider, ProviderModel, ProviderStatus } from "./data";
-
+import { sortPaymentMethods } from "shared/lib/payments/sortPaymentMethods";
 import type { ProviderPriceRecord, TrustStatus } from "shared/lib/providers/types";
 import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
+
+import type { Provider, ProviderModel, ProviderStatus } from "./data";
 
 // Placeholder shown only until AiProviderRow's useProviderCommentSummary loads
 // the real per-provider counts — this pure function has no hook access, so it
@@ -58,8 +59,8 @@ export const recordsToProviders = (records: ProviderPriceRecord[]): Provider[] =
          });
       }
 
-      const paymentMethods = Array.from(
-         new Set(groupRecords.flatMap((record) => record.paymentMethods))
+      const paymentMethods = sortPaymentMethods(
+         Array.from(new Set(groupRecords.flatMap((record) => record.paymentMethods)))
       );
 
       providers.push({

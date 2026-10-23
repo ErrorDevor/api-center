@@ -4,6 +4,8 @@ import React from "react";
 
 import { useRouter } from "next/navigation";
 
+import { CommentLayer } from "../../shared/ui/components/CommentLayer";
+import type { CommentLayerActions } from "../../shared/ui/components/CommentLayer";
 import { apiCommentToCommentLayer } from "./lib/comments.type";
 import type { CommentProviderDetails, CommentProviderModel } from "./lib/comments.type";
 import {
@@ -15,14 +17,13 @@ import {
 } from "./lib/useProviderComments";
 import type { CommentsSort } from "./lib/useProviderComments";
 import { CommentCard } from "./ui/CommentCard";
-import { CommentLayer } from "../../shared/ui/components/CommentLayer";
-import type { CommentLayerActions } from "../../shared/ui/components/CommentLayer";
 import { LeaveReviewModal } from "./ui/LeaveReviewModal";
 import clsx from "clsx";
 
 import { useAuth } from "shared/lib/auth";
 import { useTranslation } from "shared/lib/i18n";
 import { daysToProviderAge } from "shared/lib/i18n/formatters";
+import { sortPaymentMethods } from "shared/lib/payments/sortPaymentMethods";
 import { useProviderDescriptions } from "shared/lib/providerDescriptions/useProviderDescriptions";
 import { getLocalizedProviderUrl } from "shared/lib/providers/getLocalizedProviderUrl";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
@@ -87,7 +88,9 @@ export const Comments: React.FC<Prop> = ({
    const providerName = providerRecord?.providerName ?? providerDomain ?? "";
    const providerUrl = providerRecord
       ? getLocalizedProviderUrl(providerRecord, locale)
-      : (providerDomain ? `https://${providerDomain}` : "");
+      : providerDomain
+        ? `https://${providerDomain}`
+        : "";
 
    // Reflect the current provider in the browser tab. This page is a client
    // component (it reads `?provider=` from useSearchParams), so there's no
@@ -143,7 +146,10 @@ export const Comments: React.FC<Prop> = ({
    }, [providerRecords]);
 
    const paymentMethods = React.useMemo(
-      () => Array.from(new Set(providerRecords.flatMap((record) => record.paymentMethods))),
+      () =>
+         sortPaymentMethods(
+            Array.from(new Set(providerRecords.flatMap((record) => record.paymentMethods)))
+         ),
       [providerRecords]
    );
 
