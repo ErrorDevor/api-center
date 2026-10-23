@@ -1,3 +1,5 @@
+import type { Locale } from "shared/lib/i18n/types";
+
 import type { RankingColumnFormat } from "./categories";
 
 const DASH = "—";
@@ -21,7 +23,8 @@ const formatContext = (value: number): string => {
  */
 export const formatMetric = (
    value: number | null,
-   format: RankingColumnFormat
+   format: RankingColumnFormat,
+   locale: Locale = "en"
 ): string => {
    if (value == null) {
       return DASH;
@@ -37,9 +40,9 @@ export const formatMetric = (
       case "context":
          return formatContext(value);
       case "speed":
-         return `${Math.round(value)} т/с`;
+         return `${Math.round(value)} ${locale === "ru" ? "т/с" : "tok/s"}`;
       case "latency":
-         return `${Math.round(value)} мс`;
+         return `${Math.round(value)} ${locale === "ru" ? "мс" : "ms"}`;
       // Blended price per 1M tokens / per generated unit, USD.
       case "pricePer1M":
       case "pricePerMinute":

@@ -18,7 +18,7 @@ interface Prop {
 }
 
 export const RatingRow: React.FC<Prop> = ({ className, entry, columns }) => {
-   const { t } = useTranslation();
+   const { t, locale } = useTranslation();
 
    const icon = getModelVendorIcon(entry.model);
    const isOpenLicense = entry.license === "open";
@@ -76,7 +76,7 @@ export const RatingRow: React.FC<Prop> = ({ className, entry, columns }) => {
                <span className={css.rating_row_mobile_dots} />
 
                <span className={css.rating_row_value}>
-                  {formatMetric(entry.metrics[column.key] ?? null, column.format)}
+                  {formatMetric(entry.metrics[column.key] ?? null, column.format, locale)}
                </span>
             </div>
          ))}

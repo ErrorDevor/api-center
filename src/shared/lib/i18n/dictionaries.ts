@@ -30,6 +30,8 @@ export const en = {
       // this is what ModelRow / CommentCardOptions show instead of that
       // internal marker.
       trialAvailable: "Free access",
+      expert: "Expert",
+      inquiries: "inquiries",
       aiProviders: "AI-providers",
       providersSearch: "Search providers",
    },
@@ -532,6 +534,7 @@ export const en = {
          badge: "Model overview",
          title: "Explore category leaderboards",
          description: "Find the best model for your task — by capability, modality, or industry.",
+         clearView: "Show the full leaderboard",
 
          groups: {
             capabilities: "By capability",
@@ -798,6 +801,8 @@ export const ru: Dictionary = {
       buttonText: "Ответить",
       buttonBack: "Назад",
       trialAvailable: "Бесплатный доступ",
+      expert: "Эксперт",
+      inquiries: "обращений",
       aiProviders: "AI-провайдеры",
       providersSearch: "Поиск провайдеров...",
    },
@@ -913,7 +918,7 @@ export const ru: Dictionary = {
       catalogTitle: "Складчины",
 
       tabs: {
-         coding: "Coding",
+         coding: "Кодинг",
          chat: "Чат",
          image: "Изображение",
          video: "Видео",
@@ -1288,6 +1293,7 @@ export const ru: Dictionary = {
          title: "Исследовать таблицы лидеров по категориям",
          description:
             "Найдите лучшую модель для задачи — по возможностям, модальности или отрасли.",
+         clearView: "Показать весь рейтинг",
 
          groups: {
             capabilities: "По возможностям",

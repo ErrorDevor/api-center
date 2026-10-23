@@ -4,6 +4,7 @@ import React from "react";
 
 import clsx from "clsx";
 
+import { useTranslation } from "shared/lib/i18n";
 import { AccountButton } from "shared/ui/ui-kit/AccountButton";
 
 import css from "./UserInfo.module.scss";
@@ -41,6 +42,7 @@ export const UserInfo: React.FC<Prop> = ({
    withName = true,
    onAvatarClick,
 }) => {
+   const { t } = useTranslation();
    const avatar = userAvatar || getFallbackAvatar(userName);
 
    return (
@@ -57,7 +59,9 @@ export const UserInfo: React.FC<Prop> = ({
 
                      {inquiries && (
                         <>
-                           <div className={css.dot} /> <h6>{inquiries} inquiries</h6>
+                           <div className={css.dot} /> <h6>
+                              {inquiries} {t.common.inquiries}
+                           </h6>
                         </>
                      )}
                   </div>
@@ -66,7 +70,7 @@ export const UserInfo: React.FC<Prop> = ({
                )}
             </div>
          )}
-         {expert && <div className={css.expert}>Expert</div>}
+         {expert && <div className={css.expert}>{t.common.expert}</div>}
       </div>
    );
 };
