@@ -93,6 +93,18 @@
       border: 0.1rem solid #ffffff;
       border-radius: 1.2rem;
       background: #f3f4f5;
+      cursor: pointer;
+      @include transition((background, border-color));
+
+      &:hover {
+         background: #ededee;
+         border-color: #e2e3e4;
+      }
+
+      &:focus-visible {
+         outline: 0.2rem solid rgba(71, 145, 255, 0.25);
+         outline-offset: 0.2rem;
+      }
    }
 
    &_icon {

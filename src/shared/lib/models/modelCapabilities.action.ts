@@ -14,6 +14,8 @@ import { capabilitySlug } from "./capabilitySlug";
 
 export interface ModelCapabilities {
    // Output modalities: "text" | "image" | "video" | "audio" | "embeddings"
+   // Input modalities: "text" | "image" | "audio" | "video" | "file"
+   in: string[];
    out: string[];
    search: boolean;
    coding: boolean;
@@ -43,6 +45,7 @@ const toStringArray = (value: unknown): string[] =>
 const merge = (
    target: Record<string, ModelCapabilities>,
    slug: string,
+   inputs: string[],
    out: string[],
    search: boolean,
    coding = false
@@ -54,6 +57,7 @@ const merge = (
    const existing = target[slug];
 
    target[slug] = {
+      in: Array.from(new Set([...(existing?.in ?? []), ...inputs])),
       out: Array.from(new Set([...(existing?.out ?? []), ...out])),
       search: (existing?.search ?? false) || search,
       coding: (existing?.coding ?? false) || coding,
@@ -83,6 +87,7 @@ export async function getModelCapabilities(): Promise<Record<string, ModelCapabi
 
    for (const model of openRouterModels) {
       const architecture = (model.architecture ?? {}) as Record<string, unknown>;
+      const inputs = toStringArray(architecture.input_modalities);
       const out = toStringArray(architecture.output_modalities);
       const search = toStringArray(model.supported_parameters).includes("web_search_options");
       const slugs = [model.id, model.canonical_slug].filter(
@@ -93,6 +98,7 @@ export async function getModelCapabilities(): Promise<Record<string, ModelCapabi
          merge(
             capabilities,
             capabilitySlug(id.split("/").slice(1).join("/")),
+            inputs,
             out,
             search,
             codingIds.has(id)
@@ -106,6 +112,7 @@ export async function getModelCapabilities(): Promise<Record<string, ModelCapabi
             merge(
                capabilities,
                capabilitySlug(model.id),
+               toStringArray(model.input_modalities),
                toStringArray(model.output_modalities),
                false
             );

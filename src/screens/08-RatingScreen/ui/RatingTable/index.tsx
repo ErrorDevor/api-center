@@ -9,7 +9,9 @@ import { useTranslation } from "shared/lib/i18n";
 import { RANKING_CATEGORIES } from "shared/lib/rankings/categories";
 import type { RankingCategory } from "shared/lib/rankings/categories";
 import type { RankingEntry } from "shared/lib/rankings/types";
+import { useRankingView } from "shared/lib/rankings/useRankingView";
 import { useRankings } from "shared/lib/rankings/useRankings";
+import type { RankingView } from "shared/lib/rankings/views";
 import { Pagination } from "shared/ui/components/Pagination";
 import { DropdownArrowIcon, SortIcon } from "shared/ui/icons";
 
@@ -29,12 +31,7 @@ const buildColumnWidths = (metricCount: number): number[] => {
    const remaining = 100 - RANK_WIDTH - MODEL_WIDTH - LICENSE_WIDTH;
    const metricWidth = remaining / Math.max(metricCount, 1);
 
-   return [
-      RANK_WIDTH,
-      MODEL_WIDTH,
-      ...Array<number>(metricCount).fill(metricWidth),
-      LICENSE_WIDTH,
-   ];
+   return [RANK_WIDTH, MODEL_WIDTH, ...Array<number>(metricCount).fill(metricWidth), LICENSE_WIDTH];
 };
 
 const buildMinColumnWidths = (metricCount: number): number[] => [
@@ -63,12 +60,20 @@ interface Prop {
    // table keeps its own state when these aren't passed.
    activeCategoryId?: RankingCategory["id"];
    onCategoryChange?: (categoryId: RankingCategory["id"]) => void;
+   // An explore card's re-cut of the feed (see shared/lib/rankings/views),
+   // its label, and how to go back to the plain leaderboard.
+   view?: RankingView;
+   viewTitle?: string;
+   onClearView?: () => void;
 }
 
 export const RatingTable: React.FC<Prop> = ({
    className,
    activeCategoryId: controlledCategoryId,
    onCategoryChange,
+   view,
+   viewTitle,
+   onClearView,
 }) => {
    const { t } = useTranslation();
 
@@ -76,30 +81,27 @@ export const RatingTable: React.FC<Prop> = ({
    const activeCategoryId = controlledCategoryId ?? ownCategoryId;
 
    const category: RankingCategory =
-      RANKING_CATEGORIES.find((item) => item.id === activeCategoryId) ??
-      RANKING_CATEGORIES[0];
+      RANKING_CATEGORIES.find((item) => item.id === activeCategoryId) ?? RANKING_CATEGORIES[0];
 
    const { columns } = category;
    const metricCount = columns.length;
    // rank + model + metrics + license
    const columnCount = metricCount + 3;
 
-   const { entries, isLoading } = useRankings(category);
+   const { entries: feedEntries, isLoading: isFeedLoading } = useRankings(category);
+   const { entries, isLoading: isViewLoading } = useRankingView(view, feedEntries);
+   const isLoading = isFeedLoading || isViewLoading;
 
    const tableRef = React.useRef<HTMLDivElement>(null);
    const bodyScrollRef = React.useRef<HTMLDivElement>(null);
 
    const rankedEntries = React.useMemo(
       () =>
-         entries.filter(
-            (entry): entry is RankingEntry & { rank: number } => entry.rank !== null
-         ),
+         entries.filter((entry): entry is RankingEntry & { rank: number } => entry.rank !== null),
       [entries]
    );
 
-   const [columnWidths, setColumnWidths] = React.useState(() =>
-      buildColumnWidths(metricCount)
-   );
+   const [columnWidths, setColumnWidths] = React.useState(() => buildColumnWidths(metricCount));
    const [scrollbarWidth, setScrollbarWidth] = React.useState(0);
 
    const [sort, setSort] = React.useState<SortState>({
@@ -152,7 +154,7 @@ export const RatingTable: React.FC<Prop> = ({
 
    React.useEffect(() => {
       setCurrentPage(1);
-   }, [activeCategoryId, sort]);
+   }, [activeCategoryId, sort, view]);
 
    React.useEffect(() => {
       setVisibleCount(isMobile ? MOBILE_VISIBLE_COUNT : sortedEntries.length);
@@ -160,6 +162,7 @@ export const RatingTable: React.FC<Prop> = ({
 
    const handleCategoryChange = (categoryId: RankingCategory["id"]) => {
       setOwnCategoryId(categoryId);
+      onClearView?.();
       onCategoryChange?.(categoryId);
       setCurrentPage(1);
    };
@@ -262,14 +265,22 @@ export const RatingTable: React.FC<Prop> = ({
    const hasMore = isMobile && visibleCount < sortedEntries.length;
 
    const handleShowMore = () => {
-      setVisibleCount((current) =>
-         Math.min(current + MOBILE_VISIBLE_STEP, sortedEntries.length)
-      );
+      setVisibleCount((current) => Math.min(current + MOBILE_VISIBLE_STEP, sortedEntries.length));
    };
 
    return (
       <section id="rating-table" className={clsx(css.rating_table, className)}>
          <h3 className={css.rating_table_title}>{t.rating.title}</h3>
+
+         {view && viewTitle && (
+            <div className={css.rating_table_view}>
+               <span>{viewTitle}</span>
+
+               <button type="button" aria-label={t.rating.explore.clearView} onClick={onClearView}>
+                  ×
+               </button>
+            </div>
+         )}
 
          <div className={css.rating_table_tabs}>
             {RANKING_CATEGORIES.map((rankingCategory) => {
@@ -350,7 +361,7 @@ export const RatingTable: React.FC<Prop> = ({
                   {hasMore && (
                      <button type="button" className={css.show_more} onClick={handleShowMore}>
                         <DropdownArrowIcon className={css.show_more_icon} />
-                        Показать ещё
+                        {t.sidebar.showMore}
                      </button>
                   )}
                </div>

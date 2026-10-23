@@ -10,9 +10,11 @@ import css from "./RatingExplore.module.scss";
 
 interface Prop {
    className?: string;
+   // Called with the card id (a key of RANKING_VIEWS) when a card is picked.
+   onSelectItem?: (itemId: string) => void;
 }
 
-export const RatingExplore: React.FC<Prop> = ({ className }) => {
+export const RatingExplore: React.FC<Prop> = ({ className, onSelectItem }) => {
    const { t } = useTranslation();
 
    return (
@@ -36,7 +38,19 @@ export const RatingExplore: React.FC<Prop> = ({ className }) => {
                            const translation = t.rating.explore.items[item.translationKey];
 
                            return (
-                              <article key={item.id} className={css.rating_explore_item}>
+                              <article
+                                 key={item.id}
+                                 className={css.rating_explore_item}
+                                 role="button"
+                                 tabIndex={0}
+                                 onClick={() => onSelectItem?.(item.id)}
+                                 onKeyDown={(event) => {
+                                    if (event.key === "Enter" || event.key === " ") {
+                                       event.preventDefault();
+                                       onSelectItem?.(item.id);
+                                    }
+                                 }}
+                              >
                                  <div className={css.rating_explore_icon}>
                                     <Image.Default src={item.icon} alt="" />
                                  </div>
