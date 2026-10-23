@@ -12,6 +12,7 @@ import { MobileSidebar } from "widgets/Sidebar/ui/MobileSidebar";
 import Image from "shared/ui/base/Image";
 import { NextLink } from "shared/ui/base/NextLink";
 import { ContentActions } from "shared/ui/components/ContentActions";
+import type { ModelTypeDropdownOption } from "shared/ui/ui-kit/ModelTypeDropdown";
 import { BurgerButton } from "shared/ui/ui-kit/BurgerButton";
 import { Button } from "shared/ui/ui-kit/Button";
 import type { SortDropdownOption, SortValue } from "shared/ui/ui-kit/SortDropdown";
@@ -40,6 +41,10 @@ interface Props<T extends string, TSort extends string = SortValue> {
    sortOptions?: SortDropdownOption<TSort>[];
    sortValue?: TSort;
    onSortChange?: (value: TSort) => void;
+   // Forwarded to ContentActions' model-type dropdown (catalog only).
+   modelTypeOptions?: ModelTypeDropdownOption[];
+   modelTypeValue?: string;
+   onModelTypeChange?: (value: string) => void;
    // Forwarded to ContentActions' create button — see its own `onCreate`.
    onCreate?: () => void;
    selectedVendorId?: string;
@@ -64,6 +69,9 @@ export const ContentHeader = <T extends string, TSort extends string = SortValue
    sortOptions,
    sortValue,
    onSortChange,
+   modelTypeOptions,
+   modelTypeValue,
+   onModelTypeChange,
    onCreate,
    selectedVendorId,
    selectedModelId,
@@ -156,6 +164,9 @@ export const ContentHeader = <T extends string, TSort extends string = SortValue
                sortValue={sortValue}
                onSortChange={onSortChange}
                onCreate={onCreate}
+               modelTypeOptions={modelTypeOptions}
+               modelTypeValue={modelTypeValue}
+               onModelTypeChange={onModelTypeChange}
             />
          </div>
 
