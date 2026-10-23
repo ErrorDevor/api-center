@@ -39,6 +39,8 @@ interface Props {
    age?: ProviderAge;
    // When set, the provider name in the header links to the provider's page.
    href?: string;
+   // Open `href` in a new tab (an outbound link to the provider's site).
+   hrefExternal?: boolean;
    onNameClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
    onMouseEnter?: () => void;
    onMouseLeave?: () => void;
@@ -55,6 +57,7 @@ export const ProviderTooltip: React.FC<Props> = ({
    reportsCount,
    age,
    href,
+   hrefExternal = false,
    onNameClick,
    onMouseEnter,
    onMouseLeave,
@@ -105,7 +108,12 @@ export const ProviderTooltip: React.FC<Props> = ({
       >
          <div className={css.provider_modal_header}>
             {href ? (
-               <a href={href} className={css.provider_modal_name} onClick={onNameClick}>
+               <a
+                  href={href}
+                  className={css.provider_modal_name}
+                  onClick={onNameClick}
+                  {...(hrefExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+               >
                   {providerName}
                </a>
             ) : (

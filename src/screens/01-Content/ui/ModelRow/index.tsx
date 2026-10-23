@@ -14,6 +14,7 @@ import { daysToProviderAge } from "shared/lib/i18n/formatters";
 import { useProviderCommentSummary } from "shared/lib/providerComments/useProviderCommentSummary";
 import { useProviderDescriptions } from "shared/lib/providerDescriptions/useProviderDescriptions";
 import { formatPaymentMethod } from "shared/lib/providers/formatPaymentMethod";
+import { getLocalizedProviderUrl } from "shared/lib/providers/getLocalizedProviderUrl";
 import { useProviderPopularity } from "shared/lib/providers/popularity/useProviderPopularity";
 import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 import Image from "shared/ui/base/Image";
@@ -63,6 +64,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
    const { entries: providerDescriptions } = useProviderDescriptions();
    const { trackClick } = useProviderPopularity();
    const reviewsHref = `/reviews?provider=${encodeURIComponent(model.providerDomain)}`;
+   const providerSiteHref = getLocalizedProviderUrl(model, locale);
 
    // Every provider click on the row — the name cell and the reviews count,
    // both of which now open /reviews — counts toward the same popularity
@@ -542,23 +544,19 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
             <span className={css.mobile_dots} />
 
             <div className={css.provider_wrapper}>
-               {/* Links to our own /reviews page, not the reseller's site,
-                   so visitors (and link equity) stay on-site — the outbound
-                   link to the reseller lives on that page instead (see
-                   CommentCardOptions' "Ссылка" row). Same destination as the
+               {/* The provider's own site (its locale storefront when it has
+                   one), in a new tab. The reviews page is reached through the
                    Отзывы cell below. */}
                <a
                   ref={providerRef}
-                  href={reviewsHref}
+                  href={providerSiteHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={css.provider}
                   aria-describedby={
                      provider && isProviderTooltipOpen ? providerTooltipId : undefined
                   }
-                  onClick={(event) => {
-                     event.preventDefault();
-                     trackProviderClick();
-                     router.push(reviewsHref);
-                  }}
+                  onClick={trackProviderClick}
                   onMouseEnter={openProviderTooltip}
                   onMouseLeave={closeProviderTooltip}
                   onFocus={openProviderTooltip}
@@ -577,12 +575,9 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                      reviewsCount={commentSummary?.totalComments}
                      reportsCount={commentSummary?.negativeCount}
                      age={providerAge}
-                     href={reviewsHref}
-                     onNameClick={(event) => {
-                        event.preventDefault();
-                        trackProviderClick();
-                        router.push(reviewsHref);
-                     }}
+                     href={providerSiteHref}
+                     hrefExternal
+                     onNameClick={trackProviderClick}
                      position={providerTooltipPosition}
                      onMouseEnter={openProviderTooltip}
                      onMouseLeave={closeProviderTooltip}
