@@ -19,7 +19,7 @@ import { ModelsTable } from "./ui/ModelsTable";
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
-import type { ModelContentType } from "shared/lib/models/modelType";
+import { type ModelContentType } from "shared/lib/models/modelType";
 import { useModelContentTypes } from "shared/lib/models/useModelCapabilities";
 import { useModelCatalog } from "shared/lib/models/useModelCatalog";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
@@ -35,6 +35,18 @@ import type { SortDropdownOption } from "shared/ui/ui-kit/SortDropdown";
 import css from "./Content.module.scss";
 
 type TabId = (typeof tabs)[number]["id"];
+
+const ALL_TYPES_VALUE = "allTypes";
+
+// Same order as the Sidebar's "Model Type" list.
+const MODEL_TYPE_DROPDOWN_ORDER: ModelContentType[] = [
+   "coding",
+   "text",
+   "chat",
+   "images",
+   "search",
+   "audioVideo",
+];
 
 interface Prop {
    className?: string;
@@ -177,6 +189,30 @@ export const Content: React.FC<Prop> = ({
 
    const handleSortValueChange = (value: ModelsSortValue) => {
       setSort(MODELS_SORT_PRESETS[value]);
+   };
+
+   // Same buckets and per-listing counts as the Sidebar's "Model Type" list.
+   const modelTypeOptions = React.useMemo(() => {
+      const counts = new Map<string, number>();
+
+      for (const record of records) {
+         for (const contentType of getContentTypes(record.canonicalModelId)) {
+            counts.set(contentType, (counts.get(contentType) ?? 0) + 1);
+         }
+      }
+
+      return [
+         { value: ALL_TYPES_VALUE, label: t.sidebar.modelTypes.allTypes, count: records.length },
+         ...MODEL_TYPE_DROPDOWN_ORDER.map((contentType) => ({
+            value: contentType,
+            label: t.sidebar.modelTypes[contentType],
+            count: counts.get(contentType) ?? 0,
+         })),
+      ];
+   }, [records, getContentTypes, t]);
+
+   const handleModelTypeChange = (value: string) => {
+      onSelectModelType?.(value === ALL_TYPES_VALUE ? undefined : value);
    };
 
    const resultsCount = filteredModels.length;
@@ -324,6 +360,9 @@ export const Content: React.FC<Prop> = ({
                sortOptions={sortOptions}
                sortValue={sortStateToValue(sort)}
                onSortChange={handleSortValueChange}
+               modelTypeOptions={modelTypeOptions}
+               modelTypeValue={selectedModelType ?? ALL_TYPES_VALUE}
+               onModelTypeChange={handleModelTypeChange}
             />
 
             <div className={css.content_list}>

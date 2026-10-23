@@ -7,6 +7,10 @@ import { PlusIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
 import { FilterDropdown } from "shared/ui/ui-kit/FilterDropdown";
 import {
+   ModelTypeDropdown,
+   type ModelTypeDropdownOption,
+} from "shared/ui/ui-kit/ModelTypeDropdown";
+import {
    SortDropdown,
    type SortDropdownOption,
    type SortValue,
@@ -28,6 +32,10 @@ interface Prop<T extends string = SortValue> {
    // "Create" for "forum"). Left undefined everywhere it isn't backed by a
    // real action yet, in which case the button stays inert as before.
    onCreate?: () => void;
+   // The catalog's model-type filter ("api" variant). Omit to hide it.
+   modelTypeOptions?: ModelTypeDropdownOption[];
+   modelTypeValue?: string;
+   onModelTypeChange?: (value: string) => void;
 }
 
 export const ContentActions = <T extends string = SortValue>({
@@ -37,6 +45,9 @@ export const ContentActions = <T extends string = SortValue>({
    sortValue,
    onSortChange,
    onCreate,
+   modelTypeOptions,
+   modelTypeValue,
+   onModelTypeChange,
 }: Prop<T>) => {
    const { t } = useTranslation();
 
@@ -44,6 +55,15 @@ export const ContentActions = <T extends string = SortValue>({
       <div className={clsx(css.content_actions, className)}>
          {/* Filter is a group-buys-only feature. */}
          {variant === "group-buys" && <FilterDropdown name={t.common.filter} variant={variant} />}
+
+         {modelTypeOptions && modelTypeValue !== undefined && onModelTypeChange && (
+            <ModelTypeDropdown
+               name={t.sidebar.modelTypeTitle}
+               options={modelTypeOptions}
+               value={modelTypeValue}
+               onChange={onModelTypeChange}
+            />
+         )}
 
          <SortDropdown
             name={t.content.actions.tableView}

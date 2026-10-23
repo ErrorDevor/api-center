@@ -1,0 +1,45 @@
+.type_button {
+   height: 3.6rem;
+   color: #212121;
+
+   svg {
+      width: 1.6rem;
+      height: 1.6rem;
+      flex-shrink: 0;
+   }
+}
+
+.type_dropdown {
+   min-width: 22rem;
+}
+
+.type_list {
+   display: flex;
+   flex-direction: column;
+
+   &_item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.8rem;
+   }
+}
+
+.type_option {
+   width: 100%;
+}
+
+.type_label {
+   display: inline-flex;
+   align-items: center;
+   gap: 0.8rem;
+}
+
+.type_count {
+   padding: 0 0.6rem;
+   border-radius: 0.6rem;
+   background: rgba(0, 0, 0, 0.06);
+   color: #797a79;
+   font-size: 1.2rem;
+   line-height: 2rem;
+}
