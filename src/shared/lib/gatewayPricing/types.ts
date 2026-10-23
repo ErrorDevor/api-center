@@ -1,3 +1,5 @@
+import { normalizeCanonicalModelId } from "shared/lib/models/canonicalModelId";
+
 // BestAIPrice's own retail pricing, keyed by canonical_model_id — the exact
 // numbers the gateway bills from (see /api/gateway/pricing and
 // AUTH_API_BASE_URL's /models in sub2api.ts). This is deliberately a
@@ -47,11 +49,13 @@ export const parseGatewayPricingList = (payload: unknown): GatewayModelPricing[]
 
       const raw = item as Record<string, unknown>;
 
-      const canonicalModelId = raw.canonical_model_id ?? raw.model_id;
+      const rawCanonicalModelId = raw.canonical_model_id ?? raw.model_id;
 
-      if (!isNonEmptyString(canonicalModelId)) {
+      if (!isNonEmptyString(rawCanonicalModelId)) {
          continue;
       }
+
+      const canonicalModelId = normalizeCanonicalModelId(rawCanonicalModelId);
 
       const inputPrice = toNullableNumber(raw.input_price_per_1m ?? raw.input_price);
       const outputPrice = toNullableNumber(raw.output_price_per_1m ?? raw.output_price);

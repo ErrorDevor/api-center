@@ -10,6 +10,8 @@ import { Header } from "widgets/Header";
 import { Sidebar } from "widgets/Sidebar";
 import type { SidebarMode } from "widgets/Sidebar/lib/sidebar.types";
 
+import { normalizeCanonicalModelId } from "shared/lib/models/canonicalModelId";
+import { getVendorId } from "shared/lib/providers/vendors";
 import { isModelContentType } from "shared/lib/models/modelType";
 import { AppLayout } from "shared/ui/templates/AppLayout";
 
@@ -51,12 +53,13 @@ const HomeView: React.FC<Props> = ({ params }) => {
 
    const [collapsed, setCollapsed] = React.useState(false);
 
-   const selectedVendorId = segments?.[0];
-   const selectedModelSlug = segments?.[1];
+   // Old links spell versions with a hyphen ("glm-5-3"); fold them into the
+   // canonical id so they still land on the model.
    const selectedModelId =
-      selectedVendorId && selectedModelSlug
-         ? `${selectedVendorId}/${selectedModelSlug}`
+      segments?.[0] && segments[1]
+         ? normalizeCanonicalModelId(`${segments[0]}/${segments[1]}`)
          : undefined;
+   const selectedVendorId = selectedModelId ? getVendorId(selectedModelId) : segments?.[0];
 
    // Unknown/typo'd `?type=` values are ignored rather than filtering the
    // table down to nothing.

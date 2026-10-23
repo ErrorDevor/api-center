@@ -1,3 +1,5 @@
+import { normalizeCanonicalModelId } from "shared/lib/models/canonicalModelId";
+
 export type TrustStatus = "green" | "yellow" | "red";
 
 export interface ProviderPriceRecord {
@@ -53,6 +55,25 @@ const isNonEmptyString = (value: unknown): value is string =>
 const isFiniteNumber = (value: unknown): value is number =>
    typeof value === "number" && Number.isFinite(value);
 
+// After canonical ids are normalized, one reseller can list the same model
+// under several spellings or dated snapshots ("claude-haiku-4-5" and
+// "claude-haiku-4-5-20251001"). Keep one record per reseller x model — the
+// most recently checked — so the table doesn't show the same offer twice.
+const dedupeRecords = (records: ProviderPriceRecord[]): ProviderPriceRecord[] => {
+   const byKey = new Map<string, ProviderPriceRecord>();
+
+   for (const record of records) {
+      const key = `${record.providerDomain}__${record.canonicalModelId}`;
+      const existing = byKey.get(key);
+
+      if (!existing || Date.parse(record.lastCheckedAt) > Date.parse(existing.lastCheckedAt)) {
+         byKey.set(key, record);
+      }
+   }
+
+   return Array.from(byKey.values());
+};
+
 /**
  * Defensively parses the raw providers.json payload produced by the backend
  * parser. Records that don't match the expected shape are dropped instead of
@@ -81,7 +102,9 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
       const providerUrlRu = isNonEmptyString(raw.provider_url_ru) ? raw.provider_url_ru : null;
       const providerUrlEn = isNonEmptyString(raw.provider_url_en) ? raw.provider_url_en : null;
       const modelName = raw.model_name;
-      const canonicalModelId = raw.canonical_model_id;
+      const canonicalModelId = isNonEmptyString(raw.canonical_model_id)
+         ? normalizeCanonicalModelId(raw.canonical_model_id)
+         : raw.canonical_model_id;
       const inputPriceUsdPer1m = isFiniteNumber(raw.input_price_usd_per_1m)
          ? raw.input_price_usd_per_1m
          : null;
@@ -186,5 +209,5 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
       });
    }
 
-   return records;
+   return dedupeRecords(records);
 };

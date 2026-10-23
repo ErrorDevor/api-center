@@ -1,3 +1,5 @@
+import { normalizeCanonicalModelId } from "./canonicalModelId";
+
 export interface ModelCatalogEntry {
    canonicalModelId: string;
    displayName: string;
@@ -28,7 +30,9 @@ export const parseModelCatalog = (payload: unknown): ModelCatalogEntry[] => {
 
       const raw = item as Record<string, unknown>;
 
-      const canonicalModelId = raw.canonical_model_id;
+      const canonicalModelId = isNonEmptyString(raw.canonical_model_id)
+         ? normalizeCanonicalModelId(raw.canonical_model_id)
+         : raw.canonical_model_id;
       const displayName = raw.display_name;
       const descriptionRu = raw.description_ru;
       const descriptionEn = raw.description_en;

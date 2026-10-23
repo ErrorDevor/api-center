@@ -1,5 +1,6 @@
 import type { ModelDescription, ModelItem } from "./content.data";
 
+import { formatModelName } from "shared/lib/models/canonicalModelId";
 import type { ModelCatalogEntry } from "shared/lib/models/types";
 import type { ProviderPriceRecord } from "shared/lib/providers/types";
 
@@ -137,7 +138,7 @@ export const toModelItems = (
 
          return {
             id: `${record.providerDomain}__${record.canonicalModelId}`,
-            name: record.modelName,
+            name: catalogEntry?.displayName ?? formatModelName(record.canonicalModelId),
             canonicalModelId: record.canonicalModelId,
             description,
             inputPrice: record.inputPriceUsdPer1m,
