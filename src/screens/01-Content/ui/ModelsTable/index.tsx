@@ -4,7 +4,7 @@ import React from "react";
 
 import clsx from "clsx";
 import type { ModelItem, SortKey, SortState } from "screens/01-Content/lib/content.data";
-import { diversifyAdjacentProviders } from "screens/01-Content/lib/diversifyProviders";
+import { limitProviderRuns } from "screens/01-Content/lib/diversifyProviders";
 import type { PinnedModel } from "screens/01-Content/lib/usePinnedModels";
 
 import { useIsMobile } from "shared/lib/hooks/useIsMobile";
@@ -48,9 +48,18 @@ interface Props {
    // (see usePinnedModels: the model itself on a model page, the vendor's
    // top 3 on a vendor page, the top Gemini/OpenAI/Claude on the main one).
    pinnedModels?: PinnedModel[];
+   // Break up runs of the same provider (главная / vendor family pages);
+   // off for a single model's offers, where the plain sort order matters.
+   limitProviderRuns?: boolean;
 }
 
-export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange, pinnedModels = [] }) => {
+export const ModelsTable: React.FC<Props> = ({
+   models,
+   sort,
+   onSortChange,
+   pinnedModels = [],
+   limitProviderRuns: shouldLimitProviderRuns = false,
+}) => {
    const { t, locale } = useTranslation();
    const { getClickCount, version: popularityVersion } = useProviderPopularity();
    const { getReleaseDate } = useModelReleaseDates();
@@ -147,13 +156,14 @@ export const ModelsTable: React.FC<Props> = ({ models, sort, onSortChange, pinne
       });
 
       // One reseller can happen to be cheapest/first across many models in a
-      // row (e.g. onehop.ai for every Claude model) — break that up so the
-      // page doesn't read as a single provider's listing. Applied after
-      // sorting, before pagination, so page boundaries don't reshuffle it.
-      return diversifyAdjacentProviders(sorted);
+      // row (e.g. onehop.ai for every Claude model) — never show it more
+      // than twice in a row so the page doesn't read as a single provider's
+      // listing. Applied after sorting, before pagination, so page
+      // boundaries don't reshuffle it.
+      return shouldLimitProviderRuns ? limitProviderRuns(sorted) : sorted;
       // popularityVersion: re-sort when a tracked click changes the counts
       // the "popularity" sort key reads.
-   }, [models, sort, popularityVersion, getClickCount, getReleaseDate]);
+   }, [models, sort, popularityVersion, getClickCount, getReleaseDate, shouldLimitProviderRuns]);
 
    // A new/re-sorted/re-filtered list makes the previous page number
    // meaningless (or out of range) — jump back to page 1.
