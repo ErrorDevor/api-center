@@ -4,12 +4,17 @@ import React from "react";
 
 import { usePathname, useRouter } from "next/navigation";
 
-import { gaTrackAddProviderClick, gaTrackLoginClick, gaTrackSignupClick } from "shared/lib/analytics/ga";
+import {
+   gaTrackAddProviderClick,
+   gaTrackLoginClick,
+   gaTrackSignupClick,
+} from "shared/lib/analytics/ga";
 import { useAuth } from "shared/lib/auth";
+import { DASHBOARD_URL } from "shared/lib/gatewayPricing/cabinet";
 import { useTranslation } from "shared/lib/i18n";
 import Image from "shared/ui/base/Image";
+import { Modal } from "shared/ui/base/Modal";
 import { NextLink } from "shared/ui/base/NextLink";
-import { CABINET_URL } from "shared/lib/gatewayPricing/cabinet";
 import { CatalogSearch } from "shared/ui/components/CatalogSearch";
 // import { CurrencyDropdown } from "shared/ui/components/CurrencyDropdown";
 import { LanguageDropdown } from "shared/ui/components/LanguageDropdown";
@@ -49,10 +54,16 @@ export const Header: React.FC = () => {
 
    // The gateway dashboard lives outside this Next app, so a full navigation.
    const handleOpenDashboard = () => {
-      window.location.assign(CABINET_URL);
+      window.location.assign(DASHBOARD_URL);
    };
 
+   // The avatar opens a small menu (just "Log out" for now) instead of
+   // navigating anywhere.
+   const accountRef = React.useRef<HTMLDivElement>(null);
+   const [isAccountMenuOpen, setIsAccountMenuOpen] = React.useState(false);
+
    const handleLogout = async () => {
+      setIsAccountMenuOpen(false);
       await logout();
       router.replace("/");
    };
@@ -61,9 +72,8 @@ export const Header: React.FC = () => {
       <header className={css.header}>
          <div className={css.header_left_side}>
             <NextLink href="/" className={css.header_logo}>
-               <Image.Default src="/images/Logo.svg" className={css.main_logo}/>
+               <Image.Default src="/images/Logo.svg" className={css.main_logo} />
                <p>Best Ai Price</p>
-               
             </NextLink>
 
             <CatalogSearch />
@@ -94,15 +104,36 @@ export const Header: React.FC = () => {
 
             {status === "authenticated" && user ? (
                <div className={css.header_account_block}>
-                  <UserInfo
-                     userName={user.email}
-                     withName={false}
-                     onAvatarClick={handleOpenDashboard}
-                  />
-
-                  <Button variant="grey" className={css.logout_button} onClick={handleLogout}>
-                     {t.common.logout}
+                  <Button
+                     variant="blue"
+                     className={css.dashboard_button}
+                     onClick={handleOpenDashboard}
+                  >
+                     {t.common.dashboard}
                   </Button>
+
+                  <div ref={accountRef}>
+                     <UserInfo
+                        userName={user.email}
+                        withName={false}
+                        onAvatarClick={() => setIsAccountMenuOpen((current) => !current)}
+                     />
+                  </div>
+
+                  <Modal
+                     isOpen={isAccountMenuOpen}
+                     variant="dropdown"
+                     anchorRef={accountRef}
+                     placement="bottom-end"
+                     gap={8}
+                     contentClassName={css.account_menu}
+                     ariaLabel={user.email}
+                     onClose={() => setIsAccountMenuOpen(false)}
+                  >
+                     <button type="button" className={css.account_menu_item} onClick={handleLogout}>
+                        {t.common.logout}
+                     </button>
+                  </Modal>
                </div>
             ) : (
                <>
