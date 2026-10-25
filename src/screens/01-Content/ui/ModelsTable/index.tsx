@@ -30,6 +30,11 @@ const getSortPrice = (model: ModelItem): number => model.inputPrice ?? model.nat
 const getSecondarySortPrice = (model: ModelItem): number =>
    model.outputPrice ?? model.nativePriceUsd ?? 0;
 
+// With several pinned BestAIPrice rows (main / vendor listing) they are
+// spread through the list — one row in every PINNED_EVERY — instead of
+// stacking at the top. A single model's page keeps its pinned row on top.
+const PINNED_EVERY = 3;
+
 const MOBILE_VISIBLE_COUNT = 10;
 const MOBILE_VISIBLE_STEP = 10;
 
@@ -323,6 +328,20 @@ export const ModelsTable: React.FC<Props> = ({
       };
    }, [isMobile, hasMore, sortedModels.length]);
 
+   const shouldInterleavePinned = pinnedModels.length > 1;
+
+   const renderPinnedRow = ({ id, model }: PinnedModel) => (
+      <BestAiPriceRow
+         key={`pinned-${id}`}
+         canonicalModelId={id}
+         modelName={model.name}
+         model={model}
+         description={model.description[locale]}
+      />
+   );
+
+   const renderModelRow = (model: ModelItem) => <ModelRow key={model.id} model={model} />;
+
    return (
       <>
          <div className={css.table_scroll}>
@@ -382,23 +401,27 @@ export const ModelsTable: React.FC<Props> = ({
 
                <div ref={bodyScrollRef} className={css.table_body_scroll}>
                   <div className={css.table_body}>
-                     {pinnedModels.map(({ id, model }) => (
-                        <BestAiPriceRow
-                           key={id}
-                           canonicalModelId={id}
-                           modelName={model.name}
-                           model={model}
-                           description={model.description[locale]}
-                        />
-                     ))}
+                     {visibleModels.length === 0 && (
+                        <>
+                           {pinnedModels.map(renderPinnedRow)}
 
-                     {visibleModels.length === 0 ? (
-                        <div className={css.empty_state}>{t.content.table.emptyState}</div>
-                     ) : (
-                        visibleModels.map((model: ModelItem) => (
-                           <ModelRow key={model.id} model={model} />
-                        ))
+                           <div className={css.empty_state}>{t.content.table.emptyState}</div>
+                        </>
                      )}
+
+                     {visibleModels.length > 0 &&
+                        (shouldInterleavePinned
+                           ? visibleModels.flatMap((model: ModelItem, index: number) => {
+                                const pinned = pinnedModels[index / (PINNED_EVERY - 1)];
+
+                                return index % (PINNED_EVERY - 1) === 0 && pinned
+                                   ? [renderPinnedRow(pinned), renderModelRow(model)]
+                                   : [renderModelRow(model)];
+                             })
+                           : [
+                                ...pinnedModels.map(renderPinnedRow),
+                                ...visibleModels.map(renderModelRow),
+                             ])}
                   </div>
 
                   {/* {hasMore && (

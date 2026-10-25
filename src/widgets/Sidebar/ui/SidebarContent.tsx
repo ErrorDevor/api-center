@@ -129,7 +129,11 @@ export const SidebarContent: React.FC<Props> = ({
       // the second read the pre-click (stale) vendor from its closure and
       // overwrote the first, so picking a provider from the sidebar never
       // actually filtered the table.
-      onSelectVendor?.(nextProviderId);
+      if (onSelectVendor) {
+         onSelectVendor(nextProviderId);
+      } else {
+         route.push(nextProviderId ? `/home/${nextProviderId}` : "/home");
+      }
    };
 
    const handleModelClick = (provider: ProviderItemType, model: ProviderModel) => {
@@ -141,8 +145,14 @@ export const SidebarContent: React.FC<Props> = ({
          setUncontrolledModelId(nextModelId);
       }
 
-      onSelectVendor?.(provider.id);
-      onSelectModel?.(nextModelId);
+      // Pages without their own handlers (ai-providers, rating, ...) still
+      // navigate to the catalog for the picked model/provider.
+      if (onSelectModel) {
+         onSelectVendor?.(provider.id);
+         onSelectModel(nextModelId);
+      } else {
+         route.push(`/home/${nextModelId ?? provider.id}`);
+      }
    };
 
    // Clicking the already-active type deselects back to "All Types" instead
@@ -158,7 +168,13 @@ export const SidebarContent: React.FC<Props> = ({
          gaTrackFilterApply("modelType", nextModelTypeId);
       }
 
-      onSelectModelType?.(nextModelTypeId === ALL_MODEL_TYPES_ID ? undefined : nextModelTypeId);
+      const nextType = nextModelTypeId === ALL_MODEL_TYPES_ID ? undefined : nextModelTypeId;
+
+      if (onSelectModelType) {
+         onSelectModelType(nextType);
+      } else {
+         route.push(nextType ? `/home?type=${encodeURIComponent(nextType)}` : "/home");
+      }
    };
 
    const route = useRouter();
