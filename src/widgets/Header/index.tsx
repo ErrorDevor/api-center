@@ -102,12 +102,16 @@ export const Header: React.FC = () => {
                </Button>
             )}
 
-            <Button variant="blue" className={css.dashboard_button} onClick={handleOpenDashboard}>
-               {t.common.dashboard}
-            </Button>
-
             {status === "authenticated" && user ? (
                <div className={css.header_account_block}>
+                  <Button
+                     variant="blue"
+                     className={css.dashboard_button}
+                     onClick={handleOpenDashboard}
+                  >
+                     {t.common.dashboard}
+                  </Button>
+
                   <div ref={accountRef}>
                      <UserInfo
                         userName={user.email}
