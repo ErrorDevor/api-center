@@ -17,8 +17,6 @@ interface Props {
    mode?: "register" | "login";
 }
 
-const GATEWAY_KEYS_URL = "/gateway/keys";
-
 const MainScreenView: React.FC<Props> = ({ mode = "register" }) => {
    const isLogin = mode === "login";
    const { t } = useTranslation();
@@ -45,9 +43,7 @@ const MainScreenView: React.FC<Props> = ({ mode = "register" }) => {
 
       setIsSubmitting(false);
 
-      if (result.ok && isLogin) {
-         window.location.assign(GATEWAY_KEYS_URL);
-      } else if (result.ok) {
+      if (result.ok) {
          const selectedModelId = searchParams.get("model");
          router.replace(selectedModelId ? `/home/${selectedModelId}` : "/home");
       } else {
