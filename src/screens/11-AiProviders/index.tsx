@@ -12,7 +12,6 @@ import { useIsMobile } from "shared/lib/hooks/useIsMobile";
 import { useTranslation } from "shared/lib/i18n";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
 import { ContentHeader } from "shared/ui/components/ContentHeader";
-import { Pagination } from "shared/ui/components/Pagination";
 import { Search } from "shared/ui/components/Search";
 import { FilterIcon } from "shared/ui/icons";
 import { Button } from "shared/ui/ui-kit/Button";
@@ -23,8 +22,6 @@ import css from "./AiProvidersScreen.module.scss";
 
 const INITIAL_COLUMN_WIDTHS = [43, 17, 19, 11, 10];
 const MIN_COLUMN_WIDTHS = [28, 12, 14, 9, 8];
-
-const PAGE_SIZE = 11;
 
 interface Prop {
    className?: string;
@@ -54,7 +51,6 @@ export const AiProvidersScreen: React.FC<Prop> = ({
       direction: "asc",
    });
 
-   const [currentPage, setCurrentPage] = React.useState(1);
 
    const sortOptions = React.useMemo(
       () => [
@@ -89,7 +85,6 @@ export const AiProvidersScreen: React.FC<Prop> = ({
          };
       });
 
-      setCurrentPage(1);
    };
 
    const filteredProviders = React.useMemo(() => {
@@ -133,13 +128,6 @@ export const AiProvidersScreen: React.FC<Prop> = ({
          return sort.direction === "asc" ? result : -result;
       });
    }, [filteredProviders, sort, mobileSort, isMobile]);
-
-   const totalPages = Math.max(1, Math.ceil(sortedProviders.length / PAGE_SIZE));
-
-   const visibleProviders = sortedProviders.slice(
-      (currentPage - 1) * PAGE_SIZE,
-      currentPage * PAGE_SIZE
-   );
 
    const handleResizeStart = (
       event: React.PointerEvent<HTMLButtonElement>,
@@ -215,7 +203,6 @@ export const AiProvidersScreen: React.FC<Prop> = ({
 
    const handleMobileSortChange = (nextSort: MobileSortValue) => {
       setMobileSort(nextSort);
-      setCurrentPage(1);
    };
 
    const tableStyle = {
@@ -317,7 +304,7 @@ export const AiProvidersScreen: React.FC<Prop> = ({
                         </div>
 
                         <div className={css.table_body}>
-                           {visibleProviders.map((provider) => (
+                           {sortedProviders.map((provider) => (
                               <AiProviderRow
                                  key={provider.id}
                                  provider={provider}
@@ -329,13 +316,6 @@ export const AiProvidersScreen: React.FC<Prop> = ({
                         </div>
                      </div>
                   </div>
-
-                  <Pagination
-                     className={css.ai_providers_pagination}
-                     currentPage={currentPage}
-                     totalPages={totalPages}
-                     onChange={setCurrentPage}
-                  />
                </div>
             </div>
          </div>
@@ -346,7 +326,6 @@ export const AiProvidersScreen: React.FC<Prop> = ({
             value={statusFilter}
             onApply={(value) => {
                setStatusFilter(value);
-               setCurrentPage(1);
             }}
             onClose={() => setIsOpen(false)}
          />
