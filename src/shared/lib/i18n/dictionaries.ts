@@ -762,6 +762,19 @@ mainLanding: {
    terms: "Terms & Conditions",
 },
 
+addProvider: {
+   title: "Add provider",
+   description: "Tell us about an AI API provider and we will review it.",
+   name: "Provider name",
+   website: "Website",
+   contact: "Your contact (email or Telegram)",
+   comment: "Anything else we should know",
+   submit: "Send",
+   sending: "Sending...",
+   success: "Thanks! We received your request and will review it.",
+   error: "Could not send the request. Please try again later.",
+},
+
 } as const;
 
 type DeepStringValues<T> = {
@@ -1520,6 +1533,19 @@ mainLanding: {
    copyright: "© 2026 Best AI Price. Все права защищены.",
    privacy: "Политика конфиденциальности",
    terms: "Условия использования",
+},
+
+addProvider: {
+   title: "Добавить провайдер",
+   description: "Расскажите о провайдере AI API, мы рассмотрим заявку.",
+   name: "Название провайдера",
+   website: "Сайт",
+   contact: "Ваш контакт (email или Telegram)",
+   comment: "Что ещё нам стоит знать",
+   submit: "Отправить",
+   sending: "Отправляем...",
+   success: "Спасибо! Заявка получена, мы её рассмотрим.",
+   error: "Не удалось отправить заявку. Попробуйте позже.",
 },
 
 };

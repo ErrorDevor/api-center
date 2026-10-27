@@ -35,7 +35,7 @@ export const Header: React.FC = () => {
 
    const handleAddProvider = () => {
       gaTrackAddProviderClick();
-      router.push("/create");
+      router.push("/add-provider");
    };
 
    const handleCreate = () => {
