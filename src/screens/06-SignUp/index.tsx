@@ -6,6 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { RegistrationForm } from "screens/00-Onboarding/ui/RegistrationForm";
 
+import { DASHBOARD_URL } from "shared/lib/gatewayPricing/cabinet";
+
 import css from "./SignUp.module.scss";
 
 // useSearchParams() opts the reading component out of static rendering
@@ -24,12 +26,18 @@ const SignUpView: React.FC = () => {
       router.replace(selectedModelId ? `/home/${selectedModelId}` : "/home");
    };
 
+   // A freshly registered user continues straight to the gateway dashboard
+   // (outside this Next app, hence the full navigation).
+   const handleRegistered = () => {
+      window.location.assign(DASHBOARD_URL);
+   };
+
    return (
       <div className={css.signup}>
          <div className={css.signup_card}>
             <RegistrationForm
                onBack={handleComplete}
-               onSuccess={handleComplete}
+               onSuccess={handleRegistered}
                onClose={handleComplete}
             />
          </div>

@@ -2,9 +2,10 @@
 
 import React from "react";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import { useAuth } from "shared/lib/auth";
+import { DASHBOARD_URL } from "shared/lib/gatewayPricing/cabinet";
 import { useTranslation } from "shared/lib/i18n";
 import { SiteFooter } from "shared/ui/components/SiteFooter";
 import Image from "shared/ui/base/Image";
@@ -21,7 +22,6 @@ const MainScreenView: React.FC<Props> = ({ mode = "register" }) => {
    const isLogin = mode === "login";
    const { t } = useTranslation();
    const { mainLanding: content } = t;
-   const router = useRouter();
    const searchParams = useSearchParams();
    const modelParam = searchParams.get("model");
    const modelQuery = modelParam ? `?model=${encodeURIComponent(modelParam)}` : "";
@@ -44,8 +44,7 @@ const MainScreenView: React.FC<Props> = ({ mode = "register" }) => {
       setIsSubmitting(false);
 
       if (result.ok) {
-         const selectedModelId = searchParams.get("model");
-         router.replace(selectedModelId ? `/home/${selectedModelId}` : "/home");
+         window.location.assign(DASHBOARD_URL);
       } else {
          setErrorMessage(result.message);
       }
