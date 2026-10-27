@@ -35,6 +35,12 @@ const getSecondarySortPrice = (model: ModelItem): number =>
 // stacking at the top. A single model's page keeps its pinned row on top.
 const PINNED_EVERY = 3;
 
+// On a price-ascending list the very cheapest offer is often an outlier far
+// below the rest (0.24 vs 0.35–0.4), which makes the prices look odd. It is
+// moved down so it lands as the 4th row of the table (counting the pinned
+// BestAIPrice row above it).
+const CHEAPEST_ROW_POSITION = 4;
+
 const MOBILE_VISIBLE_COUNT = 10;
 const MOBILE_VISIBLE_STEP = 10;
 
@@ -99,6 +105,8 @@ export const ModelsTable: React.FC<Props> = ({
          resizeObserver.disconnect();
       };
    }, []);
+
+   const pinnedCount = pinnedModels.length;
 
    const sortedModels = React.useMemo(() => {
       const sorted = [...models].sort((firstModel, secondModel) => {
@@ -165,10 +173,32 @@ export const ModelsTable: React.FC<Props> = ({
       // than twice in a row so the page doesn't read as a single provider's
       // listing. Applied after sorting, before pagination, so page
       // boundaries don't reshuffle it.
-      return shouldLimitProviderRuns ? limitProviderRuns(sorted) : sorted;
+      const limited = shouldLimitProviderRuns ? limitProviderRuns(sorted) : sorted;
+
+      if (sort.key !== "price" || sort.direction !== "asc") {
+         return limited;
+      }
+
+      const cheapestIndex = Math.max(0, CHEAPEST_ROW_POSITION - 1 - Math.min(pinnedCount, 1));
+
+      if (limited.length <= cheapestIndex) {
+         return limited;
+      }
+
+      const [cheapest, ...rest] = limited;
+
+      return [...rest.slice(0, cheapestIndex), cheapest, ...rest.slice(cheapestIndex)];
       // popularityVersion: re-sort when a tracked click changes the counts
       // the "popularity" sort key reads.
-   }, [models, sort, popularityVersion, getClickCount, getReleaseDate, shouldLimitProviderRuns]);
+   }, [
+      models,
+      sort,
+      popularityVersion,
+      getClickCount,
+      getReleaseDate,
+      shouldLimitProviderRuns,
+      pinnedCount,
+   ]);
 
    // A new/re-sorted/re-filtered list makes the previous page number
    // meaningless (or out of range) — jump back to page 1.
