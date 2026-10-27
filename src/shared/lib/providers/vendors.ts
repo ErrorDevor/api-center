@@ -47,12 +47,16 @@ export const VENDOR_DISPLAY_NAMES: Record<string, string> = {
    alibaba: "Alibaba",
    kuaishou: "Kling",
    bytedance: "Seedance",
+   typesafe: "Jev",
 };
 
 // Vendor ids without a display name that also lack an icon file yet.
 const VENDORS_WITHOUT_ICONS = new Set(["alibaba"]);
 
-// Every id here must have a matching /public/icons/providers/<id>.svg file.
+// Every id here must have a matching /public/icons/providers/<id>.svg file
+// (or .png for the ids in PNG_ICON_VENDORS).
+const PNG_ICON_VENDORS = new Set(["typesafe"]);
+
 const VENDORS_WITH_ICONS = new Set(
    Object.keys(VENDOR_DISPLAY_NAMES).filter((id) => !VENDORS_WITHOUT_ICONS.has(id))
 );
@@ -64,4 +68,6 @@ export const getVendorDisplayName = (vendorId: string): string =>
 // callers can decide how to render a missing icon instead of pointing at a
 // 404'ing file.
 export const getVendorIcon = (vendorId: string): string | undefined =>
-   VENDORS_WITH_ICONS.has(vendorId) ? `/icons/providers/${vendorId}.svg` : undefined;
+   VENDORS_WITH_ICONS.has(vendorId)
+      ? `/icons/providers/${vendorId}.${PNG_ICON_VENDORS.has(vendorId) ? "png" : "svg"}`
+      : undefined;
