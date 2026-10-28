@@ -33,6 +33,19 @@ export const Reply: React.FC<Prop> = ({
 
    const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
+   // The textarea starts at one line and grows with its content (up to the
+   // CSS max-height, then it scrolls) so long text doesn't spill out.
+   React.useLayoutEffect(() => {
+      const textarea = textareaRef.current;
+
+      if (!textarea) {
+         return;
+      }
+
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+   }, [value]);
+
    const normalizedValue = value.trim();
    const isSubmitDisabled = disabled || !normalizedValue;
 

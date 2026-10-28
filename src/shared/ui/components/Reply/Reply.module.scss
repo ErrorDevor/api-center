@@ -4,7 +4,7 @@
    box-sizing: border-box;
 
    display: flex;
-   align-items: center;
+   align-items: flex-end;
    justify-content: space-between;
 
    width: 100%;
@@ -30,9 +30,10 @@
       width: 100%;
       height: 2rem;
       min-height: 2rem;
+      max-height: 20rem;
       padding: 0;
 
-      overflow: hidden;
+      overflow-y: auto;
       resize: none;
 
       border: none;
