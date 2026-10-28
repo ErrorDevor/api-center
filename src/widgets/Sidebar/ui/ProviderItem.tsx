@@ -4,6 +4,10 @@ import type { ProviderItem as ProviderItemType, ProviderModel } from "../lib/sid
 import clsx from "clsx";
 
 import Image from "shared/ui/base/Image";
+import { handlePlainClick } from "shared/lib/links/plainClick";
+import { NextLink } from "shared/ui/base/NextLink";
+
+import { getCatalogHref } from "../lib/catalog-href";
 
 import css from "../Sidebar.module.scss";
 
@@ -15,10 +19,10 @@ interface Props {
 
 export const ProviderItem: React.FC<Props> = ({ provider, active, onClick }) => {
    return (
-      <button
-         type="button"
+      <NextLink
+         href={getCatalogHref(provider.id)}
          className={clsx(css.provider_item, active && css.provider_item_selected)}
-         onClick={onClick}
+         onClick={handlePlainClick(onClick)}
       >
          <span className={css.provider_main}>
             <Image.Default src={provider.icon} className={css.provider_icon} />
@@ -27,6 +31,6 @@ export const ProviderItem: React.FC<Props> = ({ provider, active, onClick }) => 
 
             <span className={css.provider_count}>{provider.count}</span>
          </span>
-      </button>
+      </NextLink>
    );
 };

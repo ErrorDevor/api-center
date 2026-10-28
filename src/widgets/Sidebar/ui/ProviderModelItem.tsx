@@ -5,7 +5,11 @@ import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
 import Image from "shared/ui/base/Image";
+import { handlePlainClick } from "shared/lib/links/plainClick";
+import { NextLink } from "shared/ui/base/NextLink";
 import { DropdownArrowIcon } from "shared/ui/icons";
+
+import { getCatalogHref } from "../lib/catalog-href";
 
 import css from "../Sidebar.module.scss";
 
@@ -19,10 +23,10 @@ export const ProviderModelItem: React.FC<Props> = ({ model, active, onClick }) =
    const { t } = useTranslation();
 
    return (
-      <button
-         type="button"
+      <NextLink
+         href={getCatalogHref(model.id)}
          className={clsx(css.model_item, active && css.model_item_active)}
-         onClick={onClick}
+         onClick={handlePlainClick(onClick)}
       >
          <span className={css.model_content}>
             <span className={css.model_name}>{model.name}</span>
@@ -43,6 +47,6 @@ export const ProviderModelItem: React.FC<Props> = ({ model, active, onClick }) =
          )}
 
          {active && <DropdownArrowIcon className={css.model_arrow} />}
-      </button>
+      </NextLink>
    );
 };

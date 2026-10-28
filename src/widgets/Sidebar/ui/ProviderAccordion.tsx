@@ -5,8 +5,11 @@ import clsx from "clsx";
 
 import Accordion from "shared/ui/base/Accordion";
 import Image from "shared/ui/base/Image";
+import { handlePlainClick } from "shared/lib/links/plainClick";
+import { NextLink } from "shared/ui/base/NextLink";
 import { DropdownArrowIcon } from "shared/ui/icons";
 
+import { getCatalogHref } from "../lib/catalog-href";
 import { ProviderModelItem } from "./ProviderModelItem";
 
 import css from "../Sidebar.module.scss";
@@ -33,14 +36,14 @@ export const ProviderAccordion: React.FC<Props> = ({
          {({ active }) => (
             <div className={css.provider_accordion}>
                <Accordion.Button>
-                  <button
-                     type="button"
+                  <NextLink
+                     href={getCatalogHref(provider.id)}
                      className={clsx(
                         css.provider_item,
                         active && css.provider_item_active,
                         activeProviderId === provider.id && css.provider_item_selected
                      )}
-                     onClick={() => onProviderClick(provider.id)}
+                     onClick={handlePlainClick(() => onProviderClick(provider.id))}
                   >
                      <span className={css.provider_main}>
                         <Image.Default src={provider.icon} className={css.provider_icon} />
@@ -53,7 +56,7 @@ export const ProviderAccordion: React.FC<Props> = ({
                      <DropdownArrowIcon
                         className={clsx(css.provider_arrow, active && css.provider_arrow_opened)}
                      />
-                  </button>
+                  </NextLink>
                </Accordion.Button>
 
                <Accordion.Content>

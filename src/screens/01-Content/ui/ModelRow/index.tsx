@@ -13,11 +13,13 @@ import { useTranslation } from "shared/lib/i18n";
 import { daysToProviderAge } from "shared/lib/i18n/formatters";
 import { useProviderCommentSummary } from "shared/lib/providerComments/useProviderCommentSummary";
 import { useProviderDescriptions } from "shared/lib/providerDescriptions/useProviderDescriptions";
+import { displayPaymentMethods } from "shared/lib/payments/sortPaymentMethods";
 import { formatPaymentMethod } from "shared/lib/providers/formatPaymentMethod";
 import { getLocalizedProviderUrl } from "shared/lib/providers/getLocalizedProviderUrl";
 import { useProviderPopularity } from "shared/lib/providers/popularity/useProviderPopularity";
 import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 import Image from "shared/ui/base/Image";
+import { NextLink } from "shared/ui/base/NextLink";
 import {
    DiscountTooltip,
    type DiscountTooltipPosition,
@@ -387,9 +389,10 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
    }, [clearPricesCloseTimeout, clearProviderCloseTimeout]);
 
    const vendorIcon = getVendorIcon(getVendorId(model.canonicalModelId));
+   const displayedPaymentMethods = displayPaymentMethods(model.paymentMethods);
    const paymentMethodsText =
-      model.paymentMethods.length > 0
-         ? model.paymentMethods
+      displayedPaymentMethods.length > 0
+         ? displayedPaymentMethods
               .map((method) => formatPaymentMethod(method, t.common.trialAvailable))
               .join(", ")
          : "-";
@@ -408,7 +411,9 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                </div>
 
                <div className={css.model_info}>
-                  <strong>{model.name}</strong>
+                  <NextLink href={`/home/${model.canonicalModelId.split("/").map(encodeURIComponent).join("/")}`}>
+                     <strong>{model.name}</strong>
+                  </NextLink>
                   <span>{description}</span>
                </div>
             </div>
