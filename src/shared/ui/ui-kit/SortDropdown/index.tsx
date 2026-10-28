@@ -59,6 +59,11 @@ export const SortDropdown = <T extends string = SortValue>({
 
    const currentValue = value ?? internalSort;
 
+   // Only a controlled dropdown reports the live choice; an unmatched value
+   // (sorted via a column header) shows just the plain name.
+   const activeLabel =
+      value === undefined ? undefined : resolvedOptions.find((o) => o.value === value)?.label;
+
    const handleSelect = (nextValue: T) => {
       if (onChange) {
          onChange(nextValue);
@@ -82,6 +87,7 @@ export const SortDropdown = <T extends string = SortValue>({
          >
             <Sort2Icon />
             {name}
+            {activeLabel && <span className={css.sort_current}>{activeLabel}</span>}
          </Button>
 
          <Modal

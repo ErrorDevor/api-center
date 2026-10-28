@@ -131,6 +131,15 @@ export const ModelsTable: React.FC<Props> = ({
 
                break;
 
+            case "priceOutput":
+               result = getSecondarySortPrice(firstModel) - getSecondarySortPrice(secondModel);
+
+               if (result === 0) {
+                  result = getSortPrice(firstModel) - getSortPrice(secondModel);
+               }
+
+               break;
+
             case "reviews":
                result = firstModel.reviews - secondModel.reviews;
                break;

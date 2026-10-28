@@ -301,6 +301,8 @@ export const Content: React.FC<Prop> = ({
       { value: "name_asc", label: t.content.actions.sort.nameAsc },
       { value: "price_asc", label: t.content.actions.sort.priceAsc },
       { value: "price_desc", label: t.content.actions.sort.priceDesc },
+      { value: "output_asc", label: t.content.actions.sort.outputAsc },
+      { value: "output_desc", label: t.content.actions.sort.outputDesc },
       { value: "newest", label: t.content.actions.sort.newest },
       { value: "popular", label: t.sortDropdown.popular },
    ];

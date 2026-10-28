@@ -57,7 +57,7 @@ export interface ModelItem {
    domainAgeDays: number | null;
 }
 
-export type SortKey = "name" | "price" | "reviews" | "popularity" | "newest";
+export type SortKey = "name" | "price" | "priceOutput" | "reviews" | "popularity" | "newest";
 export type SortDirection = "asc" | "desc";
 
 export interface SortState {
@@ -75,12 +75,14 @@ export const DEFAULT_SORT: SortState = { key: "name", direction: "asc" };
 // when the current sort isn't one of these presets (e.g. "Reviews"
 // ascending), sortStateToValue returns undefined and the dropdown just shows
 // no option selected — the header icon stays the source of truth for that.
-export type ModelsSortValue = "name_asc" | "price_asc" | "price_desc" | "popular" | "newest";
+export type ModelsSortValue = "name_asc" | "price_asc" | "price_desc" | "output_asc" | "output_desc" | "popular" | "newest";
 
 export const MODELS_SORT_PRESETS: Record<ModelsSortValue, SortState> = {
    name_asc: { key: "name", direction: "asc" },
    price_asc: { key: "price", direction: "asc" },
    price_desc: { key: "price", direction: "desc" },
+   output_asc: { key: "priceOutput", direction: "asc" },
+   output_desc: { key: "priceOutput", direction: "desc" },
    // "Popular" ranks by real click-through counts (provider site + reviews
    // page, aggregated by the popularity API), not the review count that
    // shares the "reviews" sort key with the Отзывы column.
