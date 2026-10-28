@@ -21,6 +21,13 @@ const nextConfig: NextConfig = {
   experimental: {
     esmExternals: true,
   },
+  async redirects() {
+    return [
+      { source: "/forum", destination: "/discussions", permanent: true },
+      { source: "/topics", destination: "/discussions", permanent: true },
+      { source: "/password-reset", destination: "/reset-password", permanent: true },
+    ];
+  },
   images: {
     remotePatterns: [
       {

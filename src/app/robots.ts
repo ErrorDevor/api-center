@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
          allow: "/",
          // Route handlers plus the screens that only make sense for a
          // signed-in user or hold no indexable content of their own.
-         disallow: ["/api/", "/login", "/signup", "/register", "/start", "/buys", "/create"],
+         disallow: ["/api/", "/login", "/signup", "/register", "/forgot-password", "/reset-password", "/password-reset", "/start", "/buys", "/create"],
       },
       sitemap: `${SITE_URL}/sitemap.xml`,
       host: SITE_URL,

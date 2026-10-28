@@ -379,3 +379,13 @@
    }
 
 }
+
+.main_notice {
+   margin: 1.6rem 0 0;
+   @include fontInterTight(1.4rem, 2rem, -0.02em, 400, #14132e);
+}
+
+.main_support {
+   margin: 1.2rem 0 0;
+   @include fontInterTight(1.4rem, 2rem, -0.02em, 400, #8b8d98);
+}
