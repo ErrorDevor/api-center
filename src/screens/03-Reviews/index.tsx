@@ -23,7 +23,7 @@ import clsx from "clsx";
 import { useAuth } from "shared/lib/auth";
 import { useTranslation } from "shared/lib/i18n";
 import { daysToProviderAge } from "shared/lib/i18n/formatters";
-import { sortPaymentMethods } from "shared/lib/payments/sortPaymentMethods";
+import { displayPaymentMethods } from "shared/lib/payments/sortPaymentMethods";
 import { useProviderDescriptions } from "shared/lib/providerDescriptions/useProviderDescriptions";
 import { getLocalizedProviderUrl } from "shared/lib/providers/getLocalizedProviderUrl";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
@@ -147,7 +147,7 @@ export const Comments: React.FC<Prop> = ({
 
    const paymentMethods = React.useMemo(
       () =>
-         sortPaymentMethods(
+         displayPaymentMethods(
             Array.from(new Set(providerRecords.flatMap((record) => record.paymentMethods)))
          ),
       [providerRecords]

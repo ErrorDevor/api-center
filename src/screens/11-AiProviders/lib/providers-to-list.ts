@@ -1,4 +1,4 @@
-import { sortPaymentMethods } from "shared/lib/payments/sortPaymentMethods";
+import { displayPaymentMethods } from "shared/lib/payments/sortPaymentMethods";
 import type { ProviderPriceRecord, TrustStatus } from "shared/lib/providers/types";
 import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 
@@ -59,7 +59,7 @@ export const recordsToProviders = (records: ProviderPriceRecord[]): Provider[] =
          });
       }
 
-      const paymentMethods = sortPaymentMethods(
+      const paymentMethods = displayPaymentMethods(
          Array.from(new Set(groupRecords.flatMap((record) => record.paymentMethods)))
       );
 

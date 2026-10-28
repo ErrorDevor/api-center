@@ -48,6 +48,11 @@ const MOBILE_VISIBLE_STEP = 10;
 // which keeps its own separate "show more" reveal below).
 const PAGE_SIZE = 20;
 
+const SUSPICIOUS_DISCOUNT_PERCENT = 99;
+
+const isSuspiciousDiscount = (model: ModelItem): boolean =>
+   model.discountPercent !== null && Math.round(model.discountPercent) >= SUSPICIOUS_DISCOUNT_PERCENT;
+
 interface Props {
    models: ModelItem[];
    // Controlled by Content (see ContentActions' "Сортировка" dropdown above
@@ -173,7 +178,15 @@ export const ModelsTable: React.FC<Props> = ({
       // than twice in a row so the page doesn't read as a single provider's
       // listing. Applied after sorting, before pagination, so page
       // boundaries don't reshuffle it.
-      const limited = shouldLimitProviderRuns ? limitProviderRuns(sorted) : sorted;
+      const limitedRuns = shouldLimitProviderRuns ? limitProviderRuns(sorted) : sorted;
+
+      // A ~99% "discount" is almost always a broken or bait price, so those
+      // listings sink to the bottom whatever the sort (each group keeps its
+      // own order). Done after the run-limiting so it can't pull them back up.
+      const limited = [
+         ...limitedRuns.filter((model) => !isSuspiciousDiscount(model)),
+         ...limitedRuns.filter(isSuspiciousDiscount),
+      ];
 
       if (sort.key !== "price" || sort.direction !== "asc") {
          return limited;
