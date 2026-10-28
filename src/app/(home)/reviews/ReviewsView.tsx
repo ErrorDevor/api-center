@@ -12,8 +12,6 @@ import type { SidebarMode } from "widgets/Sidebar/lib/sidebar.data";
 
 import { AppLayout } from "shared/ui/templates/AppLayout";
 
-export const dynamic = "force-dynamic";
-
 interface ReviewsContentProps {
    onSelectVendor?: (vendorId: string | undefined) => void;
 }
@@ -29,7 +27,7 @@ const ReviewsContent: React.FC<ReviewsContentProps> = ({ onSelectVendor }) => {
    return <Comments providerDomain={providerDomain} onSelectVendor={onSelectVendor} />;
 };
 
-export default function ReviewsPage() {
+export default function ReviewsView() {
    const router = useRouter();
 
    const [collapsed, setCollapsed] = React.useState(false);
