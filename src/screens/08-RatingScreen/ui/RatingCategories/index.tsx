@@ -6,7 +6,9 @@ import clsx from "clsx";
 
 import type { RankingCategoryId } from "shared/lib/rankings/types";
 import { useTranslation } from "shared/lib/i18n";
+import { handlePlainClick } from "shared/lib/links/plainClick";
 import Image from "shared/ui/base/Image";
+import { NextLink } from "shared/ui/base/NextLink";
 
 import css from "./RatingCategories.module.scss";
 
@@ -44,18 +46,11 @@ export const RatingCategories: React.FC<Prop> = ({ className, onSelectCategory }
                const translation = t.rating.categories[item.translationKey];
 
                return (
-                  <article
+                  <NextLink
                      key={item.id}
+                     href={`/leaderboard?category=${item.rankingCategoryId}`}
                      className={css.rating_category}
-                     role="button"
-                     tabIndex={0}
-                     onClick={() => onSelectCategory?.(item.rankingCategoryId)}
-                     onKeyDown={(event) => {
-                        if (event.key === "Enter" || event.key === " ") {
-                           event.preventDefault();
-                           onSelectCategory?.(item.rankingCategoryId);
-                        }
-                     }}
+                     onClick={handlePlainClick(() => onSelectCategory?.(item.rankingCategoryId))}
                   >
                      <div
                         className={clsx(
@@ -70,7 +65,7 @@ export const RatingCategories: React.FC<Prop> = ({ className, onSelectCategory }
                         <h3>{translation.title}</h3>
                         <p>{translation.description}</p>
                      </div>
-                  </article>
+                  </NextLink>
                );
             })}
          </div>

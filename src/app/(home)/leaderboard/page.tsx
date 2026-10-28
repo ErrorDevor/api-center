@@ -16,11 +16,13 @@ export const dynamic = "force-dynamic";
 
 interface Props {
    params: Promise<{ vendor?: string[] }>;
+   searchParams: Promise<{ category?: string; view?: string }>;
 }
 
-export default function RatingPage({ params }: Props) {
+export default function RatingPage({ params, searchParams }: Props) {
    const router = useRouter();
    const { vendor: segments } = React.use(params);
+   const { category, view } = React.use(searchParams);
    const [collapsed, setCollapsed] = React.useState(false);
    const [mode, setMode] = React.useState<SidebarMode>("api");
    const selectedVendorId = segments?.[0];
@@ -53,7 +55,12 @@ export default function RatingPage({ params }: Props) {
             />
          }
       >
-         <RatingScreen selectedVendorId={selectedVendorId} onSelectVendor={handleSelectVendor} />
+         <RatingScreen
+            selectedVendorId={selectedVendorId}
+            onSelectVendor={handleSelectVendor}
+            initialCategory={category}
+            initialView={view}
+         />
       </AppLayout>
    );
 }

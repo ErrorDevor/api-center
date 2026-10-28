@@ -9,9 +9,12 @@ import { useTranslation } from "shared/lib/i18n";
 import { RANKING_CATEGORIES } from "shared/lib/rankings/categories";
 import type { RankingCategory } from "shared/lib/rankings/categories";
 import type { RankingEntry } from "shared/lib/rankings/types";
+import { useCanonicalModelHref } from "shared/lib/rankings/useCanonicalModelHref";
 import { useRankingView } from "shared/lib/rankings/useRankingView";
 import { useRankings } from "shared/lib/rankings/useRankings";
 import type { RankingView } from "shared/lib/rankings/views";
+import { handlePlainClick } from "shared/lib/links/plainClick";
+import { NextLink } from "shared/ui/base/NextLink";
 import { Pagination } from "shared/ui/components/Pagination";
 import { DropdownArrowIcon, SortIcon } from "shared/ui/icons";
 
@@ -91,6 +94,7 @@ export const RatingTable: React.FC<Prop> = ({
    const { entries: feedEntries, isLoading: isFeedLoading } = useRankings(category);
    const { entries, isLoading: isViewLoading } = useRankingView(view, feedEntries);
    const isLoading = isFeedLoading || isViewLoading;
+   const getModelHref = useCanonicalModelHref();
 
    const tableRef = React.useRef<HTMLDivElement>(null);
    const bodyScrollRef = React.useRef<HTMLDivElement>(null);
@@ -287,11 +291,11 @@ export const RatingTable: React.FC<Prop> = ({
                const isActive = activeCategoryId === rankingCategory.id;
 
                return (
-                  <button
+                  <NextLink
                      key={rankingCategory.id}
-                     type="button"
+                     href={`/leaderboard?category=${rankingCategory.id}`}
                      className={clsx(css.rating_table_tab, isActive && css.rating_table_tab_active)}
-                     onClick={() => handleCategoryChange(rankingCategory.id)}
+                     onClick={handlePlainClick(() => handleCategoryChange(rankingCategory.id))}
                   >
                      <span
                         className={css.rating_table_tab_icon}
@@ -301,7 +305,7 @@ export const RatingTable: React.FC<Prop> = ({
                      />
 
                      <span>{t.rating.categoryTabs[rankingCategory.labelKey]}</span>
-                  </button>
+                  </NextLink>
                );
             })}
          </div>
@@ -353,7 +357,12 @@ export const RatingTable: React.FC<Prop> = ({
                         <div className={css.table_status}>{t.rating.table.emptyState}</div>
                      ) : (
                         visibleEntries.map((entry) => (
-                           <RatingRow key={entry.rank} entry={entry} columns={columns} />
+                           <RatingRow
+                              key={entry.rank}
+                              entry={entry}
+                              columns={columns}
+                              modelHref={getModelHref(entry.model)}
+                           />
                         ))
                      )}
                   </div>

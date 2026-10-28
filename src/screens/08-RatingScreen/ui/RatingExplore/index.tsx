@@ -4,7 +4,9 @@ import { ratingExploreGroups } from "../../lib/rating.data";
 import clsx from "clsx";
 
 import { useTranslation } from "shared/lib/i18n";
+import { handlePlainClick } from "shared/lib/links/plainClick";
 import Image from "shared/ui/base/Image";
+import { NextLink } from "shared/ui/base/NextLink";
 
 import css from "./RatingExplore.module.scss";
 
@@ -38,18 +40,11 @@ export const RatingExplore: React.FC<Prop> = ({ className, onSelectItem }) => {
                            const translation = t.rating.explore.items[item.translationKey];
 
                            return (
-                              <article
+                              <NextLink
                                  key={item.id}
+                                 href={`/leaderboard?view=${item.id}`}
                                  className={css.rating_explore_item}
-                                 role="button"
-                                 tabIndex={0}
-                                 onClick={() => onSelectItem?.(item.id)}
-                                 onKeyDown={(event) => {
-                                    if (event.key === "Enter" || event.key === " ") {
-                                       event.preventDefault();
-                                       onSelectItem?.(item.id);
-                                    }
-                                 }}
+                                 onClick={handlePlainClick(() => onSelectItem?.(item.id))}
                               >
                                  <div className={css.rating_explore_icon}>
                                     <Image.Default src={item.icon} alt="" />
@@ -59,7 +54,7 @@ export const RatingExplore: React.FC<Prop> = ({ className, onSelectItem }) => {
                                     <h4>{translation.title}</h4>
                                     <p>{translation.description}</p>
                                  </div>
-                              </article>
+                              </NextLink>
                            );
                         })}
                      </div>

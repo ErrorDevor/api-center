@@ -84,6 +84,8 @@
 
    &_item {
       display: flex;
+      color: inherit;
+      text-decoration: none;
       align-items: center;
       width: 100%;
       min-width: 0;

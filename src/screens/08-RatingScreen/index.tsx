@@ -19,18 +19,36 @@ interface Prop {
    className?: string;
    selectedVendorId?: string;
    onSelectVendor?: (vendorId: string | undefined) => void;
+   // From ?category= / ?view= (read by the page, so the first render already
+   // has them and the screen stays server-rendered).
+   initialCategory?: string;
+   initialView?: string;
 }
 
-export const RatingScreen: React.FC<Prop> = ({ className, selectedVendorId, onSelectVendor }) => {
+export const RatingScreen: React.FC<Prop> = ({
+   className,
+   selectedVendorId,
+   onSelectVendor,
+   initialCategory,
+   initialView: initialViewParam,
+}) => {
    const { t } = useTranslation();
 
+   // ?category=<tab> / ?view=<explore card> make every tab and card a real
+   // link that opens the page already on that leaderboard.
+   const initialViewId = initialViewParam ?? null;
+   const initialView = initialViewId ? RANKING_VIEWS[initialViewId] : undefined;
+   const initialCategoryId =
+      initialView?.categoryId ??
+      RANKING_CATEGORIES.find((category) => category.id === initialCategory)?.id;
+
    const [activeCategoryId, setActiveCategoryId] = React.useState<RankingCategoryId>(
-      RANKING_CATEGORIES[0].id
+      initialCategoryId ?? RANKING_CATEGORIES[0].id
    );
 
    // An "explore" card re-cuts a leaderboard (see RANKING_VIEWS); null shows
    // the plain leaderboard of the active tab.
-   const [activeViewId, setActiveViewId] = React.useState<string | null>(null);
+   const [activeViewId, setActiveViewId] = React.useState<string | null>(initialView ? initialViewId : null);
    const activeView = activeViewId ? RANKING_VIEWS[activeViewId] : undefined;
    const activeItem = ratingExploreGroups
       .flatMap((group) => group.items)

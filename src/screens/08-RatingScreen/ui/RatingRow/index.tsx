@@ -8,6 +8,7 @@ import { formatMetric } from "shared/lib/rankings/format";
 import type { RankingEntry } from "shared/lib/rankings/types";
 import { getModelVendorIcon } from "shared/lib/rankings/vendor-icons";
 import Image from "shared/ui/base/Image";
+import { NextLink } from "shared/ui/base/NextLink";
 
 import css from "./RatingRow.module.scss";
 
@@ -15,9 +16,11 @@ interface Prop {
    className?: string;
    entry: RankingEntry & { rank: number };
    columns: RankingColumn[];
+   // Catalog page of the model, when it has one.
+   modelHref?: string;
 }
 
-export const RatingRow: React.FC<Prop> = ({ className, entry, columns }) => {
+export const RatingRow: React.FC<Prop> = ({ className, entry, columns, modelHref }) => {
    const { t, locale } = useTranslation();
 
    const icon = getModelVendorIcon(entry.model);
@@ -62,7 +65,13 @@ export const RatingRow: React.FC<Prop> = ({ className, entry, columns }) => {
                )}
 
                <div className={css.rating_row_model_content}>
-                  <strong>{entry.model}</strong>
+                  {modelHref ? (
+                     <NextLink href={modelHref} className={css.rating_row_model_link}>
+                        <strong>{entry.model}</strong>
+                     </NextLink>
+                  ) : (
+                     <strong>{entry.model}</strong>
+                  )}
                </div>
             </div>
          </div>

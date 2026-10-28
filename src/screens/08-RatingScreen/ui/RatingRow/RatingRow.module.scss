@@ -239,3 +239,13 @@
       }
    }
 }
+.rating_row_model_link {
+   display: block;
+   min-width: 0;
+   color: inherit;
+   text-decoration: none;
+
+   &:hover strong {
+      text-decoration: underline;
+   }
+}
