@@ -4,6 +4,8 @@ import React from "react";
 
 import { useRouter } from "next/navigation";
 
+import clsx from "clsx";
+
 import type { ModelItem } from "screens/01-Content/lib/content.data";
 import { pricesDetails, providerDetails } from "screens/01-Content/lib/provider.data";
 
@@ -16,6 +18,7 @@ import { useProviderDescriptions } from "shared/lib/providerDescriptions/useProv
 import { displayPaymentMethods } from "shared/lib/payments/sortPaymentMethods";
 import { formatPaymentMethod } from "shared/lib/providers/formatPaymentMethod";
 import { getLocalizedProviderUrl } from "shared/lib/providers/getLocalizedProviderUrl";
+import { useProviderStatuses } from "shared/lib/providerStatus/useProviderStatuses";
 import { useProviderPopularity } from "shared/lib/providers/popularity/useProviderPopularity";
 import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 import Image from "shared/ui/base/Image";
@@ -65,6 +68,11 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
    const isMobile = useIsMobile();
    const { entries: providerDescriptions } = useProviderDescriptions();
    const { trackClick } = useProviderPopularity();
+   const probe = useProviderStatuses()[model.providerDomain];
+   const statusState = probe ? (probe.ok ? "working" : "not_working") : "unknown";
+   const statusTitle = probe
+      ? `${probe.ok ? t.aiProviders.working : t.aiProviders.notWorking} · HTTP ${probe.code ?? "—"}`
+      : t.aiProviders.unknown;
    const reviewsHref = `/reviews?provider=${encodeURIComponent(model.providerDomain)}`;
    const providerSiteHref = getLocalizedProviderUrl(model, locale);
 
@@ -569,6 +577,12 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                >
                   <Image.Default src="/icons/info.svg" alt="" />
                   <span>{model.provider}</span>
+                  <i
+                     className={clsx(css.status_dot, css[`status_dot_${statusState}`])}
+                     title={statusTitle}
+                     role="img"
+                     aria-label={statusTitle}
+                  />
                </a>
 
                {provider && isProviderTooltipOpen && (

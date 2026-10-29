@@ -207,6 +207,24 @@
    min-width: 0;
 }
 
+.status_dot {
+   display: inline-block;
+   width: 0.8rem;
+   height: 0.8rem;
+   flex-shrink: 0;
+
+   border-radius: 50%;
+   background: #c4c4c4;
+
+   &_working {
+      background: #10b981;
+   }
+
+   &_not_working {
+      background: #ff153b;
+   }
+}
+
 .provider {
    display: inline-flex;
    align-items: center;
