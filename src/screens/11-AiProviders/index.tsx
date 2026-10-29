@@ -2,6 +2,7 @@
 
 import React from "react";
 
+import type { Provider } from "./lib/data";
 import { recordsToProviders } from "./lib/providers-to-list";
 import { MobileSortValue, ProviderStatusFilter, SortKey, SortState } from "./lib/types";
 import { AiProviderRow } from "./ui/AiProviderRow";
@@ -11,6 +12,7 @@ import clsx from "clsx";
 import { useIsMobile } from "shared/lib/hooks/useIsMobile";
 import { useTranslation } from "shared/lib/i18n";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
+import { useProviderStatuses } from "shared/lib/providerStatus/useProviderStatuses";
 import { ContentHeader } from "shared/ui/components/ContentHeader";
 import { Search } from "shared/ui/components/Search";
 import { FilterIcon } from "shared/ui/icons";
@@ -37,7 +39,20 @@ export const AiProvidersScreen: React.FC<Prop> = ({
    const { t } = useTranslation();
    const isMobile = useIsMobile();
    const { records } = useProviderRecords();
-   const providers = React.useMemo(() => recordsToProviders(records), [records]);
+   const probeStatuses = useProviderStatuses();
+   const providers = React.useMemo(
+      () =>
+         recordsToProviders(records).map((provider): Provider => {
+            const probe = probeStatuses[provider.id] ?? null;
+
+            return {
+               ...provider,
+               probe,
+               status: probe ? (probe.ok ? "working" : "not-working") : "unknown",
+            };
+         }),
+      [records, probeStatuses]
+   );
 
    const buttonRef = React.useRef<HTMLButtonElement>(null);
    const tableRef = React.useRef<HTMLDivElement>(null);
@@ -310,6 +325,8 @@ export const AiProvidersScreen: React.FC<Prop> = ({
                                  provider={provider}
                                  workingLabel={t.aiProviders.working}
                                  notWorkingLabel={t.aiProviders.notWorking}
+                                 unknownLabel={t.aiProviders.unknown}
+                                 lastOkLabel={t.aiProviders.lastOk}
                                  verifiedLabel={t.aiProviders.verifiedProvider}
                               />
                            ))}

@@ -1,8 +1,8 @@
 import { displayPaymentMethods } from "shared/lib/payments/sortPaymentMethods";
-import type { ProviderPriceRecord, TrustStatus } from "shared/lib/providers/types";
+import type { ProviderPriceRecord } from "shared/lib/providers/types";
 import { getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 
-import type { Provider, ProviderModel, ProviderStatus } from "./data";
+import type { Provider, ProviderModel } from "./data";
 
 // Placeholder shown only until AiProviderRow's useProviderCommentSummary loads
 // the real per-provider counts — this pure function has no hook access, so it
@@ -10,13 +10,6 @@ import type { Provider, ProviderModel, ProviderStatus } from "./data";
 // same convention as providers-to-models.ts' PLACEHOLDER_REVIEWS/REPORTS.
 const PLACEHOLDER_REVIEWS = 0;
 const PLACEHOLDER_REPORTS = 0;
-
-// providers.json has no explicit "is this reseller currently working"
-// field — trust_status is the closest real signal (currently unused
-// anywhere in the UI). green/yellow both read as "go", red as "avoid", so
-// only red maps to not-working.
-const toProviderStatus = (trustStatus: TrustStatus): ProviderStatus =>
-   trustStatus === "red" ? "not-working" : "working";
 
 /**
  * Groups the per-model providers.json rows (one row per provider_domain +
@@ -72,7 +65,10 @@ export const recordsToProviders = (records: ProviderPriceRecord[]): Provider[] =
          verified: true,
          models,
          paymentMethods,
-         status: toProviderStatus(firstRecord.trustStatus),
+         // Filled in from the live probe by the screen — providers.json has no
+         // availability signal (trust_status is about the reseller, not uptime).
+         status: "unknown",
+         probe: null,
          reviews: {
             positive: PLACEHOLDER_REVIEWS,
             negative: PLACEHOLDER_REPORTS,

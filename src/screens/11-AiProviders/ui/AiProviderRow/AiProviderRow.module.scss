@@ -178,6 +178,20 @@
    @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #212121);
 }
 
+.provider_status_wrapper {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-start;
+   gap: 0.4rem;
+   min-width: 0;
+}
+
+.provider_status_details {
+   white-space: nowrap;
+
+   @include fontInterTight(1.2rem, 1.6rem, -0.01em, 400, #8a8a8a);
+}
+
 .provider_status {
    display: inline-flex;
    align-items: center;
@@ -187,11 +201,11 @@
    padding: 0.3rem 0.8rem;
    flex-shrink: 0;
 
-   border: 0.1rem solid;
+   border: 0.1rem solid #e0e0e0;
    border-radius: 10rem;
    white-space: nowrap;
 
-   @include fontInterTight(1.3rem, 1, -0.01em, 400);
+   @include fontInterTight(1.3rem, 1, -0.01em, 400, #8a8a8a);
 
    &_working {
       @include strokeGradient(
@@ -425,10 +439,14 @@
       @include fontInterTight(1.4rem, 2rem, -0.01em, 400, #212121);
    }
 
+   .provider_status_wrapper {
+      align-items: flex-end;
+      margin-left: auto;
+   }
+
    .provider_status {
       min-height: 2.4rem;
       padding: 0.3rem 0.8rem;
-      margin-left: auto;
    }
 
    .reviews {

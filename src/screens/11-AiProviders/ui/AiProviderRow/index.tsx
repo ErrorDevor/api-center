@@ -8,7 +8,7 @@ import clsx from "clsx";
 import { Provider } from "screens/11-AiProviders/lib/data";
 
 import { useTranslation } from "shared/lib/i18n";
-import { daysToProviderAge, formatProviderAge } from "shared/lib/i18n/formatters";
+import { daysToProviderAge, formatProviderAge, formatRelativeDate } from "shared/lib/i18n/formatters";
 import { useProviderCommentSummary } from "shared/lib/providerComments/useProviderCommentSummary";
 import { useProviderDescriptions } from "shared/lib/providerDescriptions/useProviderDescriptions";
 import Image from "shared/ui/base/Image";
@@ -19,6 +19,8 @@ interface AiProviderRowProps {
    provider: Provider;
    workingLabel: string;
    notWorkingLabel: string;
+   unknownLabel: string;
+   lastOkLabel: string;
    verifiedLabel: string;
 }
 
@@ -26,6 +28,8 @@ export const AiProviderRow: React.FC<AiProviderRowProps> = ({
    provider,
    workingLabel,
    notWorkingLabel,
+   unknownLabel,
+   lastOkLabel,
    verifiedLabel,
 }) => {
    const { t, locale } = useTranslation();
@@ -149,16 +153,29 @@ export const AiProviderRow: React.FC<AiProviderRowProps> = ({
 
             <span className={css.mobile_dots} />
 
-            <span
-               className={clsx(
-                  css.provider_status,
-                  provider.status === "working"
-                     ? css.provider_status_working
-                     : css.provider_status_not_working
+            <div className={css.provider_status_wrapper}>
+               <span
+                  className={clsx(
+                     css.provider_status,
+                     provider.status === "working" && css.provider_status_working,
+                     provider.status === "not-working" && css.provider_status_not_working
+                  )}
+               >
+                  {provider.status === "working"
+                     ? workingLabel
+                     : provider.status === "not-working"
+                       ? notWorkingLabel
+                       : unknownLabel}
+               </span>
+
+               {provider.probe && (
+                  <span className={css.provider_status_details}>
+                     HTTP {provider.probe.code ?? "—"}
+                     {provider.probe.lastOkAt &&
+                        ` · ${lastOkLabel}: ${formatRelativeDate(provider.probe.lastOkAt, locale)}`}
+                  </span>
                )}
-            >
-               {provider.status === "working" ? workingLabel : notWorkingLabel}
-            </span>
+            </div>
          </div>
 
          <div className={css.provider_cell}>

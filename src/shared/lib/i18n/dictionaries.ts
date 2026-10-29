@@ -289,8 +289,6 @@ export const en = {
          bankTransfer: "Bank transfer",
          visa: "Visa",
          mastercard: "Mastercard",
-         wechat: "WeChat",
-         alipay: "Alipay",
       },
    },
 
@@ -345,7 +343,7 @@ export const en = {
    paymentMethodsModal: {
       title: "Payment methods",
       close: "Close payment methods",
-      searchPlaceholder: "WeChat, Alipay, USDT, UOI...",
+      searchPlaceholder: "Crypto, Visa, Bank transfer...",
       regionsLabel: "Payment method regions",
       selected: "Selected",
       apply: "Apply ({count})",
@@ -376,8 +374,6 @@ export const en = {
          mastercard: "Mastercard",
          unionPay: "UnionPay",
          americanExpress: "American Express",
-         wechat: "WeChat",
-         alipay: "Alipay",
          usdt: "USDT",
          uoi: "UOI",
       },
@@ -710,6 +706,8 @@ export const en = {
       sortByStatus: "Sort by status",
       working: "Working",
       notWorking: "Not working",
+      unknown: "No data",
+      lastOk: "last OK",
       verifiedProvider: "Verified provider",
 
       filters: {
@@ -1081,8 +1079,6 @@ export const ru: Dictionary = {
          bankTransfer: "Банковский перевод",
          visa: "Visa",
          mastercard: "Mastercard",
-         wechat: "WeChat",
-         alipay: "Alipay",
       },
    },
 
@@ -1137,7 +1133,7 @@ export const ru: Dictionary = {
    paymentMethodsModal: {
       title: "Способы оплаты",
       close: "Закрыть способы оплаты",
-      searchPlaceholder: "WeChat, Alipay, USDT, UOI...",
+      searchPlaceholder: "Crypto, Visa, Bank transfer...",
       regionsLabel: "Регионы способов оплаты",
       selected: "Выбрано",
       apply: "Применить ({count})",
@@ -1168,8 +1164,6 @@ export const ru: Dictionary = {
          mastercard: "Mastercard",
          unionPay: "UnionPay",
          americanExpress: "American Express",
-         wechat: "WeChat",
-         alipay: "Alipay",
          usdt: "USDT",
          uoi: "UOI",
       },
@@ -1505,6 +1499,8 @@ export const ru: Dictionary = {
       sortByStatus: "Сортировать по статусу",
       working: "Работает",
       notWorking: "Не работает",
+      unknown: "Нет данных",
+      lastOk: "последний успех",
       verifiedProvider: "Проверенный провайдер",
 
       filters: {
