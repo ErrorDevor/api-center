@@ -42,9 +42,7 @@ export type PricesOptionTranslationKey =
    | "anyWallet"
    | "bankTransfer"
    | "visa"
-   | "mastercard"
-   | "wechat"
-   | "alipay";
+   | "mastercard";
 
 export interface PricesOption {
    id: string;
@@ -108,16 +106,6 @@ export const pricesDetails: Record<string, PricesDetails> = {
                {
                   id: "mastercard",
                   translationKey: "mastercard",
-                  price: 40,
-               },
-               {
-                  id: "wechat",
-                  translationKey: "wechat",
-                  price: 40,
-               },
-               {
-                  id: "alipay",
-                  translationKey: "alipay",
                   price: 40,
                },
             ],

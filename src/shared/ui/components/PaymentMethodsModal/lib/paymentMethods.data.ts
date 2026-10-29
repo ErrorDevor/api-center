@@ -12,8 +12,6 @@ export type PaymentMethodId =
    | "mastercard"
    | "unionPay"
    | "americanExpress"
-   | "wechat"
-   | "alipay"
    | "usdt"
    | "uoi";
 
@@ -126,20 +124,6 @@ export const paymentMethods: PaymentMethod[] = [
       translationKey: "americanExpress",
       group: "cards",
       regions: ["global", "europe", "latinAmerica"],
-      price: 40,
-   },
-   {
-      id: "wechat",
-      translationKey: "wechat",
-      group: "cards",
-      regions: ["asia"],
-      price: 40,
-   },
-   {
-      id: "alipay",
-      translationKey: "alipay",
-      group: "cards",
-      regions: ["asia"],
       price: 40,
    },
    {

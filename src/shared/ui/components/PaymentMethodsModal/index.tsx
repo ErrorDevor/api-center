@@ -137,7 +137,7 @@ export const PaymentMethodsModal: React.FC<Prop> = ({
 
             <div className={css.payment_methods_modal_search}>
                <Search
-                  placeholder="WeChat, Alipay, USDT, UOI..."
+                  placeholder={t.paymentMethodsModal.searchPlaceholder}
                   aria-label={t.paymentMethodsModal.searchPlaceholder}
                   onChange={(event) => setSearchValue(event.target.value)}
                   ref={searchInputRef}

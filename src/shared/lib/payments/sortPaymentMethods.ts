@@ -1,9 +1,11 @@
 // Entries the feed lists that aren't useful to show.
 const HIDDEN_METHODS = new Set(["CNY"]);
 
-// Kept in the records (the payment filter still matches on them) but never
-// shown in payment-method cells and panels.
-const DISPLAY_HIDDEN_PATTERN = /^alipay$/i;
+// Present in the feed's records but never shown in payment-method cells and
+// panels. The Chinese rails (Alipay, WeChat Pay) are not offered here, so they
+// must not surface next to crypto/card/bank — and they have no picker id, so no
+// filter can bring a provider back through them either.
+const DISPLAY_HIDDEN_PATTERN = /^(alipay|wechat|wechat\s?pay)$/i;
 
 const CRYPTO_PATTERN = /crypto|usdt|usdc|btc|bitcoin|ethereum|\beth\b|\btrx\b|\bton\b/i;
 const BANK_PATTERN = /bank|wire|transfer|\bach\b|sepa|swift/i;
