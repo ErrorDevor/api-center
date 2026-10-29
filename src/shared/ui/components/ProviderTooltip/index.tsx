@@ -112,7 +112,7 @@ export const ProviderTooltip: React.FC<Props> = ({
                   href={href}
                   className={css.provider_modal_name}
                   onClick={onNameClick}
-                  {...(hrefExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  {...(hrefExternal ? { target: "_blank", rel: "noopener noreferrer nofollow" } : {})}
                >
                   {providerName}
                </a>

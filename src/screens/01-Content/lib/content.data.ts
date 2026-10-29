@@ -65,8 +65,6 @@ export interface SortState {
    direction: SortDirection;
 }
 
-export const DEFAULT_SORT: SortState = { key: "name", direction: "asc" };
-
 // The "Сортировка" dropdown in ContentActions offers a curated set of full
 // (key + direction) presets rather than the table's raw key/direction pair —
 // picking one is a single click instead of "pick a column, then maybe click

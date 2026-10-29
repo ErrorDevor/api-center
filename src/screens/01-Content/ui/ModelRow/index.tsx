@@ -556,7 +556,7 @@ export const ModelRow: React.FC<Prop> = ({ model }) => {
                   ref={providerRef}
                   href={providerSiteHref}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener noreferrer nofollow"
                   className={css.provider}
                   aria-describedby={
                      provider && isProviderTooltipOpen ? providerTooltipId : undefined

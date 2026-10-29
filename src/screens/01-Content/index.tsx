@@ -4,7 +4,6 @@ import React from "react";
 
 import { collapseToCheapest } from "./lib/collapseToCheapest";
 import {
-   DEFAULT_SORT,
    MODELS_SORT_PRESETS,
    type ModelItem,
    type ModelsSortValue,
@@ -275,11 +274,9 @@ export const Content: React.FC<Prop> = ({
    // Drives both the "Сортировка" dropdown (ContentActions, below) and the
    // table's own per-column sort icons (ModelsTable) — one state so picking
    // an option in either place is reflected in the other.
-   // The unfiltered "all providers" listing (главная) defaults to
-   // alphabetical, same as always. Everywhere else — a specific vendor or
-   // model's offers — defaults to cheapest-first instead, since that's the
-   // comparison you're actually there to make.
-   const defaultSort = isMainListing ? DEFAULT_SORT : MODELS_SORT_PRESETS.price_asc;
+   // Every listing — главная, a vendor, a model's offers — defaults to
+   // cheapest-first, since that's the comparison you're actually there to make.
+   const defaultSort = MODELS_SORT_PRESETS.price_asc;
 
    const [sort, setSort] = React.useState<SortState>(defaultSort);
 

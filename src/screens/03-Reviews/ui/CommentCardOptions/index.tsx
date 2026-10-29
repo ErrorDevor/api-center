@@ -126,7 +126,7 @@ export const CommentCardOptions: React.FC<Prop> = ({ data }) => {
                      className={css.comment_card_options_link}
                      href={data.url}
                      target="_blank"
-                     rel="noreferrer"
+                     rel="noreferrer nofollow"
                   >
                      {data.url}
                   </a>
