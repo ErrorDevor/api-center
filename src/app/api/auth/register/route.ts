@@ -5,12 +5,13 @@ import { parseAuthTokens, parseAuthUser } from "shared/lib/auth/types";
 interface RegisterRequestBody {
    email?: unknown;
    password?: unknown;
+   verifyCode?: unknown;
 }
 
-// POST /api/auth/register — proxies sub2api's POST /auth/register. Email
-// verification, promo/invitation codes, and turnstile are out of scope for
-// this pass (see AUTH_API_GUIDE.md §3/§4), so those fields are always sent
-// empty. On success, the token pair is stored in httpOnly cookies and never
+// POST /api/auth/register — proxies sub2api's POST /auth/register. The emailed
+// verify_code is passed through when the form collected one; promo/invitation
+// codes and turnstile are out of scope (see AUTH_API_GUIDE.md §3/§4), so
+// those fields are always sent empty. On success, the token pair is stored in httpOnly cookies and never
 // reaches the client — only the user object is returned.
 export async function POST(request: Request): Promise<Response> {
    let body: RegisterRequestBody;
@@ -21,7 +22,7 @@ export async function POST(request: Request): Promise<Response> {
       return Response.json({ message: "Invalid request body" }, { status: 400 });
    }
 
-   const { email, password } = body;
+   const { email, password, verifyCode } = body;
 
    if (typeof email !== "string" || typeof password !== "string" || !email || !password) {
       return Response.json({ message: "Email and password are required" }, { status: 400 });
@@ -32,7 +33,7 @@ export async function POST(request: Request): Promise<Response> {
       body: JSON.stringify({
          email,
          password,
-         verify_code: "",
+         verify_code: typeof verifyCode === "string" ? verifyCode.trim() : "",
          promo_code: "",
          invitation_code: "",
          turnstile_token: "",

@@ -18,11 +18,13 @@ interface Props {
 
 export const RegistrationForm: React.FC<Props> = ({ onBack, onSuccess, onClose }) => {
    const { t } = useTranslation();
-   const { register } = useAuth();
+   const { register, sendVerifyCode } = useAuth();
 
    const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
    const [isSubmitting, setIsSubmitting] = React.useState(false);
    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+   const [isCodeSent, setIsCodeSent] = React.useState(false);
+   const formRef = React.useRef<HTMLFormElement>(null);
 
    const togglePasswordVisibility = () => {
       setIsPasswordVisible((current) => !current);
@@ -37,11 +39,27 @@ export const RegistrationForm: React.FC<Props> = ({ onBack, onSuccess, onClose }
       const formData = new FormData(event.currentTarget);
       const email = String(formData.get("email") ?? "");
       const password = String(formData.get("password") ?? "");
+      const verifyCode = String(formData.get("code") ?? "");
 
       setIsSubmitting(true);
       setErrorMessage(null);
 
-      const result = await register(email, password);
+      // Step 1: email the code; step 2: register with it.
+      if (!isCodeSent) {
+         const sent = await sendVerifyCode(email);
+
+         setIsSubmitting(false);
+
+         if (sent.ok) {
+            setIsCodeSent(true);
+         } else {
+            setErrorMessage(sent.message);
+         }
+
+         return;
+      }
+
+      const result = await register(email, password, verifyCode);
 
       setIsSubmitting(false);
 
@@ -76,7 +94,7 @@ export const RegistrationForm: React.FC<Props> = ({ onBack, onSuccess, onClose }
 
          <h2 className={css.registration_form_title}>{t.onboarding.registration.title}</h2>
 
-         <form className={css.registration_form_form} onSubmit={handleSubmit}>
+         <form ref={formRef} className={css.registration_form_form} onSubmit={handleSubmit}>
             <input
                type="text"
                name="name"
@@ -117,6 +135,22 @@ export const RegistrationForm: React.FC<Props> = ({ onBack, onSuccess, onClose }
                </button>
             </div>
 
+            {isCodeSent && (
+               <>
+                  <input
+                     type="text"
+                     name="code"
+                     placeholder={t.onboarding.registration.code}
+                     aria-label={t.onboarding.registration.code}
+                     autoComplete="one-time-code"
+                     inputMode="numeric"
+                     required
+                  />
+
+                  <p>{t.onboarding.registration.codeHint}</p>
+               </>
+            )}
+
             {errorMessage && <p className={css.registration_form_error}>{errorMessage}</p>}
 
             <Button
@@ -125,8 +159,32 @@ export const RegistrationForm: React.FC<Props> = ({ onBack, onSuccess, onClose }
                className={css.registration_form_submit}
                disabled={isSubmitting}
             >
-               {t.onboarding.registration.submit}
+               {isCodeSent
+                  ? t.onboarding.registration.submit
+                  : t.onboarding.registration.sendCode}
             </Button>
+
+            {isCodeSent && (
+               <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={async () => {
+                     const email = formRef.current
+                        ? new FormData(formRef.current).get("email")
+                        : "";
+
+                     setErrorMessage(null);
+
+                     const sent = await sendVerifyCode(String(email ?? ""));
+
+                     if (!sent.ok) {
+                        setErrorMessage(sent.message);
+                     }
+                  }}
+               >
+                  {t.onboarding.registration.resendCode}
+               </button>
+            )}
          </form>
 
          <div className={css.registration_form_divider}>

@@ -443,6 +443,10 @@ export const en = {
          userName: "Enter username *",
          password: "Password *",
          submit: "Create account",
+         code: "Verification code *",
+         codeHint: "We sent a 6-digit code to your email.",
+         sendCode: "Send code",
+         resendCode: "Send again",
          close: "Close registration",
       },
 
@@ -1234,6 +1238,10 @@ export const ru: Dictionary = {
          userName: "Укажите имя пользователя *",
          password: "Пароль *",
          submit: "Создать аккаунт",
+         code: "Код подтверждения *",
+         codeHint: "Мы отправили 6-значный код на вашу почту.",
+         sendCode: "Отправить код",
+         resendCode: "Отправить ещё раз",
          close: "Закрыть регистрацию",
       },
 

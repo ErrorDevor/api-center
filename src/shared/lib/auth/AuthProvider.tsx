@@ -14,7 +14,8 @@ export type AuthActionResult = { ok: true } | { ok: false; message: string };
 interface AuthContextValue {
    user: AuthUser | null;
    status: AuthStatus;
-   register: (email: string, password: string) => Promise<AuthActionResult>;
+   sendVerifyCode: (email: string) => Promise<AuthActionResult>;
+   register: (email: string, password: string, verifyCode?: string) => Promise<AuthActionResult>;
    login: (email: string, password: string) => Promise<AuthActionResult>;
    logout: () => Promise<void>;
 }
@@ -61,14 +62,19 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
    }, []);
 
    const runAuthAction = React.useCallback(
-      async (endpoint: string, email: string, password: string): Promise<AuthActionResult> => {
+      async (
+         endpoint: string,
+         email: string,
+         password: string,
+         verifyCode?: string
+      ): Promise<AuthActionResult> => {
          let response: Response;
 
          try {
             response = await fetch(endpoint, {
                method: "POST",
                headers: { "Content-Type": "application/json" },
-               body: JSON.stringify({ email, password }),
+               body: JSON.stringify({ email, password, verifyCode }),
             });
          } catch {
             return { ok: false, message: dictionary.onboarding.common.networkError };
@@ -101,8 +107,32 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
    );
 
    const register = React.useCallback(
-      (email: string, password: string) => runAuthAction("/api/auth/register", email, password),
+      (email: string, password: string, verifyCode?: string) =>
+         runAuthAction("/api/auth/register", email, password, verifyCode),
       [runAuthAction]
+   );
+
+   const sendVerifyCode = React.useCallback(
+      async (email: string): Promise<AuthActionResult> => {
+         try {
+            const response = await fetch("/api/auth/send-verify-code", {
+               method: "POST",
+               headers: { "Content-Type": "application/json" },
+               body: JSON.stringify({ email }),
+            });
+
+            if (response.ok) {
+               return { ok: true };
+            }
+
+            const payload: { message?: string } = await response.json().catch(() => ({}));
+
+            return { ok: false, message: payload.message || dictionary.onboarding.common.genericError };
+         } catch {
+            return { ok: false, message: dictionary.onboarding.common.networkError };
+         }
+      },
+      [dictionary]
    );
 
    const login = React.useCallback(
@@ -123,8 +153,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
    }, []);
 
    const value = React.useMemo<AuthContextValue>(
-      () => ({ user, status, register, login, logout }),
-      [user, status, register, login, logout]
+      () => ({ user, status, sendVerifyCode, register, login, logout }),
+      [user, status, sendVerifyCode, register, login, logout]
    );
 
    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
