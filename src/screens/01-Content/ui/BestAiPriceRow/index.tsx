@@ -2,6 +2,8 @@
 
 import React from "react";
 
+import clsx from "clsx";
+
 import type { ModelItem } from "../../lib/content.data";
 import { computeGatewayDiscountPercent } from "../../lib/providers-to-models";
 
@@ -262,6 +264,12 @@ export const BestAiPriceRow: React.FC<Prop> = ({
                <span className={css.provider}>
                   <Image.Default src="/icons/info.svg" alt="" />
                   <span>{PROVIDER_NAME}</span>
+                  <i
+                     className={clsx(css.status_dot, css.status_dot_working)}
+                     title={t.aiProviders.working}
+                     role="img"
+                     aria-label={t.aiProviders.working}
+                  />
                </span>
             </div>
          </div>
