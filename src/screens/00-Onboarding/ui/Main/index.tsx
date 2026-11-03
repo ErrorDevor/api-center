@@ -38,7 +38,9 @@ const MainScreen: React.FC<Props> = ({
    const isReset = mode === "reset";
    const isRecovery = isForgot || isReset;
    const modelQuery = modelParam ? `?model=${encodeURIComponent(modelParam)}` : "";
-   const { register, login } = useAuth();
+   const { register, login, sendVerifyCode } = useAuth();
+   const isRegister = !isLogin && !isRecovery;
+   const [isCodeSent, setIsCodeSent] = React.useState(false);
    const [isSubmitting, setIsSubmitting] = React.useState(false);
    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
    const [showPassword, setShowPassword] = React.useState(false);
@@ -46,6 +48,7 @@ const MainScreen: React.FC<Props> = ({
       email: "",
       password: "",
       repeatPassword: "",
+      code: "",
    });
    const [notice, setNotice] = React.useState<string | null>(null);
    const [isDone, setIsDone] = React.useState(false);
@@ -109,7 +112,24 @@ const MainScreen: React.FC<Props> = ({
          return;
       }
 
-      const result = await (isLogin ? login : register)(form.email, form.password);
+      // Registration is two steps: email the code, then register with it.
+      if (isRegister && !isCodeSent) {
+         const sent = await sendVerifyCode(form.email);
+
+         setIsSubmitting(false);
+
+         if (sent.ok) {
+            setIsCodeSent(true);
+         } else {
+            setErrorMessage(sent.message);
+         }
+
+         return;
+      }
+
+      const result = await (isLogin
+         ? login(form.email, form.password)
+         : register(form.email, form.password, form.code.trim()));
 
       setIsSubmitting(false);
 
@@ -264,6 +284,25 @@ const MainScreen: React.FC<Props> = ({
                               }
                            />
                         )}
+                        {isRegister && isCodeSent && (
+                           <>
+                              <input
+                                 className={css.main_form_input}
+                                 type="text"
+                                 name="code"
+                                 inputMode="numeric"
+                                 autoComplete="one-time-code"
+                                 required
+                                 placeholder={content.verifyCode}
+                                 aria-label={content.verifyCode}
+                                 value={form.code}
+                                 onChange={(event) =>
+                                    setForm((current) => ({ ...current, code: event.target.value }))
+                                 }
+                              />
+                              <p className={css.main_switch}>{content.codeSent}</p>
+                           </>
+                        )}
                         {errorMessage && <p className={css.main_form_error}>{errorMessage}</p>}
                         <Button
                            type="submit"
@@ -277,10 +316,32 @@ const MainScreen: React.FC<Props> = ({
                                 ? content.sendResetLink
                                 : isLogin
                                   ? content.logIn
-                                  : content.createAccount}
+                                  : isCodeSent
+                                    ? content.createAccount
+                                    : content.sendCode}
                            <Image.Default src="/icons/dot-arrow-white.svg" alt="" />
                         </Button>
                      </form>
+                  )}
+                  {isRegister && isCodeSent && (
+                     <p className={css.main_switch}>
+                        <button
+                           className={css.main_switch_link}
+                           type="button"
+                           disabled={isSubmitting}
+                           onClick={async () => {
+                              setErrorMessage(null);
+
+                              const sent = await sendVerifyCode(form.email);
+
+                              if (!sent.ok) {
+                                 setErrorMessage(sent.message);
+                              }
+                           }}
+                        >
+                           {content.resendCode}
+                        </button>
+                     </p>
                   )}
                   {isLogin && (
                      <p className={css.main_switch}>
