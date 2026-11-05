@@ -1,4 +1,4 @@
-import { normalizeCanonicalModelId } from "shared/lib/models/canonicalModelId";
+import { isReadableModelId, normalizeCanonicalModelId } from "shared/lib/models/canonicalModelId";
 import { sortPaymentMethods } from "shared/lib/payments/sortPaymentMethods";
 
 export type TrustStatus = "green" | "yellow" | "red";
@@ -178,6 +178,7 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
          isNonEmptyString(providerUrl) &&
          isNonEmptyString(modelName) &&
          isNonEmptyString(canonicalModelId) &&
+         isReadableModelId(canonicalModelId) &&
          (hasTokenPricing || hasNativePricing) &&
          isNonEmptyString(sourceUrl) &&
          isNonEmptyString(lastCheckedAt) &&

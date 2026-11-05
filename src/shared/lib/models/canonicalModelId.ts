@@ -8,23 +8,41 @@ const endsWithShortNumber = (segment: string): boolean => /^[a-z]*\d{1,2}$/i.tes
 
 const isYear = (segment: string | undefined): boolean => /^(19|20)\d{2}$/.test(segment ?? "");
 
-// Some resellers also list one video model once per duration x resolution
-// ("doubao-seedance-1-5-pro_5s_720p"); that suffix is dropped so the
-// variants don't flood the sidebar as ~30 separate models.
-const VARIANT_SUFFIX = /(_\d+s)?(_\d+p)$/i;
-
-// Trailing snapshot dates ("-250528", "-20251001") name the same model as the
-// undated id, so they fold into it. "doubao-seedance" is ByteDance's own
-// brand for "seedance", and one reseller truncates "-fast" to "-fas".
+// Resellers list one model under many ids: a variant per duration x
+// resolution ("seedance-1.5-pro-5s-720p", "..._5s_720p"), per tier or channel
+// ("-vip", "-c", "-all", "-async"), per reasoning effort ("-high"), per
+// snapshot date ("-250528"), or with the maker's brand in front
+// ("bytedance-seedance", "doubao-seedance"). All of those are the same model
+// for the sidebar, so they fold into one id. One reseller also truncates
+// "-fast" to "-fas", and "-on"/"-off" mark a Kling audio toggle.
 const SNAPSHOT_DATE_SUFFIX = /-(\d{6}|\d{8})$/;
-const DOUBAO_SEEDANCE_PREFIX = /^doubao-(?=seedance)/;
+const VARIANT_TOKEN_SUFFIX =
+   /-(\d+s|\d+p|\d+k|vip|c|count|b64|all|async|thinking|low|medium|high|xhigh|on|off)$/i;
+const MAKER_PREFIX = /^(doubao|bytedance|dola|api-videos)-(?=seed)/;
 const TRUNCATED_FAST_SUFFIX = /-fas$/;
+// "veo3.1" / "veo3" / "veo_3_1" are spellings of "veo-3.1" / "veo-3".
+const GLUED_VEO_VERSION = /^veo(?=\d)/;
 
-const cleanSlug = (slug: string): string =>
-   slug
-      .replace(SNAPSHOT_DATE_SUFFIX, "")
-      .replace(DOUBAO_SEEDANCE_PREFIX, "")
-      .replace(TRUNCATED_FAST_SUFFIX, "-fast");
+const cleanSlug = (rawSlug: string): string => {
+   let slug = rawSlug
+      .replace(/_/g, "-")
+      .replace(MAKER_PREFIX, "")
+      .replace(GLUED_VEO_VERSION, "veo-");
+   let previous: string;
+
+   do {
+      previous = slug;
+      slug = slug.replace(SNAPSHOT_DATE_SUFFIX, "").replace(VARIANT_TOKEN_SUFFIX, "");
+   } while (slug !== previous);
+
+   return slug.replace(TRUNCATED_FAST_SUFFIX, "-fast");
+};
+
+// Ids that are listing labels rather than model names ("gpt-image-2(sub)",
+// "gemini-4-pro[...]", Chinese notes, "sora-16:9-..."): the feed's own
+// spelling of an aspect ratio or a note, not something to list as a model.
+export const isReadableModelId = (canonicalModelId: string): boolean =>
+   /^[a-z0-9][a-z0-9._-]*$/i.test(canonicalModelId.split("/").slice(1).join("/"));
 
 // The feed spells one model several ways: "glm-5-3" / "glm-5.3",
 // "gemini-2-5-flash" / "gemini-2.5-flash", "moonshot/..." / "moonshotai/...".
@@ -32,8 +50,7 @@ const cleanSlug = (slug: string): string =>
 // folds them into a single id: vendor aliases are resolved and a version
 // written with a hyphen ("5-3") is rewritten with a dot ("5.3"). Dates
 // inside the id ("2024-08-06") and longer numbers are left alone.
-export const normalizeCanonicalModelId = (rawCanonicalModelId: string): string => {
-   const canonicalModelId = rawCanonicalModelId.replace(VARIANT_SUFFIX, "");
+export const normalizeCanonicalModelId = (canonicalModelId: string): string => {
    const slashIndex = canonicalModelId.indexOf("/");
 
    if (slashIndex === -1) {
