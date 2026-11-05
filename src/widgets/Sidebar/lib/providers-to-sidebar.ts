@@ -78,14 +78,16 @@ export const toSidebarProviders = (records: ProviderPriceRecord[]): ProviderItem
       };
    };
 
-   // Known vendors keep their fixed sidebar order, followed by any vendor
-   // providers.json introduces that isn't in the known list yet, so new data
-   // is never silently dropped. Vendors without listings are hidden.
+   // Known vendors keep their fixed sidebar order, followed by any other
+   // vendor providers.json introduces. Vendors without listings are hidden,
+   // and so are those without an icon: a vendor only gets one once it has
+   // been added to VENDOR_DISPLAY_NAMES, so this keeps the long tail of
+   // obscure vendors in the feed out of the sidebar.
    const extraVendorIds = Array.from(modelsByVendor.keys())
       .filter((vendorId) => !KNOWN_VENDOR_IDS.includes(vendorId))
       .sort((a, b) => vendorListingCount(b) - vendorListingCount(a));
 
    const providers = [...KNOWN_VENDOR_IDS, ...extraVendorIds].map(toProviderItem);
 
-   return providers.filter((provider) => provider.count > 0);
+   return providers.filter((provider) => provider.count > 0 && provider.icon !== undefined);
 };
