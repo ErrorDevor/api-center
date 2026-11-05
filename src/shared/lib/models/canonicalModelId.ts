@@ -13,12 +13,25 @@ const isYear = (segment: string | undefined): boolean => /^(19|20)\d{2}$/.test(s
 // variants don't flood the sidebar as ~30 separate models.
 const VARIANT_SUFFIX = /(_\d+s)?(_\d+p)$/i;
 
+// Trailing snapshot dates ("-250528", "-20251001") name the same model as the
+// undated id, so they fold into it. "doubao-seedance" is ByteDance's own
+// brand for "seedance", and one reseller truncates "-fast" to "-fas".
+const SNAPSHOT_DATE_SUFFIX = /-(\d{6}|\d{8})$/;
+const DOUBAO_SEEDANCE_PREFIX = /^doubao-(?=seedance)/;
+const TRUNCATED_FAST_SUFFIX = /-fas$/;
+
+const cleanSlug = (slug: string): string =>
+   slug
+      .replace(SNAPSHOT_DATE_SUFFIX, "")
+      .replace(DOUBAO_SEEDANCE_PREFIX, "")
+      .replace(TRUNCATED_FAST_SUFFIX, "-fast");
+
 // The feed spells one model several ways: "glm-5-3" / "glm-5.3",
 // "gemini-2-5-flash" / "gemini-2.5-flash", "moonshot/..." / "moonshotai/...".
 // Each spelling used to become its own sidebar entry and table group. This
 // folds them into a single id: vendor aliases are resolved and a version
 // written with a hyphen ("5-3") is rewritten with a dot ("5.3"). Dates
-// ("2024-08-06", "20250514") and longer numbers are left alone.
+// inside the id ("2024-08-06") and longer numbers are left alone.
 export const normalizeCanonicalModelId = (rawCanonicalModelId: string): string => {
    const canonicalModelId = rawCanonicalModelId.replace(VARIANT_SUFFIX, "");
    const slashIndex = canonicalModelId.indexOf("/");
@@ -28,7 +41,7 @@ export const normalizeCanonicalModelId = (rawCanonicalModelId: string): string =
    }
 
    const vendorId = getVendorId(canonicalModelId);
-   const segments = canonicalModelId.slice(slashIndex + 1).split("-");
+   const segments = cleanSlug(canonicalModelId.slice(slashIndex + 1)).split("-");
    let slug = segments[0] ?? "";
 
    for (let index = 1; index < segments.length; index += 1) {
