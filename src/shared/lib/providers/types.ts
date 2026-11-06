@@ -1,6 +1,9 @@
 import { isReadableModelId, normalizeCanonicalModelId } from "shared/lib/models/canonicalModelId";
 import { sortPaymentMethods } from "shared/lib/payments/sortPaymentMethods";
 
+// Smallest flat per-request/per-second price worth displaying.
+const MIN_NATIVE_PRICE_USD = 0.001;
+
 export type TrustStatus = "green" | "yellow" | "red";
 
 export interface ProviderPriceRecord {
@@ -170,7 +173,13 @@ export const parseProviderPriceRecords = (payload: unknown): ProviderPriceRecord
          officialOutputPriceUsdPer1m !== null &&
          inputDiscountPercent !== null &&
          outputDiscountPercent !== null;
-      const hasNativePricing = nativePriceUsd !== null && nativePriceUnit !== null;
+      // Near-zero flat prices ("$0/request", "$0.0001/request") are placeholder
+      // or broken data, not a real offer — treat them as unpriced so the
+      // record is dropped instead of shown.
+      const hasNativePricing =
+         nativePriceUsd !== null &&
+         nativePriceUnit !== null &&
+         nativePriceUsd >= MIN_NATIVE_PRICE_USD;
 
       const isValid =
          isNonEmptyString(providerName) &&
