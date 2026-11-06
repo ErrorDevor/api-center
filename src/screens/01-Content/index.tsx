@@ -24,7 +24,7 @@ import { useModelContentTypes } from "shared/lib/models/useModelCapabilities";
 import { useModelCatalog } from "shared/lib/models/useModelCatalog";
 import { matchesPaymentIds } from "shared/lib/payments/matchPaymentIds";
 import { useProviderRecords } from "shared/lib/providers/useProviderRecords";
-import { getVendorDisplayName, getVendorId } from "shared/lib/providers/vendors";
+import { getVendorDisplayName, getVendorIcon, getVendorId } from "shared/lib/providers/vendors";
 import { GENERIC_VENDOR_SLUG } from "shared/lib/vendorDescriptions/types";
 import { useVendorDescriptions } from "shared/lib/vendorDescriptions/useVendorDescriptions";
 import { ContentActions } from "shared/ui/components/ContentActions";
@@ -84,7 +84,15 @@ export const Content: React.FC<Prop> = ({
    const { entries: vendorDescriptions } = useVendorDescriptions();
    const { getContentTypes } = useModelContentTypes();
 
-   const models = React.useMemo(() => toModelItems(records, modelCatalog), [records, modelCatalog]);
+   // Models whose vendor the Sidebar hides (no icon — see toSidebarProviders)
+   // aren't reachable from any Sidebar section, so the catalog drops them too.
+   const models = React.useMemo(
+      () =>
+         toModelItems(records, modelCatalog).filter(
+            (model) => getVendorIcon(getVendorId(model.canonicalModelId)) !== undefined
+         ),
+      [records, modelCatalog]
+   );
 
    // A search behaves like drilling in: results stay per-reseller (not
    // collapsed) and default to cheapest-first, so a "sonnet" query is a
