@@ -36,6 +36,8 @@ export interface PriceFilters {
    maxInput: number | null;
    maxOutput: number | null;
    minDiscount: number | null;
+   // Case-insensitive substring of the provider name or domain.
+   query?: string;
 }
 
 export const isNativeRecord = (record: ProviderPriceRecord): boolean =>
@@ -97,6 +99,16 @@ export const buildPriceRows = (
       .filter((record) => record.canonicalModelId === modelId)
       .map(toRow)
       .filter((row) => {
+         const query = filters.query?.trim().toLowerCase();
+
+         if (
+            query &&
+            !row.record.providerName.toLowerCase().includes(query) &&
+            !row.record.providerDomain.toLowerCase().includes(query)
+         ) {
+            return false;
+         }
+
          if (filters.maxInput !== null && row.input > filters.maxInput) {
             return false;
          }

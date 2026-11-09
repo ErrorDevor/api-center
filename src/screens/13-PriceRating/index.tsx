@@ -25,6 +25,29 @@ const parseNumber = (value: string): number | null => {
    return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
 };
 
+// Favicon of the reseller's domain via Google's favicon service; falls back to
+// the name's first letter when the domain has no icon or the request fails.
+const ProviderLogo: React.FC<{ domain: string; name: string }> = ({ domain, name }) => {
+   const [failed, setFailed] = React.useState(false);
+
+   return failed ? (
+      <span className={css.logo_fallback} aria-hidden>
+         {name.charAt(0).toUpperCase()}
+      </span>
+   ) : (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+         className={css.logo}
+         src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`}
+         alt=""
+         width={24}
+         height={24}
+         loading="lazy"
+         onError={() => setFailed(true)}
+      />
+   );
+};
+
 export const PriceRatingScreen: React.FC<{ className?: string }> = ({ className }) => {
    const { t } = useTranslation();
    const { records, isLoading, error } = useProviderRecords();
@@ -32,6 +55,7 @@ export const PriceRatingScreen: React.FC<{ className?: string }> = ({ className 
    const [familyId, setFamilyId] = React.useState<PriceFamilyId>("anthropic");
    const [pickedModelId, setPickedModelId] = React.useState<string | null>(null);
    const [sortKey, setSortKey] = React.useState<PriceSortKey>("input");
+   const [query, setQuery] = React.useState("");
    const [maxInput, setMaxInput] = React.useState("");
    const [maxOutput, setMaxOutput] = React.useState("");
    const [minDiscount, setMinDiscount] = React.useState("");
@@ -63,19 +87,21 @@ export const PriceRatingScreen: React.FC<{ className?: string }> = ({ className 
                     maxInput: parseNumber(maxInput),
                     maxOutput: parseNumber(maxOutput),
                     minDiscount: parseNumber(minDiscount),
+                    query,
                  },
                  sortKey
               )
             : [],
-      [records, modelId, sortKey, maxInput, maxOutput, minDiscount]
+      [records, modelId, sortKey, maxInput, maxOutput, minDiscount, query]
    );
 
    const summary = React.useMemo(() => summarize(allRows), [allRows]);
    const isNative = allRows.length > 0 && isNativeRecord(allRows[0].record);
    const unit = allRows[0]?.record.nativePriceUnit ?? "";
-   const hasFilters = maxInput !== "" || maxOutput !== "" || minDiscount !== "";
+   const hasFilters = query !== "" || maxInput !== "" || maxOutput !== "" || minDiscount !== "";
 
    const resetFilters = () => {
+      setQuery("");
       setMaxInput("");
       setMaxOutput("");
       setMinDiscount("");
@@ -109,6 +135,16 @@ export const PriceRatingScreen: React.FC<{ className?: string }> = ({ className 
             </div>
 
             <div className={css.controls}>
+               <label className={clsx(css.field, css.field_search)}>
+                  <span>{t.common.search}</span>
+                  <input
+                     type="search"
+                     placeholder={t.common.providersSearch}
+                     value={query}
+                     onChange={(event) => setQuery(event.target.value)}
+                  />
+               </label>
+
                <label className={css.field}>
                   <span>{t.priceRating.model}</span>
                   <select
@@ -230,10 +266,15 @@ export const PriceRatingScreen: React.FC<{ className?: string }> = ({ className 
                               <td>{row.rank}</td>
                               <td>
                                  <a
+                                    className={css.provider}
                                     href={row.record.providerUrl}
                                     target="_blank"
                                     rel="noopener noreferrer nofollow"
                                  >
+                                    <ProviderLogo
+                                       domain={row.record.providerDomain}
+                                       name={row.record.providerName}
+                                    />
                                     {row.record.providerName}
                                  </a>
                               </td>
