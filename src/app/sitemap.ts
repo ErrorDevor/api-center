@@ -18,6 +18,7 @@ const STATIC_PATHS: Array<{
    { path: "/group-buys", priority: 0.8, changeFrequency: "daily" },
    { path: "/reviews", priority: 0.7, changeFrequency: "daily" },
    { path: "/rating", priority: 0.7, changeFrequency: "daily" },
+   { path: "/price-rating", priority: 0.8, changeFrequency: "daily" },
    { path: "/leaderboard", priority: 0.7, changeFrequency: "daily" },
    { path: "/discussions", priority: 0.6, changeFrequency: "daily" },
 ];

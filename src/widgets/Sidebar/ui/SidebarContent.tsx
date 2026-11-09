@@ -181,6 +181,7 @@ export const SidebarContent: React.FC<Props> = ({
    const pathname = usePathname();
    const isLeaderboardActive = pathname === "/leaderboard" || pathname.startsWith("/leaderboard/");
    const isAiProvidersActive = pathname === "/ai-providers" || pathname.startsWith("/ai-providers/");
+   const isPriceRatingActive = pathname === "/price-rating";
    const isDiscussionsActive = pathname === "/discussions" || pathname.startsWith("/discussions/");
    const [isDiscussionsHovered, setIsDiscussionsHovered] = React.useState(false);
 
@@ -268,6 +269,21 @@ export const SidebarContent: React.FC<Props> = ({
                >
                   <TableIcon />
                   {t.sidebar.aiProviders}
+               </Button>
+
+               <Button
+                  variant="grey"
+                  className={clsx(
+                     css.sidebar_forum_button,
+                     isPriceRatingActive && css.sidebar_forum_button_active
+                  )}
+                  aria-current={isPriceRatingActive ? "page" : undefined}
+                  onClick={() => {
+                     route.push("/price-rating");
+                  }}
+               >
+                  <TableIcon />
+                  {t.sidebar.priceRating}
                </Button>
             </div>
 

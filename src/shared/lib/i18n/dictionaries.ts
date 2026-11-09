@@ -58,6 +58,7 @@ export const en = {
       discussions: "Discussions",
       liderTable: "Leaderboard",
       aiProviders: "AI Providers",
+      priceRating: "Price rating",
       modelTypes: {
          allTypes: "All Types",
          images: "Images",
@@ -699,6 +700,32 @@ export const en = {
       text: "This functionality is currently available only to PRO users. We are actively testing the system and will soon open access to it for all participants.",
    },
 
+   priceRating: {
+      title: "Provider price rating",
+      subtitle:
+         "Resellers ranked by price for popular models. Struck-through price is the official one.",
+      model: "Model",
+      maxInput: "Max input, $/1M",
+      maxOutput: "Max output, $/1M",
+      maxPrice: "Max price, $",
+      minDiscount: "Min discount",
+      sortInput: "Input: cheapest first",
+      sortOutput: "Output: cheapest first",
+      sortPrice: "Price: cheapest first",
+      sortDiscount: "Biggest discount first",
+      official: "Official price",
+      cheapest: "Cheapest offer",
+      avgDiscount: "Average discount",
+      upTo: "up to",
+      inputPer1m: "Input, $/1M",
+      outputPer1m: "Output, $/1M",
+      price: "Price",
+      discount: "Discount",
+      loading: "Loading prices...",
+      loadError: "Failed to load prices.",
+      empty: "No providers match the filters.",
+   },
+
    aiProviders: {
       name: "Provider name",
       models: "Models",
@@ -866,6 +893,7 @@ export const ru: Dictionary = {
       showLess: "Скрыть",
       liderTable: "Таблица лидеров",
       aiProviders: "AI-провайдеры",
+      priceRating: "Рейтинг цен",
       modelTypeTitle: "Тип модели",
       forum: "Форум",
       discussions: "Обсуждения",
@@ -1498,6 +1526,32 @@ export const ru: Dictionary = {
    featureTestingModal: {
       title: "Раздел находится в режиме тестирования",
       text: "В данный момент этот функционал доступен только PRO-пользователям. Мы активно тестируем систему и в скором времени откроем к ней доступ для всех участников.",
+   },
+
+   priceRating: {
+      title: "Рейтинг поставщиков по цене",
+      subtitle:
+         "Реселлеры, отсортированные по цене на популярные модели. Зачёркнута официальная цена.",
+      model: "Модель",
+      maxInput: "Макс. input, $/1M",
+      maxOutput: "Макс. output, $/1M",
+      maxPrice: "Макс. цена, $",
+      minDiscount: "Мин. скидка",
+      sortInput: "Input: сначала дешёвые",
+      sortOutput: "Output: сначала дешёвые",
+      sortPrice: "Цена: сначала дешёвые",
+      sortDiscount: "Сначала бо́льшая скидка",
+      official: "Официальная цена",
+      cheapest: "Самое дешёвое предложение",
+      avgDiscount: "Средняя скидка",
+      upTo: "до",
+      inputPer1m: "Input, $/1M",
+      outputPer1m: "Output, $/1M",
+      price: "Цена",
+      discount: "Скидка",
+      loading: "Загружаем цены...",
+      loadError: "Не удалось загрузить цены.",
+      empty: "Нет поставщиков под выбранные фильтры.",
    },
 
    aiProviders: {
